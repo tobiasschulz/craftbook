@@ -88,7 +88,6 @@ import com.sk89q.craftbook.gates.logic.ToggleFlipFlop;
 import com.sk89q.craftbook.gates.logic.XnorGate;
 import com.sk89q.craftbook.gates.logic.XorGate;
 import com.sk89q.craftbook.gates.world.blocks.BlockBreaker;
-import com.sk89q.craftbook.gates.world.blocks.BlockBreakerST;
 import com.sk89q.craftbook.gates.world.blocks.BlockLauncher;
 import com.sk89q.craftbook.gates.world.blocks.BonemealTerraformer;
 import com.sk89q.craftbook.gates.world.blocks.BonemealTerraformerST;
@@ -203,6 +202,7 @@ import com.sk89q.craftbook.ic.families.FamilySI3O;
 import com.sk89q.craftbook.ic.families.FamilySI5O;
 import com.sk89q.craftbook.ic.families.FamilySISO;
 import com.sk89q.craftbook.ic.families.FamilyVIVO;
+import com.sk89q.craftbook.ic.families.FamilyZISO;
 import com.sk89q.craftbook.plc.PlcFactory;
 import com.sk89q.craftbook.plc.lang.Perlstone;
 import com.sk89q.wepif.PermissionsResolverManager;
@@ -215,6 +215,7 @@ import com.sk89q.wepif.PermissionsResolverManager;
  */
 public class CircuitsPlugin extends BaseBukkitPlugin {
 
+    public static final ICFamily FAMILY_ZISO = new FamilyZISO();
     public static final ICFamily FAMILY_SISO = new FamilySISO();
     public static final ICFamily FAMILY_3ISO = new Family3ISO();
     public static final ICFamily FAMILY_SI3O = new FamilySI3O();
@@ -326,6 +327,7 @@ public class CircuitsPlugin extends BaseBukkitPlugin {
 
         // Let's register ICs!
         icManager = new ICManager();
+        ICFamily familyZISO = FAMILY_ZISO;
         ICFamily familySISO = FAMILY_SISO;
         ICFamily family3ISO = FAMILY_3ISO;
         ICFamily familySI3O = FAMILY_SI3O;
@@ -362,8 +364,8 @@ public class CircuitsPlugin extends BaseBukkitPlugin {
         registerIC("MC1217", "pot induce",  new PotionInducer.Factory(server), familySISO, familyAISO);
         registerIC("MC1218", "block launch",new BlockLauncher.Factory(server), familySISO, familyAISO);
         registerIC("MC1219", "auto craft",  new AutomaticCrafter.Factory(server), familySISO, familyAISO);
-        registerIC("MC1220", "a b break",   new BlockBreaker.Factory(server, false), familySISO, familyAISO);
-        registerIC("MC1221", "b b break",   new BlockBreaker.Factory(server, true), familySISO, familyAISO);
+        registerIC("MC1220", "a b break",   new BlockBreaker.Factory(server, false), familySISO, familyAISO, familyZISO);
+        registerIC("MC1221", "b b break",   new BlockBreaker.Factory(server, true), familySISO, familyAISO, familyZISO);
         registerIC("MC1222", "liquid flood",new LiquidFlood.Factory(server), familySISO, familyAISO);    //Restricted
         registerIC("MC1223", "terraform",   new BonemealTerraformer.Factory(server), familySISO, familyAISO);
         registerIC("MC1224", "time bomb",   new TimedExplosion.Factory(server), familySISO, familyAISO); //Restricted
@@ -460,8 +462,6 @@ public class CircuitsPlugin extends BaseBukkitPlugin {
         registerIC("MC0216", "set b chest st",new SetBlockBelowChestST.Factory(server), familySISO, familyAISO);
         registerIC("MC0217", "pot induce st",new PotionInducerST.Factory(server), familySISO, familyAISO);              //Restricted
         registerIC("MC0219", "auto craft st",new AutomaticCrafterST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0220", "a bl break st",new BlockBreakerST.Factory(server, false), familySISO, familyAISO);
-        registerIC("MC0221", "b bl break st",new BlockBreakerST.Factory(server, true), familySISO, familyAISO);
         registerIC("MC0222", "liq flood st",new LiquidFloodST.Factory(server), familySISO, familyAISO);    //Restricted
         registerIC("MC0223", "terraform st",new BonemealTerraformerST.Factory(server), familySISO, familyAISO);
         registerIC("MC0225", "pump st",     new PumpST.Factory(server), familySISO, familyAISO);

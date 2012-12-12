@@ -16,11 +16,12 @@ import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.BlockUtil;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.blocks.BlockID;
 
-public class BlockBreaker extends AbstractIC {
+public class BlockBreaker extends AbstractIC implements SelfTriggeredIC {
 
     boolean above;
 
@@ -147,5 +148,15 @@ public class BlockBreaker extends AbstractIC {
             };
             return lines;
         }
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
+    }
+
+    @Override
+    public void think (ChipState chip) {
+        chip.setOutput(0, breakBlock());
     }
 }

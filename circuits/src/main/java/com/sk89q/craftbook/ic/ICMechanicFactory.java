@@ -29,6 +29,7 @@ import com.sk89q.craftbook.InvalidMechanismException;
 import com.sk89q.craftbook.LocalPlayer;
 import com.sk89q.craftbook.bukkit.BukkitUtil;
 import com.sk89q.craftbook.bukkit.CircuitsPlugin;
+import com.sk89q.craftbook.ic.families.FamilyZISO;
 import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;
 
@@ -76,6 +77,7 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
         Matcher matcher = IC_PATTERN.matcher(sign.getLine(1));
         if (!matcher.matches()) return null;
 
+        String id = matcher.group(1);
         String prefix = matcher.group(2);
         // TODO: remove after some time to stop converting existing MCA ICs
         // convert existing MCA ICs to the new [MCXXXX]A syntax
@@ -83,10 +85,17 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
             sign.setLine(1, sign.getLine(1).replace("A", "") + "A");
             sign.update(false);
         }
+        // Convert Existing Self-Triggered IC's to the new format.
+        if (id.toLowerCase().startsWith("mc0")) {
+            sign.setLine(1, sign.getLine(1).replaceAll("(?i)mc0", "MC1") + "ST");
+            sign.update(false);
+            matcher = IC_PATTERN.matcher(sign.getLine(1));
+            prefix = matcher.group(2);
+            id = matcher.group(1);
+        }
 
         if (!manager.hasCustomPrefix(prefix)) return null;
 
-        String id = matcher.group(1);
         // after this point, we don't return null if we can't make an IC: we throw shit,
         //  because it SHOULD be an IC and can't possibly be any other kind of mechanic.
 
@@ -123,7 +132,7 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
         }
 
         // okay, everything checked out.  we can finally make it.
-        if (ic instanceof SelfTriggeredIC) return new SelfTriggeredICMechanic(
+        if (family instanceof FamilyZISO) return new SelfTriggeredICMechanic(
                 plugin,
                 id,
                 (SelfTriggeredIC) ic,
@@ -174,6 +183,23 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
 
             String id = matcher.group(1);
             String suffix = "";
+            String prefix = matcher.group(2);
+
+            // TODO: remove after some time to stop converting existing MCA ICs
+            // convert existing MCA ICs to the new [MCXXXX]A syntax
+            if (prefix.equalsIgnoreCase("MCA")) {
+                sign.setLine(1, sign.getLine(1).replace("A", "") + "A");
+                sign.update(false);
+            }
+            // Convert Existing Self-Triggered IC's to the new format.
+            if (id.toLowerCase().startsWith("mc0")) {
+                sign.setLine(1, sign.getLine(1).replaceAll("(?i)mc0", "MC1") + "S");
+                sign.update(false);
+                matcher = IC_PATTERN.matcher(sign.getLine(1));
+                prefix = matcher.group(2);
+                id = matcher.group(1);
+            }
+
             String[] str = RIGHT_BRACKET_PATTERN.split(sign.getLine(1));
             if (str.length > 1) {
                 suffix = str[1];
@@ -213,7 +239,7 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
 
             ICMechanic mechanic;
 
-            if (ic instanceof SelfTriggeredIC) {
+            if (family instanceof FamilyZISO) {
                 mechanic = new SelfTriggeredICMechanic(
                         plugin,
                         id,

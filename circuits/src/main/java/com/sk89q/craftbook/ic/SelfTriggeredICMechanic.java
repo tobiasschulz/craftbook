@@ -49,5 +49,4 @@ public class SelfTriggeredICMechanic extends ICMechanic implements SelfTriggerin
             selfTrigIC.think(chipState);
         }
     }
-
 }
