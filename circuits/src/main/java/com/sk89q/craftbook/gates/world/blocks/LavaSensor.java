@@ -29,8 +29,9 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.ICVerificationException;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 
-public class LavaSensor extends AbstractIC {
+public class LavaSensor extends AbstractIC implements SelfTriggeredIC {
 
     private Block center;
 
@@ -54,6 +55,18 @@ public class LavaSensor extends AbstractIC {
     public String getSignTitle() {
 
         return "LAVA SENSOR";
+    }
+
+    @Override
+    public void think(ChipState chip) {
+
+        chip.setOutput(0, hasLava());
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
     }
 
     @Override

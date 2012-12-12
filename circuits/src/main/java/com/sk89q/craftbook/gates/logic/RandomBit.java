@@ -27,8 +27,9 @@ import com.sk89q.craftbook.ic.AbstractICFactory;
 import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 
-public class RandomBit extends AbstractIC {
+public class RandomBit extends AbstractIC implements SelfTriggeredIC {
 
     public RandomBit(Server server, ChangedSign sign, ICFactory factory) {
 
@@ -45,6 +46,16 @@ public class RandomBit extends AbstractIC {
     public String getSignTitle() {
 
         return "RANDOM BIT";
+    }
+
+    @Override
+    public void think(ChipState chip) {
+
+        if (chip.getInput(0)) {
+            for (short i = 0; i < chip.getOutputCount(); i++) {
+                chip.setOutput(i, BaseBukkitPlugin.random.nextBoolean());
+            }
+        }
     }
 
     @Override
@@ -69,6 +80,11 @@ public class RandomBit extends AbstractIC {
 
             return new RandomBit(getServer(), sign, this);
         }
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
     }
 
 }

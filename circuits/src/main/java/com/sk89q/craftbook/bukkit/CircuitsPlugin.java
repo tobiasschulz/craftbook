@@ -79,7 +79,6 @@ import com.sk89q.craftbook.gates.logic.Pulser;
 import com.sk89q.craftbook.gates.logic.Random3Bit;
 import com.sk89q.craftbook.gates.logic.Random5Bit;
 import com.sk89q.craftbook.gates.logic.RandomBit;
-import com.sk89q.craftbook.gates.logic.RandomBitST;
 import com.sk89q.craftbook.gates.logic.RangedOutput;
 import com.sk89q.craftbook.gates.logic.Repeater;
 import com.sk89q.craftbook.gates.logic.RsNandLatch;
@@ -90,31 +89,20 @@ import com.sk89q.craftbook.gates.logic.XorGate;
 import com.sk89q.craftbook.gates.world.blocks.BlockBreaker;
 import com.sk89q.craftbook.gates.world.blocks.BlockLauncher;
 import com.sk89q.craftbook.gates.world.blocks.BonemealTerraformer;
-import com.sk89q.craftbook.gates.world.blocks.BonemealTerraformerST;
 import com.sk89q.craftbook.gates.world.blocks.CombineHarvester;
-import com.sk89q.craftbook.gates.world.blocks.CombineHarvesterST;
 import com.sk89q.craftbook.gates.world.blocks.Cultivator;
-import com.sk89q.craftbook.gates.world.blocks.CultivatorST;
 import com.sk89q.craftbook.gates.world.blocks.FlexibleSetBlock;
 import com.sk89q.craftbook.gates.world.blocks.Irrigator;
-import com.sk89q.craftbook.gates.world.blocks.IrrigatorST;
 import com.sk89q.craftbook.gates.world.blocks.LavaSensor;
-import com.sk89q.craftbook.gates.world.blocks.LavaSensorST;
 import com.sk89q.craftbook.gates.world.blocks.LiquidFlood;
-import com.sk89q.craftbook.gates.world.blocks.LiquidFloodST;
 import com.sk89q.craftbook.gates.world.blocks.MultipleSetBlock;
 import com.sk89q.craftbook.gates.world.blocks.Planter;
-import com.sk89q.craftbook.gates.world.blocks.PlanterST;
 import com.sk89q.craftbook.gates.world.blocks.Pump;
 import com.sk89q.craftbook.gates.world.blocks.PumpST;
 import com.sk89q.craftbook.gates.world.blocks.SetBlockAbove;
 import com.sk89q.craftbook.gates.world.blocks.SetBlockAboveChest;
-import com.sk89q.craftbook.gates.world.blocks.SetBlockAboveChestST;
-import com.sk89q.craftbook.gates.world.blocks.SetBlockAboveST;
 import com.sk89q.craftbook.gates.world.blocks.SetBlockBelow;
 import com.sk89q.craftbook.gates.world.blocks.SetBlockBelowChest;
-import com.sk89q.craftbook.gates.world.blocks.SetBlockBelowChestST;
-import com.sk89q.craftbook.gates.world.blocks.SetBlockBelowST;
 import com.sk89q.craftbook.gates.world.blocks.SetBridge;
 import com.sk89q.craftbook.gates.world.blocks.SetDoor;
 import com.sk89q.craftbook.gates.world.blocks.Spigot;
@@ -123,9 +111,7 @@ import com.sk89q.craftbook.gates.world.blocks.WaterSensorST;
 import com.sk89q.craftbook.gates.world.entity.AdvancedEntitySpawner;
 import com.sk89q.craftbook.gates.world.entity.CreatureSpawner;
 import com.sk89q.craftbook.gates.world.entity.EntityCannon;
-import com.sk89q.craftbook.gates.world.entity.EntityCannonST;
 import com.sk89q.craftbook.gates.world.entity.EntityTrap;
-import com.sk89q.craftbook.gates.world.entity.EntityTrapST;
 import com.sk89q.craftbook.gates.world.items.AutomaticCrafter;
 import com.sk89q.craftbook.gates.world.items.AutomaticCrafterST;
 import com.sk89q.craftbook.gates.world.items.ChestStocker;
@@ -133,7 +119,6 @@ import com.sk89q.craftbook.gates.world.items.ChestStockerST;
 import com.sk89q.craftbook.gates.world.items.ContainerCollector;
 import com.sk89q.craftbook.gates.world.items.ContainerCollectorST;
 import com.sk89q.craftbook.gates.world.items.ContainerDispenser;
-import com.sk89q.craftbook.gates.world.items.ContainerDispenserST;
 import com.sk89q.craftbook.gates.world.items.ItemDispenser;
 import com.sk89q.craftbook.gates.world.items.ItemFan;
 import com.sk89q.craftbook.gates.world.items.ItemFanST;
@@ -154,7 +139,6 @@ import com.sk89q.craftbook.gates.world.miscellaneous.PotionInducerST;
 import com.sk89q.craftbook.gates.world.miscellaneous.SoundEffect;
 import com.sk89q.craftbook.gates.world.miscellaneous.TimedExplosion;
 import com.sk89q.craftbook.gates.world.miscellaneous.WirelessReceiver;
-import com.sk89q.craftbook.gates.world.miscellaneous.WirelessReceiverST;
 import com.sk89q.craftbook.gates.world.miscellaneous.WirelessTransmitter;
 import com.sk89q.craftbook.gates.world.sensors.BlockSensor;
 import com.sk89q.craftbook.gates.world.sensors.BlockSensorST;
@@ -337,81 +321,81 @@ public class CircuitsPlugin extends BaseBukkitPlugin {
         ICFamily familySI5O = FAMILY_SI5O;
 
         //SISOs
-        registerIC("MC1000", "repeater",    new Repeater.Factory(server), familySISO, familyAISO);
-        registerIC("MC1001", "inverter",    new Inverter.Factory(server), familySISO, familyAISO);
-        registerIC("MC1017", "re t flip",   new ToggleFlipFlop.Factory(server, true), familySISO, familyAISO);
-        registerIC("MC1018", "fe t flip",   new ToggleFlipFlop.Factory(server, false), familySISO, familyAISO);
-        registerIC("MC1020", "random bit",  new RandomBit.Factory(server), familySISO, familyAISO);
-        registerIC("MC1025", "server time", new ServerTimeModulus.Factory(server), familySISO, familyAISO);
-        registerIC("MC1110", "transmitter", new WirelessTransmitter.Factory(server), familySISO, familyAISO);
-        registerIC("MC1111", "receiver",    new WirelessReceiver.Factory(server), familySISO, familyAISO);
-        registerIC("MC1200", "spawner",     new CreatureSpawner.Factory(server), familySISO, familyAISO);     // Restricted
-        registerIC("MC1201", "dispenser",   new ItemDispenser.Factory(server), familySISO,familyAISO);       // Restricted
-        registerIC("MC1202", "c dispense",  new ContainerDispenser.Factory(server), familySISO, familyAISO);      // Restricted
-        registerIC("MC1203", "strike",      new LightningSummon.Factory(server), familySISO, familyAISO);     // Restricted
-        registerIC("MC1204", "trap",        new EntityTrap.Factory(server), familySISO, familyAISO);          // Restricted
-        registerIC("MC1205", "set above",   new SetBlockAbove.Factory(server), familySISO, familyAISO);       // Restricted
-        registerIC("MC1206", "set below",   new SetBlockBelow.Factory(server), familySISO, familyAISO);       // Restricted
-        registerIC("MC1207", "flex set",    new FlexibleSetBlock.Factory(server), familySISO, familyAISO);    // Restricted
-        registerIC("MC1208", "mult set",    new MultipleSetBlock.Factory(server), familySISO, familyAISO);
-        registerIC("MC1209", "collector",   new ContainerCollector.Factory(server), familySISO, familyAISO);
-        registerIC("MC1210", "emitter",     new ParticleEffect.Factory(server), familySISO, familyAISO);      // Restricted
-        registerIC("MC1211", "set bridge",  new SetBridge.Factory(server), familySISO, familyAISO);           // Restricted
-        registerIC("MC1212", "set door",    new SetDoor.Factory(server), familySISO, familyAISO);             // Restricted
-        registerIC("MC1213", "sound",       new SoundEffect.Factory(server), familySISO, familyAISO);         // Restricted
-        registerIC("MC1215", "set a chest", new SetBlockAboveChest.Factory(server), familySISO, familyAISO);  // Restricted
-        registerIC("MC1216", "set b chest", new SetBlockBelowChest.Factory(server), familySISO, familyAISO);  // Restricted
-        registerIC("MC1217", "pot induce",  new PotionInducer.Factory(server), familySISO, familyAISO);
-        registerIC("MC1218", "block launch",new BlockLauncher.Factory(server), familySISO, familyAISO);
-        registerIC("MC1219", "auto craft",  new AutomaticCrafter.Factory(server), familySISO, familyAISO);
+        registerIC("MC1000", "repeater",    new Repeater.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1001", "inverter",    new Inverter.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1017", "re t flip",   new ToggleFlipFlop.Factory(server, true), familySISO, familyAISO, familyZISO);
+        registerIC("MC1018", "fe t flip",   new ToggleFlipFlop.Factory(server, false), familySISO, familyAISO, familyZISO);
+        registerIC("MC1020", "random bit",  new RandomBit.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1025", "server time", new ServerTimeModulus.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1110", "transmitter", new WirelessTransmitter.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1111", "receiver",    new WirelessReceiver.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1200", "spawner",     new CreatureSpawner.Factory(server), familySISO, familyAISO, familyZISO);     // Restricted
+        registerIC("MC1201", "dispenser",   new ItemDispenser.Factory(server), familySISO,familyAISO, familyZISO);       // Restricted
+        registerIC("MC1202", "c dispense",  new ContainerDispenser.Factory(server), familySISO, familyAISO, familyZISO);      // Restricted
+        registerIC("MC1203", "strike",      new LightningSummon.Factory(server), familySISO, familyAISO, familyZISO);     // Restricted
+        registerIC("MC1204", "trap",        new EntityTrap.Factory(server), familySISO, familyAISO, familyZISO);          // Restricted
+        registerIC("MC1205", "set above",   new SetBlockAbove.Factory(server), familySISO, familyAISO, familyZISO);       // Restricted
+        registerIC("MC1206", "set below",   new SetBlockBelow.Factory(server), familySISO, familyAISO, familyZISO);       // Restricted
+        registerIC("MC1207", "flex set",    new FlexibleSetBlock.Factory(server), familySISO, familyAISO, familyZISO);    // Restricted
+        registerIC("MC1208", "mult set",    new MultipleSetBlock.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1209", "collector",   new ContainerCollector.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1210", "emitter",     new ParticleEffect.Factory(server), familySISO, familyAISO, familyZISO);      // Restricted
+        registerIC("MC1211", "set bridge",  new SetBridge.Factory(server), familySISO, familyAISO, familyZISO);           // Restricted
+        registerIC("MC1212", "set door",    new SetDoor.Factory(server), familySISO, familyAISO, familyZISO);             // Restricted
+        registerIC("MC1213", "sound",       new SoundEffect.Factory(server), familySISO, familyAISO, familyZISO);         // Restricted
+        registerIC("MC1215", "set a chest", new SetBlockAboveChest.Factory(server), familySISO, familyAISO, familyZISO);  // Restricted
+        registerIC("MC1216", "set b chest", new SetBlockBelowChest.Factory(server), familySISO, familyAISO, familyZISO);  // Restricted
+        registerIC("MC1217", "pot induce",  new PotionInducer.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1218", "block launch",new BlockLauncher.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1219", "auto craft",  new AutomaticCrafter.Factory(server), familySISO, familyAISO, familyZISO);
         registerIC("MC1220", "a b break",   new BlockBreaker.Factory(server, false), familySISO, familyAISO, familyZISO);
         registerIC("MC1221", "b b break",   new BlockBreaker.Factory(server, true), familySISO, familyAISO, familyZISO);
-        registerIC("MC1222", "liquid flood",new LiquidFlood.Factory(server), familySISO, familyAISO);    //Restricted
-        registerIC("MC1223", "terraform",   new BonemealTerraformer.Factory(server), familySISO, familyAISO);
-        registerIC("MC1224", "time bomb",   new TimedExplosion.Factory(server), familySISO, familyAISO); //Restricted
-        registerIC("MC1225", "pump",        new Pump.Factory(server), familySISO, familyAISO);
-        registerIC("MC1226", "spigot",      new Spigot.Factory(server), familySISO, familyAISO);
-        registerIC("MC1227", "avd spawner", new AdvancedEntitySpawner.Factory(server), familySISO, familyAISO);     // Restricted
-        registerIC("MC1228", "ent cannon",  new EntityCannon.Factory(server), familySISO, familyAISO);     // Restricted
-        registerIC("MC1229", "sorter",      new Sorter.Factory(server), familySISO, familyAISO);
-        registerIC("MC1230", "sense day",   new DaySensor.Factory(server), familySISO, familyAISO);
-        registerIC("MC1231", "t control",   new TimeControl.Factory(server), familySISO, familyAISO);         // Restricted
-        registerIC("MC1232", "time set",    new TimeSet.Factory(server), familySISO, familyAISO);         // Restricted
-        registerIC("MC1233", "item fan",    new ItemFan.Factory(server), familySISO, familyAISO);
-        registerIC("MC1234", "planter",     new Planter.Factory(server), familySISO, familyAISO);
-        registerIC("MC1235", "cultivator",  new Cultivator.Factory(server), familySISO, familyAISO);
-        registerIC("MC1236", "fake weather",new WeatherFaker.Factory(server), familySISO, familyAISO);        // Restricted
-        registerIC("MC1237", "fake time",   new TimeFaker.Factory(server), familySISO, familyAISO);           // Restricted
-        registerIC("MC1238", "irrigate",    new Irrigator.Factory(server), familySISO, familyAISO);
-        registerIC("MC1239", "harvester",   new CombineHarvester.Factory(server), familySISO, familyAISO);
-        registerIC("MC1240", "shoot arrow", new ArrowShooter.Factory(server), familySISO, familyAISO);        // Restricted
-        registerIC("MC1241", "shoot arrows",new ArrowBarrage.Factory(server), familySISO, familyAISO);        // Restricted
-        registerIC("MC1242", "stocker",     new ChestStocker.Factory(server), familySISO, familyAISO);        // Restricted
-        registerIC("MC1250", "shoot fire",  new FireShooter.Factory(server), familySISO, familyAISO);         // Restricted
-        registerIC("MC1251", "shoot fires", new FireBarrage.Factory(server), familySISO, familyAISO);         // Restricted
-        registerIC("MC1252", "flame thower",new FlameThrower.Factory(server), familySISO, familyAISO);         // Restricted
-        registerIC("MC1260", "sense water", new WaterSensor.Factory(server), familySISO, familyAISO);
-        registerIC("MC1261", "sense lava",  new LavaSensor.Factory(server), familySISO, familyAISO);
-        registerIC("MC1262", "sense light", new LightSensor.Factory(server), familySISO, familyAISO);
-        registerIC("MC1263", "sense block", new BlockSensor.Factory(server), familySISO, familyAISO);
-        registerIC("MC1264", "sense item",  new ItemSensor.Factory(server), familySISO, familyAISO);
-        registerIC("MC1265", "inv sense item",new ItemNotSensor.Factory(server), familySISO, familyAISO);
-        registerIC("MC1266", "sense power", new PowerSensor.Factory(server), familySISO, familyAISO);
-        registerIC("MC1267", "sense move",  new MovementSensor.Factory(server), familySISO, familyAISO);
-        registerIC("MC1270", "melody",      new Melody.Factory(server), familySISO, familyAISO);
-        registerIC("MC1271", "sense entity",new EntitySensor.Factory(server), familySISO, familyAISO);
-        registerIC("MC1272", "sense player",new PlayerDetection.Factory(server), familySISO, familyAISO);     // Restricted
-        registerIC("MC1420", "divide clock",new ClockDivider.Factory(server), familySISO, familyAISO);
-        registerIC("MC1421", "clock",       new Clock.Factory(server), familySISO, familyAISO);
-        registerIC("MC1510", "send message",new MessageSender.Factory(server), familySISO, familyAISO);
-        registerIC("MC2100", "delayer",     new Delayer.Factory(server), familySISO, familyAISO);
-        registerIC("MC2101", "inv delayer", new NotDelayer.Factory(server), familySISO, familyAISO);
-        registerIC("MC2110", "fe delayer",  new LowDelayer.Factory(server), familySISO, familyAISO);
-        registerIC("MC2111", "inv fe delayer",new NotLowDelayer.Factory(server), familySISO, familyAISO);
-        registerIC("MC2500", "pulser",      new Pulser.Factory(server), familySISO, familyAISO);
-        registerIC("MC2501", "inv pulser",  new NotPulser.Factory(server), familySISO, familyAISO);
-        registerIC("MC2510", "fe pulser",   new LowPulser.Factory(server), familySISO, familyAISO);
-        registerIC("MC2511", "inv fe pulser",new LowNotPulser.Factory(server), familySISO, familyAISO);
+        registerIC("MC1222", "liquid flood",new LiquidFlood.Factory(server), familySISO, familyAISO, familyZISO);    //Restricted
+        registerIC("MC1223", "terraform",   new BonemealTerraformer.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1224", "time bomb",   new TimedExplosion.Factory(server), familySISO, familyAISO, familyZISO); //Restricted
+        registerIC("MC1225", "pump",        new Pump.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1226", "spigot",      new Spigot.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1227", "avd spawner", new AdvancedEntitySpawner.Factory(server), familySISO, familyAISO, familyZISO);     // Restricted
+        registerIC("MC1228", "ent cannon",  new EntityCannon.Factory(server), familySISO, familyAISO, familyZISO);     // Restricted
+        registerIC("MC1229", "sorter",      new Sorter.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1230", "sense day",   new DaySensor.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1231", "t control",   new TimeControl.Factory(server), familySISO, familyAISO, familyZISO);         // Restricted
+        registerIC("MC1232", "time set",    new TimeSet.Factory(server), familySISO, familyAISO, familyZISO);         // Restricted
+        registerIC("MC1233", "item fan",    new ItemFan.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1234", "planter",     new Planter.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1235", "cultivator",  new Cultivator.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1236", "fake weather",new WeatherFaker.Factory(server), familySISO, familyAISO, familyZISO);        // Restricted
+        registerIC("MC1237", "fake time",   new TimeFaker.Factory(server), familySISO, familyAISO, familyZISO);           // Restricted
+        registerIC("MC1238", "irrigate",    new Irrigator.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1239", "harvester",   new CombineHarvester.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1240", "shoot arrow", new ArrowShooter.Factory(server), familySISO, familyAISO, familyZISO);        // Restricted
+        registerIC("MC1241", "shoot arrows",new ArrowBarrage.Factory(server), familySISO, familyAISO, familyZISO);        // Restricted
+        registerIC("MC1242", "stocker",     new ChestStocker.Factory(server), familySISO, familyAISO, familyZISO);        // Restricted
+        registerIC("MC1250", "shoot fire",  new FireShooter.Factory(server), familySISO, familyAISO, familyZISO);         // Restricted
+        registerIC("MC1251", "shoot fires", new FireBarrage.Factory(server), familySISO, familyAISO, familyZISO);         // Restricted
+        registerIC("MC1252", "flame thower",new FlameThrower.Factory(server), familySISO, familyAISO, familyZISO);         // Restricted
+        registerIC("MC1260", "sense water", new WaterSensor.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1261", "sense lava",  new LavaSensor.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1262", "sense light", new LightSensor.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1263", "sense block", new BlockSensor.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1264", "sense item",  new ItemSensor.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1265", "inv sense item",new ItemNotSensor.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1266", "sense power", new PowerSensor.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1267", "sense move",  new MovementSensor.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1270", "melody",      new Melody.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1271", "sense entity",new EntitySensor.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1272", "sense player",new PlayerDetection.Factory(server), familySISO, familyAISO, familyZISO);     // Restricted
+        registerIC("MC1420", "divide clock",new ClockDivider.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1421", "clock",       new Clock.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC1510", "send message",new MessageSender.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC2100", "delayer",     new Delayer.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC2101", "inv delayer", new NotDelayer.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC2110", "fe delayer",  new LowDelayer.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC2111", "inv fe delayer",new NotLowDelayer.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC2500", "pulser",      new Pulser.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC2501", "inv pulser",  new NotPulser.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC2510", "fe pulser",   new LowPulser.Factory(server), familySISO, familyAISO, familyZISO);
+        registerIC("MC2511", "inv fe pulser",new LowNotPulser.Factory(server), familySISO, familyAISO, familyZISO);
 
         //SI3Os
         registerIC("MC2020", "random 3",    new Random3Bit.Factory(server), familySI3O);
@@ -450,33 +434,17 @@ public class CircuitsPlugin extends BaseBukkitPlugin {
         registerIC("MC5001", "perlstone 3i3o",PlcFactory.fromLang(server, new Perlstone(), false), family3I3O);
 
         //Self triggered
-        registerIC("MC0020", "random 1 st", new RandomBitST.Factory(server), familySISO, familyAISO);                     //Restricted
-        registerIC("MC0111", "receiver st", new WirelessReceiverST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0202", "c dispense st",new ContainerDispenserST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0204", "trap st",     new EntityTrapST.Factory(server), familySISO, familyAISO);                    // Restricted
-        registerIC("MC0205", "set above st", new SetBlockAboveST.Factory(server), familySISO, familyAISO);       // Restricted
-        registerIC("MC0206", "set below st", new SetBlockBelowST.Factory(server), familySISO, familyAISO);       // Restricted
         registerIC("MC0209", "collector st",new ContainerCollectorST.Factory(server), familySISO, familyAISO);
         registerIC("MC0210", "emitter st",  new ParticleEffectST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0215", "set a chest st",new SetBlockAboveChestST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0216", "set b chest st",new SetBlockBelowChestST.Factory(server), familySISO, familyAISO);
         registerIC("MC0217", "pot induce st",new PotionInducerST.Factory(server), familySISO, familyAISO);              //Restricted
         registerIC("MC0219", "auto craft st",new AutomaticCrafterST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0222", "liq flood st",new LiquidFloodST.Factory(server), familySISO, familyAISO);    //Restricted
-        registerIC("MC0223", "terraform st",new BonemealTerraformerST.Factory(server), familySISO, familyAISO);
         registerIC("MC0225", "pump st",     new PumpST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0228", "ent cannon st",new EntityCannonST.Factory(server), familySISO, familyAISO);     // Restricted
         registerIC("MC0229", "sorter st",    new SorterST.Factory(server), familySISO, familyAISO);
         registerIC("MC0230", "sense day st",new DaySensorST.Factory(server), familySISO, familyAISO);
         registerIC("MC0232", "time set st", new TimeSetST.Factory(server), familySISO, familyAISO);         // Restricted
         registerIC("MC0233", "item fan st",  new ItemFanST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0234", "planter st",   new PlanterST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0235", "cultivator st",new CultivatorST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0238", "irrigate st",  new IrrigatorST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0239", "harvester st", new CombineHarvesterST.Factory(server), familySISO, familyAISO);
         registerIC("MC0242", "stocker st",   new ChestStockerST.Factory(server), familySISO, familyAISO);        // Restricted
         registerIC("MC0260", "sense water st",new WaterSensorST.Factory(server), familySISO, familyAISO);
-        registerIC("MC0261", "sense lava st",new LavaSensorST.Factory(server), familySISO, familyAISO);
         registerIC("MC0262", "sense light st",new LightSensorST.Factory(server), familySISO, familyAISO);
         registerIC("MC0263", "sense block st",new BlockSensorST.Factory(server), familySISO, familyAISO);
         registerIC("MC0264", "sense item st",new ItemSensorST.Factory(server), familySISO, familyAISO);                    // Restricted

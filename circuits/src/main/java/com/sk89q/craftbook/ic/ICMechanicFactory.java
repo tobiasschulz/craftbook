@@ -77,22 +77,24 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
         Matcher matcher = IC_PATTERN.matcher(sign.getLine(1));
         if (!matcher.matches()) return null;
 
-        String id = matcher.group(1);
-        String prefix = matcher.group(2);
         // TODO: remove after some time to stop converting existing MCA ICs
         // convert existing MCA ICs to the new [MCXXXX]A syntax
-        if (prefix.equalsIgnoreCase("MCA")) {
-            sign.setLine(1, sign.getLine(1).replace("A", "") + "A");
+        if (sign.getLine(1).toLowerCase().contains("mca")) {
+            sign.setLine(1, sign.getLine(1).replaceAll("(?i)a", "") + "A");
             sign.update(false);
+            matcher = IC_PATTERN.matcher(sign.getLine(1));
         }
         // Convert Existing Self-Triggered IC's to the new format.
-        if (id.toLowerCase().startsWith("mc0")) {
+        if (sign.getLine(1).toLowerCase().contains("mc0")) {
             sign.setLine(1, sign.getLine(1).replaceAll("(?i)mc0", "MC1") + "S");
             sign.update(false);
             matcher = IC_PATTERN.matcher(sign.getLine(1));
-            prefix = matcher.group(2);
-            id = matcher.group(1);
         }
+
+        if (!matcher.matches()) return null;
+
+        String id = matcher.group(1);
+        String prefix = matcher.group(2);
 
         if (!manager.hasCustomPrefix(prefix)) return null;
 
@@ -170,6 +172,25 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
         if (!matcher.matches()) {
             matches = false;
         }
+
+        // TODO: remove after some time to stop converting existing MCA ICs
+        // convert existing MCA ICs to the new [MCXXXX]A syntax
+        if (sign.getLine(1).toLowerCase().contains("mca")) {
+            sign.setLine(1, sign.getLine(1).replaceAll("(?i)a", "") + "A");
+            sign.update(false);
+            matcher = IC_PATTERN.matcher(sign.getLine(1));
+        }
+        // Convert Existing Self-Triggered IC's to the new format.
+        if (sign.getLine(1).toLowerCase().contains("mc0")) {
+            sign.setLine(1, sign.getLine(1).replaceAll("(?i)mc0", "MC1") + "S");
+            sign.update(false);
+            matcher = IC_PATTERN.matcher(sign.getLine(1));
+        }
+
+        if (!matcher.matches()) {
+            matches = false;
+        }
+
         try {
             if (!manager.hasCustomPrefix(matcher.group(2))) {
                 matches = false;
@@ -183,22 +204,6 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
 
             String id = matcher.group(1);
             String suffix = "";
-            String prefix = matcher.group(2);
-
-            // TODO: remove after some time to stop converting existing MCA ICs
-            // convert existing MCA ICs to the new [MCXXXX]A syntax
-            if (prefix.equalsIgnoreCase("MCA")) {
-                sign.setLine(1, sign.getLine(1).replace("A", "") + "A");
-                sign.update(false);
-            }
-            // Convert Existing Self-Triggered IC's to the new format.
-            if (id.toLowerCase().startsWith("mc0")) {
-                sign.setLine(1, sign.getLine(1).replaceAll("(?i)mc0", "MC1") + "S");
-                sign.update(false);
-                matcher = IC_PATTERN.matcher(sign.getLine(1));
-                prefix = matcher.group(2);
-                id = matcher.group(1);
-            }
 
             String[] str = RIGHT_BRACKET_PATTERN.split(sign.getLine(1));
             if (str.length > 1) {

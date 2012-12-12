@@ -22,10 +22,11 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.EnumUtil;
 import com.sk89q.craftbook.util.LocationUtil;
 
-public class EntityCannon extends AbstractIC {
+public class EntityCannon extends AbstractIC implements SelfTriggeredIC {
 
     private enum Type {
         PLAYER,
@@ -92,6 +93,16 @@ public class EntityCannon extends AbstractIC {
         if (chip.getInput(0)) {
             chip.setOutput(0, shoot());
         }
+    }
+
+    @Override
+    public boolean isActive() {
+        return true;
+    }
+
+    @Override
+    public void think(ChipState state) {
+        state.setOutput(0, shoot());
     }
 
     /**

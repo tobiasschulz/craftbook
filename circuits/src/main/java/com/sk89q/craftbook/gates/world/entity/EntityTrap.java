@@ -22,13 +22,14 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.EnumUtil;
 import com.sk89q.craftbook.util.LocationUtil;
 
 /**
  * @author Me4502
  */
-public class EntityTrap extends AbstractIC {
+public class EntityTrap extends AbstractIC implements SelfTriggeredIC {
 
     private enum Type {
         PLAYER,
@@ -95,6 +96,18 @@ public class EntityTrap extends AbstractIC {
         if (chip.getInput(0)) {
             chip.setOutput(0, hurt());
         }
+    }
+
+    @Override
+    public void think(ChipState chip) {
+
+        chip.setOutput(0, hurt());
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
     }
 
     int radius = 10;

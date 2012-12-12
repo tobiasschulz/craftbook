@@ -13,9 +13,10 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.worldedit.blocks.BlockID;
 
-public class LiquidFlood extends AbstractIC {
+public class LiquidFlood extends AbstractIC implements SelfTriggeredIC {
 
     int radius;
     String liquid;
@@ -70,6 +71,18 @@ public class LiquidFlood extends AbstractIC {
         }
 
         liquid = getSign().getLine(2).equalsIgnoreCase("lava") ? "lava" : "water";
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
+    }
+
+    @Override
+    public void think(ChipState state) {
+
+        doStuff(state);
     }
 
     public void doStuff(ChipState chip) {

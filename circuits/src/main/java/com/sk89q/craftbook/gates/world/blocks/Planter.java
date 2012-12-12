@@ -16,6 +16,7 @@ import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.ItemUtil;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.Vector;
@@ -30,7 +31,7 @@ import com.sk89q.worldedit.blocks.ItemID;
  *
  * @authors Drathus, Me4502
  */
-public class Planter extends AbstractIC {
+public class Planter extends AbstractIC implements SelfTriggeredIC {
 
     public Planter(Server server, ChangedSign block, ICFactory factory) {
 
@@ -93,6 +94,12 @@ public class Planter extends AbstractIC {
     public String getSignTitle() {
 
         return "PLANTER";
+    }
+
+    @Override
+    public void think(ChipState state) {
+
+        plant();
     }
 
     @Override
@@ -291,5 +298,10 @@ public class Planter extends AbstractIC {
             };
             return lines;
         }
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
     }
 }

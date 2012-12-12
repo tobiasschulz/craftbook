@@ -18,6 +18,7 @@ import com.sk89q.craftbook.ic.AbstractICFactory;
 import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.ItemUtil;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.blocks.BlockID;
@@ -25,7 +26,7 @@ import com.sk89q.worldedit.blocks.BlockID;
 /**
  * @author Me4502
  */
-public class ContainerDispenser extends AbstractIC {
+public class ContainerDispenser extends AbstractIC implements SelfTriggeredIC {
 
     public ContainerDispenser(Server server, ChangedSign sign, ICFactory factory) {
 
@@ -57,6 +58,16 @@ public class ContainerDispenser extends AbstractIC {
         if (chip.getInput(0)) {
             chip.setOutput(0, dispense());
         }
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
+    }
+
+    @Override
+    public void think (ChipState chip) {
+        chip.setOutput(0, dispense());
     }
 
     /**

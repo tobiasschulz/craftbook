@@ -19,12 +19,13 @@ import com.sk89q.craftbook.ic.AbstractICFactory;
 import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.blocks.ItemID;
 
-public class BonemealTerraformer extends AbstractIC {
+public class BonemealTerraformer extends AbstractIC implements SelfTriggeredIC {
 
     int radius;
     Integer maxradius;
@@ -70,6 +71,18 @@ public class BonemealTerraformer extends AbstractIC {
         if (chip.getInput(0)) {
             terraform(true);
         }
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
+    }
+
+    @Override
+    public void think(ChipState state) {
+
+        terraform(false);
     }
 
     public void terraform(boolean overrideChance) {

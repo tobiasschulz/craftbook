@@ -15,11 +15,12 @@ import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BlockID;
 
-public class CombineHarvester extends AbstractIC {
+public class CombineHarvester extends AbstractIC implements SelfTriggeredIC {
 
     public CombineHarvester (Server server, ChangedSign sign, ICFactory factory) {
         super(server, sign, factory);
@@ -75,6 +76,17 @@ public class CombineHarvester extends AbstractIC {
     @Override
     public String getSignTitle () {
         return "HARVEST";
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
+    }
+
+    @Override
+    public void think (ChipState chip) {
+
+        chip.setOutput(0, harvest());
     }
 
     @Override

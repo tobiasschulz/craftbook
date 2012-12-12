@@ -20,12 +20,13 @@ import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.Location;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BlockID;
 
-public class AdvancedEntitySpawner extends AbstractIC {
+public class AdvancedEntitySpawner extends AbstractIC implements SelfTriggeredIC {
 
     private static final Pattern ASTERISK_PATTERN = Pattern.compile("*", Pattern.LITERAL);
     private static final Pattern COLON_PATTERN = Pattern.compile(":", Pattern.LITERAL);
@@ -82,11 +83,7 @@ public class AdvancedEntitySpawner extends AbstractIC {
         }
     }
 
-    @Override
-    public void trigger(ChipState chip) {
-
-        if(!chip.getInput(0))
-            return;
+    public void spawn() {
         Block left = SignUtil.getLeftBlock(BukkitUtil.toSign(getSign()).getBlock());
         ChangedSign effectSign = null;
         if(left.getTypeId() == BlockID.WALL_SIGN) {
@@ -222,6 +219,19 @@ public class AdvancedEntitySpawner extends AbstractIC {
         }
     }
 
+    @Override
+    public void trigger(ChipState chip) {
+
+        if(chip.getInput(0))
+            spawn();
+    }
+
+    @Override
+    public void think(ChipState chip) {
+
+        spawn();
+    }
+
     public static class Factory extends AbstractICFactory implements RestrictedIC {
 
         public Factory(Server server) {
@@ -250,5 +260,10 @@ public class AdvancedEntitySpawner extends AbstractIC {
             };
             return lines;
         }
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
     }
 }

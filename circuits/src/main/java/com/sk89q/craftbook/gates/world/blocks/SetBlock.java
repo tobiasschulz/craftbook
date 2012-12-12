@@ -12,11 +12,12 @@ import com.sk89q.craftbook.ic.AbstractIC;
 import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.blocks.BlockType;
 
-public abstract class SetBlock extends AbstractIC {
+public abstract class SetBlock extends AbstractIC implements SelfTriggeredIC {
 
     public SetBlock(Server server, ChangedSign sign, ICFactory factory) {
 
@@ -53,6 +54,17 @@ public abstract class SetBlock extends AbstractIC {
             }
         } catch (Exception e) {
         }
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
+    }
+
+    @Override
+    public void think (ChipState chip) {
+
+        onTrigger();
     }
 
     public void onTrigger() {

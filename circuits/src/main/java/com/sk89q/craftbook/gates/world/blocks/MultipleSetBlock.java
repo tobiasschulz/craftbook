@@ -32,9 +32,10 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.SignUtil;
 
-public class MultipleSetBlock extends AbstractIC {
+public class MultipleSetBlock extends AbstractIC implements SelfTriggeredIC {
 
     private static final Pattern PLUS_PATTERN = Pattern.compile("+", Pattern.LITERAL);
 
@@ -108,6 +109,10 @@ public class MultipleSetBlock extends AbstractIC {
 
         boolean inp = chip.getInput(0);
 
+        setBlocks(inp);
+    }
+
+    public void setBlocks(boolean inp) {
         if (!inp) {
             block = 0;
         }
@@ -142,5 +147,20 @@ public class MultipleSetBlock extends AbstractIC {
 
             return new MultipleSetBlock(getServer(), sign, this);
         }
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
+    }
+
+    @Override
+    public void think (ChipState chip) {
+
+        chip.setOutput(0, chip.getInput(0));
+
+        boolean inp = chip.getInput(0);
+
+        setBlocks(inp);
     }
 }

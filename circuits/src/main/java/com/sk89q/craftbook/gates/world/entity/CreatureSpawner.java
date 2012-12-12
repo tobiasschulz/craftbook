@@ -53,11 +53,12 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.LocationUtil;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.blocks.BlockID;
 
-public class CreatureSpawner extends AbstractIC {
+public class CreatureSpawner extends AbstractIC implements SelfTriggeredIC {
 
     EntityType type;
     String data;
@@ -98,25 +99,39 @@ public class CreatureSpawner extends AbstractIC {
     }
 
     @Override
+    public boolean isActive() {
+        return true;
+    }
+
+    @Override
+    public void think(ChipState state) {
+        spawn();
+    }
+
+    @Override
     public void trigger(ChipState chip) {
 
+        if (chip.getInput(0))
+            spawn();
+    }
+
+    public void spawn() {
         Block center = SignUtil.getBackBlock(BukkitUtil.toSign(getSign()).getBlock());
 
-        if (chip.getInput(0))
-            if(center.getRelative(0, 1, 0).getTypeId() == BlockID.MOB_SPAWNER) {
+        if(center.getRelative(0, 1, 0).getTypeId() == BlockID.MOB_SPAWNER) {
 
-                org.bukkit.block.CreatureSpawner sp = (org.bukkit.block.CreatureSpawner) center.getRelative(0, 1, 0).getState();
-                sp.setCreatureTypeByName(type.getName());
-                sp.update();
+            org.bukkit.block.CreatureSpawner sp = (org.bukkit.block.CreatureSpawner) center.getRelative(0, 1, 0).getState();
+            sp.setCreatureTypeByName(type.getName());
+            sp.update();
+        }
+        else {
+            Location loc = LocationUtil.getCenterOfBlock(LocationUtil.getNextFreeSpace(center, BlockFace.UP));
+            // spawn amount of mobs
+            for (int i = 0; i < amount; i++) {
+                Entity entity = loc.getWorld().spawnEntity(loc, type);
+                setEntityData(entity, data);
             }
-            else {
-                Location loc = LocationUtil.getCenterOfBlock(LocationUtil.getNextFreeSpace(center, BlockFace.UP));
-                // spawn amount of mobs
-                for (int i = 0; i < amount; i++) {
-                    Entity entity = loc.getWorld().spawnEntity(loc, type);
-                    setEntityData(entity, data);
-                }
-            }
+        }
     }
 
     public static void setEntityData(Entity ent, String bit) {

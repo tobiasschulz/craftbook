@@ -29,8 +29,9 @@ import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICVerificationException;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 
-public class WirelessReceiver extends AbstractIC {
+public class WirelessReceiver extends AbstractIC implements SelfTriggeredIC {
 
     protected String band;
 
@@ -67,6 +68,16 @@ public class WirelessReceiver extends AbstractIC {
 
             chip.setOutput(0, val);
         }
+    }
+
+    @Override
+    public void think(ChipState chip) {
+
+        Boolean val = WirelessTransmitter.getValue(band);
+
+        if (val == null) return;
+
+        chip.setOutput(0, val);
     }
 
     public static class Factory extends AbstractICFactory {
@@ -118,5 +129,10 @@ public class WirelessReceiver extends AbstractIC {
         public boolean needsConfiguration() {
             return true;
         }
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
     }
 }

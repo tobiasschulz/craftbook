@@ -15,9 +15,10 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.SignUtil;
 
-public class BlockLauncher extends AbstractIC {
+public class BlockLauncher extends AbstractIC implements SelfTriggeredIC {
 
     public BlockLauncher(Server server, ChangedSign block, ICFactory factory) {
 
@@ -116,5 +117,15 @@ public class BlockLauncher extends AbstractIC {
             };
             return lines;
         }
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
+    }
+
+    @Override
+    public void think (ChipState chip) {
+        launch();
     }
 }
