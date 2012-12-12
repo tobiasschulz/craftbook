@@ -87,7 +87,7 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
         }
         // Convert Existing Self-Triggered IC's to the new format.
         if (id.toLowerCase().startsWith("mc0")) {
-            sign.setLine(1, sign.getLine(1).replaceAll("(?i)mc0", "MC1") + "ST");
+            sign.setLine(1, sign.getLine(1).replaceAll("(?i)mc0", "MC1") + "S");
             sign.update(false);
             matcher = IC_PATTERN.matcher(sign.getLine(1));
             prefix = matcher.group(2);
