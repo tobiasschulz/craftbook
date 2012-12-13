@@ -16,10 +16,11 @@ import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.LocationUtil;
 import com.sk89q.craftbook.util.SignUtil;
 
-public class MovementSensor extends AbstractIC {
+public class MovementSensor extends AbstractIC implements SelfTriggeredIC {
 
     public MovementSensor (Server server, ChangedSign sign, ICFactory factory) {
         super(server, sign, factory);
@@ -77,6 +78,16 @@ public class MovementSensor extends AbstractIC {
             chip.setOutput(0, check());
     }
 
+    @Override
+    public boolean isActive () {
+        return true;
+    }
+
+    @Override
+    public void think (ChipState chip) {
+
+        check();
+    }
     public boolean check() {
 
         for (Chunk chunk : chunks)

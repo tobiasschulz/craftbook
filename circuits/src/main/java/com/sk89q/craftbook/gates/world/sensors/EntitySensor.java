@@ -25,6 +25,7 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.ICVerificationException;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.EnumUtil;
 import com.sk89q.craftbook.util.LocationUtil;
 import com.sk89q.craftbook.util.SignUtil;
@@ -32,7 +33,7 @@ import com.sk89q.craftbook.util.SignUtil;
 /**
  * @author Silthus
  */
-public class EntitySensor extends AbstractIC {
+public class EntitySensor extends AbstractIC implements SelfTriggeredIC {
 
     public enum Type {
         PLAYER('P'),
@@ -170,6 +171,18 @@ public class EntitySensor extends AbstractIC {
         if (chip.getInput(0)) {
             chip.setOutput(0, isDetected());
         }
+    }
+
+    @Override
+    public void think(ChipState state) {
+
+        state.setOutput(0, isDetected());
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
     }
 
     protected boolean isDetected() {

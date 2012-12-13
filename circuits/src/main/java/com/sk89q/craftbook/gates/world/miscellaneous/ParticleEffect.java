@@ -15,13 +15,14 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.blocks.BlockType;
 
 /**
  * @author Me4502
  */
-public class ParticleEffect extends AbstractIC {
+public class ParticleEffect extends AbstractIC implements SelfTriggeredIC {
 
     public ParticleEffect(Server server, ChangedSign sign, ICFactory factory) {
 
@@ -44,6 +45,20 @@ public class ParticleEffect extends AbstractIC {
     public void trigger(ChipState chip) {
 
         if (chip.getInput(0)) {
+            doEffect();
+        }
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
+    }
+
+    @Override
+    public void think(ChipState state) {
+
+        if (state.getInput(0)) {
             doEffect();
         }
     }

@@ -29,8 +29,9 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.ICVerificationException;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 
-public class WaterSensor extends AbstractIC {
+public class WaterSensor extends AbstractIC implements SelfTriggeredIC {
 
     Block center;
 
@@ -62,6 +63,18 @@ public class WaterSensor extends AbstractIC {
         if (chip.getInput(0)) {
             chip.setOutput(0, hasWater());
         }
+    }
+
+    @Override
+    public void think(ChipState chip) {
+
+        chip.setOutput(0, hasWater());
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
     }
 
     /**

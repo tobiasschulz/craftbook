@@ -10,8 +10,9 @@ import com.sk89q.craftbook.ic.AbstractICFactory;
 import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 
-public class RainSensor extends AbstractIC {
+public class RainSensor extends AbstractIC implements SelfTriggeredIC {
 
     public RainSensor(Server server, ChangedSign sign, ICFactory factory) {
 
@@ -38,6 +39,17 @@ public class RainSensor extends AbstractIC {
         }
     }
 
+    @Override
+    public void think(ChipState chip) {
+
+        chip.setOutput(0, BukkitUtil.toSign(getSign()).getWorld().hasStorm());
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
+    }
 
     public static class Factory extends AbstractICFactory {
 

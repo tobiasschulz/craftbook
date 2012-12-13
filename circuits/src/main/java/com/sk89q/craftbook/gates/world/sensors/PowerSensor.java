@@ -11,11 +11,12 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.ICVerificationException;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 
 /**
  * @author Silthus
  */
-public class PowerSensor extends AbstractIC {
+public class PowerSensor extends AbstractIC implements SelfTriggeredIC {
 
 
     private Block center;
@@ -49,6 +50,18 @@ public class PowerSensor extends AbstractIC {
         if (chip.getInput(0)) {
             chip.setOutput(0, isPowered());
         }
+    }
+
+    @Override
+    public void think(ChipState state) {
+
+        state.setOutput(0, isPowered());
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
     }
 
     protected boolean isPowered() {

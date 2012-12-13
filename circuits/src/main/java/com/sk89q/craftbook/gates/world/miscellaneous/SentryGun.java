@@ -18,10 +18,11 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICVerificationException;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.EnumUtil;
 import com.sk89q.craftbook.util.SignUtil;
 
-public class SentryGun extends AbstractIC {
+public class SentryGun extends AbstractIC implements SelfTriggeredIC {
 
     /**
      * @author Me4502
@@ -85,6 +86,18 @@ public class SentryGun extends AbstractIC {
 
     @Override
     public void trigger(ChipState chip) {
+
+        shoot();
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
+    }
+
+    @Override
+    public void think(ChipState state) {
 
         shoot();
     }

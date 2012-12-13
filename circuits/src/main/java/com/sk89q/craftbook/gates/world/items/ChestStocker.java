@@ -14,10 +14,11 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BlockID;
 
-public class ChestStocker extends AbstractIC {
+public class ChestStocker extends AbstractIC implements SelfTriggeredIC {
 
     public ChestStocker (Server server, ChangedSign sign, ICFactory factory) {
         super(server, sign, factory);
@@ -68,6 +69,17 @@ public class ChestStocker extends AbstractIC {
 
         if(chip.getInput(0))
             chip.setOutput(0, stock());
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
+    }
+
+    @Override
+    public void think (ChipState chip) {
+
+        chip.setOutput(0, stock());
     }
 
     public boolean stock() {

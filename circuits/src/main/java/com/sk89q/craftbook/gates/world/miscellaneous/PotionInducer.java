@@ -16,11 +16,12 @@ import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.ICVerificationException;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 
 /**
  * @author Me4502
  */
-public class PotionInducer extends AbstractIC {
+public class PotionInducer extends AbstractIC implements SelfTriggeredIC {
 
     public PotionInducer(Server server, ChangedSign sign, ICFactory factory) {
 
@@ -83,6 +84,18 @@ public class PotionInducer extends AbstractIC {
 
         if(chip.getInput(0))
             induce();
+    }
+
+    @Override
+    public void think(ChipState state) {
+
+        induce();
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
     }
 
     public static class Factory extends AbstractICFactory implements RestrictedIC {

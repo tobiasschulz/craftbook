@@ -15,6 +15,7 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.GeneralUtil;
 import com.sk89q.craftbook.util.LocationUtil;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -22,7 +23,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 /**
  * @author Me4502
  */
-public class PlayerDetection extends AbstractIC {
+public class PlayerDetection extends AbstractIC implements SelfTriggeredIC {
 
     public PlayerDetection(Server server, ChangedSign block, ICFactory factory) {
 
@@ -48,6 +49,18 @@ public class PlayerDetection extends AbstractIC {
         if (chip.getInput(0)) {
             chip.setOutput(0, isDetected());
         }
+    }
+
+    @Override
+    public void think(ChipState state) {
+
+        state.setOutput(0, isDetected());
+    }
+
+    @Override
+    public boolean isActive() {
+
+        return true;
     }
 
     int radius;

@@ -27,8 +27,9 @@ import com.sk89q.craftbook.ic.AbstractICFactory;
 import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 
-public class DaySensor extends AbstractIC {
+public class DaySensor extends AbstractIC implements SelfTriggeredIC {
 
     public DaySensor(Server server, ChangedSign sign, ICFactory factory) {
 
@@ -53,6 +54,12 @@ public class DaySensor extends AbstractIC {
         if (chip.getInput(0)) {
             chip.setOutput(0, isDay());
         }
+    }
+
+    @Override
+    public void think(ChipState chip) {
+
+        chip.setOutput(0, isDay());
     }
 
     long day = 0L;
@@ -119,5 +126,10 @@ public class DaySensor extends AbstractIC {
             };
             return lines;
         }
+    }
+
+    @Override
+    public boolean isActive () {
+        return true;
     }
 }
