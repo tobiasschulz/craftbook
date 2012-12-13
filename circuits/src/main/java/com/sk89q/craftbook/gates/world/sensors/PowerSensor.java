@@ -87,5 +87,21 @@ public class PowerSensor extends AbstractIC implements SelfTriggeredIC {
 
             ICUtil.verifySignSyntax(sign);
         }
+
+        @Override
+        public String getDescription() {
+
+            return "Detects if offset block is powered.";
+        }
+
+        @Override
+        public String[] getLineHelp() {
+
+            String[] lines = new String[] {
+                    "x:y:z offset",
+                    null
+            };
+            return lines;
+        }
     }
 }

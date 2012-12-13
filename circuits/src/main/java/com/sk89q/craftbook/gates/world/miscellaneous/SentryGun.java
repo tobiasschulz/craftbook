@@ -167,5 +167,21 @@ public class SentryGun extends AbstractIC implements SelfTriggeredIC {
                 throw new ICVerificationException("You need to give a radius in line four.");
             }
         }
+
+        @Override
+        public String getDescription() {
+
+            return "Shoots nearby mobs with arrows.";
+        }
+
+        @Override
+        public String[] getLineHelp() {
+
+            String[] lines = new String[] {
+                    "Mob Type",
+                    "Radius"
+            };
+            return lines;
+        }
     }
 }

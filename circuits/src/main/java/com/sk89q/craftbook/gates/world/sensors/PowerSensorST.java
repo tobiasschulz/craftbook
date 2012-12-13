@@ -8,14 +8,15 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.ICVerificationException;
+import com.sk89q.craftbook.ic.RestrictedIC;
 import com.sk89q.craftbook.ic.SelfTriggeredIC;
 
 /**
  * @author Silthus
  */
-public class ItemNotSensor extends ItemSensor implements SelfTriggeredIC {
+public class PowerSensorST extends PowerSensor implements SelfTriggeredIC {
 
-    public ItemNotSensor(Server server, ChangedSign block, ICFactory factory) {
+    public PowerSensorST(Server server, ChangedSign block, ICFactory factory) {
 
         super(server, block, factory);
     }
@@ -23,27 +24,19 @@ public class ItemNotSensor extends ItemSensor implements SelfTriggeredIC {
     @Override
     public String getTitle() {
 
-        return "Item Not Sensor";
+        return "Self Triggered Power Sensor";
     }
 
     @Override
     public String getSignTitle() {
 
-        return "ITEM NOT SENSOR";
-    }
-
-    @Override
-    public void trigger(ChipState chip) {
-
-        if (chip.getInput(0)) {
-            chip.setOutput(0, !isDetected());
-        }
+        return "ST POWER SENSOR";
     }
 
     @Override
     public void think(ChipState state) {
 
-        state.setOutput(0, !isDetected());
+        state.setOutput(0, isPowered());
     }
 
     @Override
@@ -52,7 +45,7 @@ public class ItemNotSensor extends ItemSensor implements SelfTriggeredIC {
         return true;
     }
 
-    public static class Factory extends ItemSensor.Factory {
+    public static class Factory extends PowerSensor.Factory implements RestrictedIC {
 
         public Factory(Server server) {
 
@@ -62,19 +55,20 @@ public class ItemNotSensor extends ItemSensor implements SelfTriggeredIC {
         @Override
         public IC create(ChangedSign sign) {
 
-            return new ItemNotSensor(getServer(), sign, this);
+            try {
+                if (sign.getLine(1).equalsIgnoreCase("[MC0270]")) {
+                    sign.setLine(1, "[MC0266]");
+                    sign.update(false);
+                }
+            } catch (Exception ignored) {
+            }
+            return new PowerSensorST(getServer(), sign, this);
         }
 
         @Override
         public void verify(ChangedSign sign) throws ICVerificationException {
 
             ICUtil.verifySignSyntax(sign);
-        }
-
-        @Override
-        public String getDescription() {
-
-            return "Detects if an item is NOT within a given radius";
         }
     }
 }

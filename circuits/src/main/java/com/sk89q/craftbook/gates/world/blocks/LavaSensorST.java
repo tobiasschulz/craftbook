@@ -19,11 +19,8 @@
 package com.sk89q.craftbook.gates.world.blocks;
 
 import org.bukkit.Server;
-import org.bukkit.block.Block;
 
 import com.sk89q.craftbook.ChangedSign;
-import com.sk89q.craftbook.ic.AbstractIC;
-import com.sk89q.craftbook.ic.AbstractICFactory;
 import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
@@ -31,30 +28,23 @@ import com.sk89q.craftbook.ic.ICUtil;
 import com.sk89q.craftbook.ic.ICVerificationException;
 import com.sk89q.craftbook.ic.SelfTriggeredIC;
 
-public class LavaSensor extends AbstractIC implements SelfTriggeredIC {
+public class LavaSensorST extends LavaSensor implements SelfTriggeredIC {
 
-    private Block center;
-
-    public LavaSensor(Server server, ChangedSign sign, ICFactory factory) {
+    public LavaSensorST(Server server, ChangedSign sign, ICFactory factory) {
 
         super(server, sign, factory);
     }
 
     @Override
-    public void load() {
-        center = ICUtil.parseBlockLocation(getSign());
-    }
-
-    @Override
     public String getTitle() {
 
-        return "Lava Sensor";
+        return "Self-triggered Lava Sensor";
     }
 
     @Override
     public String getSignTitle() {
 
-        return "LAVA SENSOR";
+        return "ST LAVA SENSOR";
     }
 
     @Override
@@ -69,27 +59,7 @@ public class LavaSensor extends AbstractIC implements SelfTriggeredIC {
         return true;
     }
 
-    @Override
-    public void trigger(ChipState chip) {
-
-        if (chip.getInput(0)) {
-            chip.setOutput(0, hasLava());
-        }
-    }
-
-    /**
-     * Returns true if the sign has lava at the specified location.
-     *
-     * @return
-     */
-    protected boolean hasLava() {
-
-        int blockID = center.getTypeId();
-
-        return blockID == 10 || blockID == 11;
-    }
-
-    public static class Factory extends AbstractICFactory {
+    public static class Factory extends LavaSensor.Factory {
 
         public Factory(Server server) {
 
@@ -99,7 +69,7 @@ public class LavaSensor extends AbstractIC implements SelfTriggeredIC {
         @Override
         public IC create(ChangedSign sign) {
 
-            return new LavaSensor(getServer(), sign, this);
+            return new LavaSensorST(getServer(), sign, this);
         }
 
         @Override
@@ -107,21 +77,6 @@ public class LavaSensor extends AbstractIC implements SelfTriggeredIC {
 
             ICUtil.verifySignSyntax(sign);
         }
-
-        @Override
-        public String getDescription() {
-
-            return "Outputs high if lava is at given offset.";
-        }
-
-        @Override
-        public String[] getLineHelp() {
-
-            String[] lines = new String[] {
-                    "x:y:z Offset",
-                    null
-            };
-            return lines;
-        }
     }
+
 }

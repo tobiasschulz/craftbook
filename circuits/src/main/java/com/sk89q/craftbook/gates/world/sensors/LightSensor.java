@@ -134,7 +134,7 @@ public class LightSensor extends AbstractIC implements SelfTriggeredIC {
         @Override
         public String getDescription() {
 
-            return "Outputs high if specifiec block is above specified light level.";
+            return "Outputs high if specific block is above specified light level.";
         }
 
         @Override

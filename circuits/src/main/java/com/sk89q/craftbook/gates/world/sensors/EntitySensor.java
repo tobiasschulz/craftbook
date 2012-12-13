@@ -222,5 +222,21 @@ public class EntitySensor extends AbstractIC implements SelfTriggeredIC {
 
             ICUtil.verifySignSyntax(sign);
         }
+
+        @Override
+        public String getDescription() {
+
+            return "Detects specific entity types in a given radius.";
+        }
+
+        @Override
+        public String[] getLineHelp() {
+
+            String[] lines = new String[] {
+                    "radius=x:y:z offset",
+                    "Entity Types"
+            };
+            return lines;
+        }
     }
 }

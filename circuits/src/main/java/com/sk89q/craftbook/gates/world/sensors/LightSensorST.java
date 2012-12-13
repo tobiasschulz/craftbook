@@ -16,22 +16,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.sk89q.craftbook.gates.world.weather;
+package com.sk89q.craftbook.gates.world.sensors;
 
 import org.bukkit.Server;
 
 import com.sk89q.craftbook.ChangedSign;
-import com.sk89q.craftbook.bukkit.BukkitUtil;
-import com.sk89q.craftbook.ic.AbstractIC;
-import com.sk89q.craftbook.ic.AbstractICFactory;
 import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
-import com.sk89q.craftbook.ic.RestrictedIC;
+import com.sk89q.craftbook.ic.SelfTriggeredIC;
 
-public class TimeControl extends AbstractIC {
+public class LightSensorST extends LightSensor implements SelfTriggeredIC {
 
-    public TimeControl(Server server, ChangedSign sign, ICFactory factory) {
+    public LightSensorST(Server server, ChangedSign sign, ICFactory factory) {
 
         super(server, sign, factory);
     }
@@ -39,30 +36,39 @@ public class TimeControl extends AbstractIC {
     @Override
     public String getTitle() {
 
-        return "Time Control";
+        return "Self-Triggered Light Sensor";
     }
 
     @Override
     public String getSignTitle() {
 
-        return "TIME CONTROL";
+        return "ST LIGHT SENSOR";
     }
 
     @Override
     public void trigger(ChipState chip) {
 
-        Long time;
-        if (chip.getInput(0)) {
-            time = 0L;
-        } else {
-            time = 13000L;
-        }
-        BukkitUtil.toSign(getSign()).getWorld().setTime(time);
-
-        chip.setOutput(0, chip.getInput(0));
     }
 
-    public static class Factory extends AbstractICFactory implements RestrictedIC {
+    @Override
+    public boolean isActive() {
+
+        return true;
+    }
+
+    @Override
+    public void think(ChipState chip) {
+
+        chip.setOutput(0, getTargetLighted());
+    }
+
+    /**
+     * Finds the location where the light detect should be done, and returns the state.
+     *
+     * @return
+     */
+
+    public static class Factory extends LightSensor.Factory {
 
         public Factory(Server server) {
 
@@ -72,23 +78,7 @@ public class TimeControl extends AbstractIC {
         @Override
         public IC create(ChangedSign sign) {
 
-            return new TimeControl(getServer(), sign, this);
-        }
-
-        @Override
-        public String getDescription() {
-
-            return "Sets time based on input.";
-        }
-
-        @Override
-        public String[] getLineHelp() {
-
-            String[] lines = new String[] {
-                    null,
-                    null
-            };
-            return lines;
+            return new LightSensorST(getServer(), sign, this);
         }
     }
 }
