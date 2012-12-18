@@ -63,8 +63,8 @@ public class MechanismCommands {
         @CommandPermissions("craftbook.mech.reload")
         public void reload(CommandContext context, CommandSender sender) {
 
-            plugin.reloadConfig();
-            sender.sendMessage("Config has been reloaded successfully!");
+            plugin.reloadConfiguration();
+            sender.sendMessage("CraftBook Mechanisms has successfully been reloaded!");
         }
     }
 }

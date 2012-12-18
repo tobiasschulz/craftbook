@@ -33,6 +33,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 
 import com.sk89q.craftbook.CircuitsConfiguration;
 import com.sk89q.craftbook.ICConfiguration;
@@ -45,6 +46,7 @@ import com.sk89q.craftbook.bukkit.commands.CircuitCommands;
 import com.sk89q.craftbook.circuits.GlowStone;
 import com.sk89q.craftbook.circuits.JackOLantern;
 import com.sk89q.craftbook.circuits.Netherrack;
+import com.sk89q.craftbook.circuits.Pipes;
 import com.sk89q.craftbook.gates.logic.AndGate;
 import com.sk89q.craftbook.gates.logic.Clock;
 import com.sk89q.craftbook.gates.logic.ClockDivider;
@@ -201,6 +203,12 @@ public class CircuitsPlugin extends BaseBukkitPlugin {
         return instance;
     }
 
+    public ICMechanicFactory icFactory;
+
+    public Pipes.Factory pipeFactory;
+
+    public File romFolder;
+
     @Override
     public void onEnable() {
 
@@ -230,31 +238,12 @@ public class CircuitsPlugin extends BaseBukkitPlugin {
             midi.mkdir();
         }
 
-        if (config.enableICs) {
-            registerICs();
-            icConfig = new ICConfiguration(YamlConfiguration.loadConfiguration(new File(getDataFolder(),
-                    "ic-config.yml")), getDataFolder());
-            try {
-                icConfig.cfg.save(new File(getDataFolder(), "ic-config.yml"));
-            } catch (IOException ex) {
-                getLogger().log(Level.SEVERE, "Could not save IC Config", ex);
-            }
+        romFolder = new File(getDataFolder(), "rom/");
+        if (!romFolder.exists()) {
+            romFolder.mkdir();
         }
 
-        // Let's register mechanics!
-        if (config.enableNetherstone) {
-            registerMechanic(new Netherrack.Factory());
-        }
-        if (config.enablePumpkins) {
-            registerMechanic(new JackOLantern.Factory(this));
-        }
-        if (config.enableGlowStone) {
-            registerMechanic(new GlowStone.Factory(this));
-        }
-        if (config.enableICs) {
-            registerMechanic(new ICMechanicFactory(this, icManager));
-            setupSelfTriggered();
-        }
+        registerMechanics();
 
         // Register events
         registerEvents();
@@ -278,6 +267,37 @@ public class CircuitsPlugin extends BaseBukkitPlugin {
 
             metrics.start();
         } catch (Exception ignored) {
+        }
+    }
+
+    private void registerMechanics() {
+        if (config.enableICs) {
+            registerICs();
+            icConfig = new ICConfiguration(YamlConfiguration.loadConfiguration(new File(getDataFolder(),
+                    "ic-config.yml")), getDataFolder());
+            try {
+                icConfig.cfg.save(new File(getDataFolder(), "ic-config.yml"));
+            } catch (IOException ex) {
+                getLogger().log(Level.SEVERE, "Could not save IC Config", ex);
+            }
+        }
+
+        // Let's register mechanics!
+        if (config.enableNetherstone) {
+            registerMechanic(new Netherrack.Factory());
+        }
+        if (config.enablePumpkins) {
+            registerMechanic(new JackOLantern.Factory(this));
+        }
+        if (config.enableGlowStone) {
+            registerMechanic(new GlowStone.Factory(this));
+        }
+        if (config.enableICs) {
+            registerMechanic(icFactory = new ICMechanicFactory(this, icManager));
+            setupSelfTriggered();
+        }
+        if(config.pipeSettings.enabled) {
+            registerMechanic(pipeFactory = new Pipes.Factory(this));
         }
     }
 
@@ -534,13 +554,20 @@ public class CircuitsPlugin extends BaseBukkitPlugin {
         return manager.unregister(factory);
     }
 
+    protected boolean unregisterAllMechanics() {
+
+        boolean ret = true;
+
+        for(MechanicFactory<? extends Mechanic> factory : manager.factories) {
+            if(unregisterMechanic(factory) == false)
+                ret = false;
+        }
+
+        return ret;
+    }
+
     public void generateICDocs(Player player, String id) {
         RegisteredICFactory ric = icManager.registered.get(id.toLowerCase());
-        /*TODO continue work on all docs for(Map.Entry<String, RegisteredICFactory> rc : icManager.registered.entrySet()) {
-            if(rc.getValue().getFactory().getDescription().equalsIgnoreCase("No Description.")) {
-                Bukkit.getLogger().severe("IC " + rc.getValue().getId() + " MISSING DOCS!");
-            }
-        }*/
         if (ric == null) {
             try {
                 ric = icManager.registered.get(getSearchID(player, id));
@@ -662,22 +689,43 @@ public class CircuitsPlugin extends BaseBukkitPlugin {
                         SelfTriggeredIC ? "ST " : "T ") + (ric.getFactory() instanceof RestrictedIC ? ChatColor
                                 .DARK_RED + "R " : ""));
             }
-            } catch (Exception e) {
-                if (ic.endsWith("5001") || ic.endsWith("5000")) {
-                    // TODO
-                } else {
-                    Bukkit.getLogger().severe("An error occured generating the docs for IC: " + ic + ". Please report" +
-                            " it to Me4502");
-                }
+            } catch (Throwable e) {
+                Bukkit.getLogger().severe("An error occured generating the docs for IC: " + ic + ". Please report" + " it to Me4502");
             }
         }
 
         return strings.toArray(new String[strings.size()]);
     }
 
+    public void reloadICConfiguration() {
+        icConfig = new ICConfiguration(YamlConfiguration.loadConfiguration(new File(getDataFolder(),
+                "ic-config.yml")), getDataFolder());
+        try {
+            icConfig.cfg.save(new File(getDataFolder(), "ic-config.yml"));
+        } catch (IOException ex) {
+            getLogger().log(Level.SEVERE, "Could not save IC Config", ex);
+        }
+    }
+
     @Override
     public void reloadConfiguration() {
-        config = new CircuitsConfiguration(getConfig(), getDataFolder());
-        saveConfig();
+
+        getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+            @Override
+            public void run () {
+                //Unload everything.
+                unregisterAllMechanics();
+                HandlerList.unregisterAll(CircuitsPlugin.getInst());
+
+                //Reload the config
+                reloadConfig();
+                config = new CircuitsConfiguration(getConfig(), getDataFolder());
+                saveConfig();
+
+                //Load everything
+                registerMechanics();
+                registerEvents();
+            };
+        });
     }
 }

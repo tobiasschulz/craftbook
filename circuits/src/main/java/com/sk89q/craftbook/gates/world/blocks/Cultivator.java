@@ -16,7 +16,7 @@ import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.ItemUtil;
 import com.sk89q.craftbook.util.SignUtil;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;
 
 public class Cultivator extends AbstractIC implements SelfTriggeredIC {
@@ -74,14 +74,12 @@ public class Cultivator extends AbstractIC implements SelfTriggeredIC {
 
     public boolean cultivate() {
 
-        Vector position = getSign().getSignLocation().getPosition();
+        BlockWorldVector position = getSign().getBlockVector();
         for (int x = -radius + 1; x < radius; x++) {
             for (int y = -radius + 1; y < radius; y++) {
                 for (int z = -radius + 1; z < radius; z++) {
-                    int rx = position.getBlockX() - x;
-                    int ry = position.getBlockY() - y;
-                    int rz = position.getBlockZ() - z;
-                    Block b = BukkitUtil.toSign(getSign()).getWorld().getBlockAt(rx, ry, rz);
+                    BlockWorldVector current = new BlockWorldVector(getSign().getLocalWorld(), position.subtract(x, y, z).toBlockPoint());
+                    Block b = BukkitUtil.toBlock(current);
                     if(b.getTypeId() == BlockID.DIRT || b.getTypeId() == BlockID.GRASS) {
                         if(damageHoe()) {
                             b.setTypeId(BlockID.SOIL);

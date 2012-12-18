@@ -118,7 +118,7 @@ public class EntityTrap extends AbstractIC implements SelfTriggeredIC {
     @Override
     public void load() {
 
-        Location location = BukkitUtil.toSign(getSign()).getLocation();
+        location = BukkitUtil.toSign(getSign()).getLocation();
         try {
             String[] splitLine = ICUtil.EQUALS_PATTERN.split(getSign().getLine(2), 3);
             radius = Integer.parseInt(splitLine[0]);
@@ -148,24 +148,21 @@ public class EntityTrap extends AbstractIC implements SelfTriggeredIC {
 
         boolean hasHurt = false;
 
-        try {
-            for (Entity e : LocationUtil.getNearbyEntities(location, radius)) {
-                if (e.isDead() || !e.isValid()) {
-                    continue;
-                }
-                if (!type.is(e)) {
-                    continue;
-                }
-                if (e instanceof LivingEntity) {
-                    ((LivingEntity) e).damage(damage);
-                } else if (e instanceof Minecart) {
-                    ((Minecart) e).setDamage(((Minecart) e).getDamage() + damage);
-                } else {
-                    e.remove();
-                }
-                hasHurt = true;
+        for (Entity e : LocationUtil.getNearbyEntities(location, radius)) {
+            if (e == null || e.isDead() || !e.isValid()) {
+                continue;
             }
-        } catch (Exception ignored) {
+            if (!type.is(e)) {
+                continue;
+            }
+            if (e instanceof LivingEntity) {
+                ((LivingEntity) e).damage(damage);
+            } else if (e instanceof Minecart) {
+                ((Minecart) e).setDamage(((Minecart) e).getDamage() + damage);
+            } else {
+                e.remove();
+            }
+            hasHurt = true;
         }
 
         return hasHurt;

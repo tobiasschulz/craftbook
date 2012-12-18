@@ -22,6 +22,7 @@ import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.sk89q.craftbook.LanguageManager;
@@ -107,6 +108,35 @@ public class MechanismsPlugin extends BaseBukkitPlugin {
         MechanicListenerAdapter adapter = new MechanicListenerAdapter(this);
         adapter.register(manager);
 
+        registerMechanics();
+
+        // Register events
+        registerEvents();
+
+        languageManager = new LanguageManager(this);
+
+        try {
+            Metrics metrics = new Metrics(this);
+
+            Graph graph = metrics.createGraph("Language");
+            for (String lan : languageManager.getLanguages()) {
+                graph.addPlotter(new Metrics.Plotter(lan) {
+
+                    @Override
+                    public int getValue() {
+
+                        return 1;
+                    }
+                });
+            }
+
+            metrics.start();
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void registerMechanics() {
+
         // Let's register mechanics!
         if (getLocalConfiguration().ammeterSettings.enable) {
             registerMechanic(new Ammeter.Factory(this));
@@ -173,30 +203,6 @@ public class MechanismsPlugin extends BaseBukkitPlugin {
         }
 
         setupSelfTriggered(manager);
-
-        // Register events
-        registerEvents();
-
-        languageManager = new LanguageManager(this);
-
-        try {
-            Metrics metrics = new Metrics(this);
-
-            Graph graph = metrics.createGraph("Language");
-            for (String lan : languageManager.getLanguages()) {
-                graph.addPlotter(new Metrics.Plotter(lan) {
-
-                    @Override
-                    public int getValue() {
-
-                        return 1;
-                    }
-                });
-            }
-
-            metrics.start();
-        } catch (Exception ignored) {
-        }
     }
 
     /**
@@ -244,7 +250,10 @@ public class MechanismsPlugin extends BaseBukkitPlugin {
             getServer().getPluginManager().registerEvents(new AIMechanic(this), this);
         }
         if (getLocalConfiguration().chairSettings.enable) {
-            getServer().getPluginManager().registerEvents(new Chair(this), this);
+            if(getProtocolManager() != null)
+                getServer().getPluginManager().registerEvents(new Chair(this), this);
+            else
+                getLogger().severe("Chairs require ProtocolLib! They will not function without it!");
         }
         if (getLocalConfiguration().paintingSettings.enabled) {
             getServer().getPluginManager().registerEvents(new PaintingSwitch(this), this);
@@ -317,10 +326,21 @@ public class MechanismsPlugin extends BaseBukkitPlugin {
      *
      * @return true if the mechanic was successfully unregistered.
      */
-    @SuppressWarnings("unused")
     private boolean unregisterMechanic(MechanicFactory<? extends Mechanic> factory) {
 
         return manager.unregister(factory);
+    }
+
+    private boolean unregisterAllMechanics() {
+
+        boolean ret = true;
+
+        for(MechanicFactory<? extends Mechanic> factory : manager.factories) {
+            if(unregisterMechanic(factory) == false)
+                ret = false;
+        }
+
+        return ret;
     }
 
     /**
@@ -337,7 +357,24 @@ public class MechanismsPlugin extends BaseBukkitPlugin {
 
     @Override
     public void reloadConfiguration() {
-        config = new MechanismsConfiguration(getConfig(), getDataFolder());
-        saveConfig();
+
+        getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+
+            @Override
+            public void run() {
+                //Unload everything.
+                unregisterAllMechanics();
+                HandlerList.unregisterAll(MechanismsPlugin.getInst());
+
+                //Reload the config
+                reloadConfig();
+                config = new MechanismsConfiguration(getConfig(), getDataFolder());
+                saveConfig();
+
+                //Load everything
+                registerMechanics();
+                registerEvents();
+            }
+        });
     }
 }

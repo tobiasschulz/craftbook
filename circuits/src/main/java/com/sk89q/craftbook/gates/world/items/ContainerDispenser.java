@@ -123,9 +123,9 @@ public class ContainerDispenser extends AbstractIC implements SelfTriggeredIC {
 
         if(inv == null)
             return false;
-        HashMap<Integer, ItemStack> over = inv.removeItem(new ItemStack(item.getTypeId(), amount, item.getDurability(), item.getData().getData()));
+        HashMap<Integer, ItemStack> over = inv.removeItem(new ItemStack(item.getTypeId(), amount, item.getDurability()));
         if(over.isEmpty()) {
-            BukkitUtil.toSign(getSign()).getWorld().dropItemNaturally(BukkitUtil.toSign(getSign()).getLocation(), new ItemStack(item.getTypeId(), amount, item.getDurability(), item.getData().getData()));
+            BukkitUtil.toSign(getSign()).getWorld().dropItemNaturally(BukkitUtil.toSign(getSign()).getLocation(), new ItemStack(item.getTypeId(), amount, item.getDurability()));
             return true;
         }
         else {
@@ -133,7 +133,7 @@ public class ContainerDispenser extends AbstractIC implements SelfTriggeredIC {
 
                 if(amount - it.getAmount() < 1)
                     continue;
-                BukkitUtil.toSign(getSign()).getWorld().dropItemNaturally(BukkitUtil.toSign(getSign()).getLocation(), new ItemStack(it.getTypeId(), amount - it.getAmount(), it.getDurability(), it.getData().getData()));
+                BukkitUtil.toSign(getSign()).getWorld().dropItemNaturally(BukkitUtil.toSign(getSign()).getLocation(), new ItemStack(it.getTypeId(), amount - it.getAmount(), it.getDurability()));
                 return true;
             }
         }

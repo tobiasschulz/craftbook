@@ -109,6 +109,7 @@ public class CombineHarvester extends AbstractIC implements SelfTriggeredIC {
                     if (harvestable(b)) {
 
                         collectDrops(b.getDrops().toArray(new ItemStack[b.getDrops().size()]));
+                        b.setTypeId(0);
                         return true;
                     }
                 }
@@ -121,7 +122,7 @@ public class CombineHarvester extends AbstractIC implements SelfTriggeredIC {
 
         if(onBlock.getRelative(0, 1, 0).getTypeId() == BlockID.CHEST) {
 
-            Chest c = (Chest) onBlock.getState();
+            Chest c = (Chest) onBlock.getRelative(0, 1, 0).getState();
             HashMap<Integer, ItemStack> leftovers = c.getInventory().addItem(drops);
             for(ItemStack item : leftovers.values()) {
 

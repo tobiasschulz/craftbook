@@ -40,6 +40,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.util.Vector;
 
 import com.sk89q.craftbook.ChangedSign;
@@ -48,7 +49,7 @@ import com.sk89q.craftbook.ic.ChipState;
 import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICVerificationException;
 import com.sk89q.craftbook.ic.SelfTriggeredIC;
-import com.sk89q.worldedit.Location;
+import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.blocks.ItemID;
 
@@ -83,6 +84,8 @@ class PlcIC<StateT, CodeT, Lang extends PlcLanguage<StateT, CodeT>> implements I
 
         lang = l;
         sign = s;
+        if(s == null)
+            return;
         try {
             codeString = getCode();
         } catch (CodeNotFoundException e) {
@@ -112,8 +115,8 @@ class PlcIC<StateT, CodeT, Lang extends PlcLanguage<StateT, CodeT>> implements I
     private String getFileName() {
 
         if (!isShared()) {
-            Location l = sign.getSignLocation();
-            return lang.getName() + "$$" + l.getPosition().getBlockX() + "_" + l.getPosition().getBlockY() + "_" + l.getPosition().getBlockZ();
+            BlockWorldVector l = sign.getBlockVector();
+            return lang.getName() + "$$" + l.getBlockX() + "_" + l.getBlockY() + "_" + l.getBlockZ();
         } else return lang.getName() + "$" + sign.getLine(3);
     }
 
@@ -231,9 +234,9 @@ class PlcIC<StateT, CodeT, Lang extends PlcLanguage<StateT, CodeT>> implements I
             }
         if (book == null)
             throw new CodeNotFoundException("No written books found in chest.");
-        BookItem data = new BookItem(book);
+
         StringBuilder code = new StringBuilder();
-        for (String s : data.getPages()) {
+        for (String s : ((BookMeta)book.getItemMeta()).getPages()) {
             code.append(s).append("\n");
         }
         System.out.println(code);
@@ -376,10 +379,10 @@ class PlcIC<StateT, CodeT, Lang extends PlcLanguage<StateT, CodeT>> implements I
 
         if (p.hasPermission("craftbook.plc.debug")) {
             p.sendMessage(ChatColor.GREEN + "Programmable Logic Controller debug information");
-            Location l = sign.getSignLocation();
+            BlockWorldVector l = sign.getBlockVector();
             p.sendMessage(ChatColor.RED + "Status:" + ChatColor.RESET + " " + (error ? "Error Encountered" : "OK"));
             p.sendMessage(ChatColor.RED + "Location:" + ChatColor.RESET +
-                    " (" + l.getPosition().getBlockX() + ", " + l.getPosition().getBlockY() + ", " + l.getPosition().getBlockZ() + ")");
+                    " (" + l.getBlockX() + ", " + l.getBlockY() + ", " + l.getBlockZ() + ")");
             p.sendMessage(ChatColor.RED + "Language:" + ChatColor.RESET + " " + lang.getName());
             p.sendMessage(ChatColor.RED + "Full Storage Name:" + ChatColor.RESET + " " + getFileName());
             if (error) {

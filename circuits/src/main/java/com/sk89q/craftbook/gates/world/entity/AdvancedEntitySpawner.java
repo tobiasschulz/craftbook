@@ -56,8 +56,9 @@ public class AdvancedEntitySpawner extends AbstractIC implements SelfTriggeredIC
 
         String[] splitLine3 = ASTERISK_PATTERN.split(getSign().getLine(3).trim());
         type = EntityType.fromName(splitLine3[0].toLowerCase());
-        if(type == null)
+        if(type == null) {
             type = EntityType.PIG;
+        }
 
         try {
             amount = Integer.parseInt(splitLine3[1]);

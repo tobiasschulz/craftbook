@@ -29,12 +29,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.sk89q.bukkit.util.CommandsManagerRegistration;
 import com.sk89q.craftbook.BaseConfiguration;
 import com.sk89q.craftbook.LanguageManager;
@@ -78,6 +81,8 @@ public abstract class BaseBukkitPlugin extends JavaPlugin {
     protected WorldGuardPlugin worldguard = null;
     protected boolean useWorldGuard = false;
     protected StateFlag useFlag = null;
+
+    public boolean hasProtocolLib = false;
 
     public static final Random random = new Random(); //Good random, allowing for more random numbers.
 
@@ -135,12 +140,23 @@ public abstract class BaseBukkitPlugin extends JavaPlugin {
                 .checkWGRegions || getWorldGuard().canBuild(p, loc);
     }
 
+    private ProtocolManager protocolManager = null;
+
+    public ProtocolManager getProtocolManager() {
+        if(!hasProtocolLib)
+            return null;
+
+        return protocolManager;
+    }
+
     /**
      * Called on load.
      */
     @Override
     public void onLoad() {
-
+        hasProtocolLib = getServer().getPluginManager().getPlugin("ProtocolLib") != null;
+        if(hasProtocolLib)
+            protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
     /**
@@ -336,4 +352,16 @@ public abstract class BaseBukkitPlugin extends JavaPlugin {
     }
 
     public abstract void reloadConfiguration();
+
+    private static Boolean useOldBlockFace = null;
+
+    public static boolean useOldBlockFace() {
+
+        if(useOldBlockFace == null) {
+            Location loc = new Location(Bukkit.getWorlds().get(0), 0, 0, 0);
+            useOldBlockFace = loc.getBlock().getRelative(BlockFace.WEST).getX() == 0;
+        }
+
+        return useOldBlockFace;
+    }
 }

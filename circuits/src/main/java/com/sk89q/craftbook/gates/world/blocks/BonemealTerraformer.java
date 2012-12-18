@@ -21,7 +21,7 @@ import com.sk89q.craftbook.ic.IC;
 import com.sk89q.craftbook.ic.ICFactory;
 import com.sk89q.craftbook.ic.SelfTriggeredIC;
 import com.sk89q.craftbook.util.SignUtil;
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.blocks.ItemID;
 
@@ -87,7 +87,7 @@ public class BonemealTerraformer extends AbstractIC implements SelfTriggeredIC {
 
     public void terraform(boolean overrideChance) {
 
-        Vector position = getSign().getSignLocation().getPosition();
+        BlockWorldVector position = getSign().getBlockVector();
         for (int x = -radius + 1; x < radius; x++) {
             for (int y = -radius + 1; y < radius; y++) {
                 for (int z = -radius + 1; z < radius; z++) {

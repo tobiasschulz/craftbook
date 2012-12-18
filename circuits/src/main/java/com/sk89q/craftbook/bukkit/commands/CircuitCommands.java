@@ -33,7 +33,7 @@ public class CircuitCommands {
             )
     public void reload(CommandContext context, CommandSender sender) {
 
-        plugin.reloadConfig();
+        plugin.reloadICConfiguration();
         sender.sendMessage("The IC config has been reloaded.");
     }
 
@@ -63,8 +63,8 @@ public class CircuitCommands {
         @CommandPermissions("craftbook.circuit.reload")
         public void reload(CommandContext context, CommandSender sender) {
 
-            plugin.getLocalConfiguration().reload();
-            sender.sendMessage("Config has been reloaded successfully!");
+            plugin.reloadConfiguration();
+            sender.sendMessage("CraftBook Circuits has been reloaded successfully!");
         }
     }
 
@@ -122,7 +122,7 @@ public class CircuitCommands {
     @Command(
             aliases = {"searchics"},
             desc = "Search available IC's with names",
-            min = 0,
+            min = 1,
             max = 3
             )
     public void searchics(CommandContext context, CommandSender sender) {
