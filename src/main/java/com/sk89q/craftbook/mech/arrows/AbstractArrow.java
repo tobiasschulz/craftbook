@@ -15,13 +15,10 @@ public abstract class AbstractArrow implements ElementalArrow {
 
     Recipe recipe;
 
-    MechanismsPlugin plugin;
-
     String name;
 
-    public AbstractArrow(MechanismsPlugin plugin, String name) {
+    public AbstractArrow(String name) {
 
-        this.plugin = plugin;
         this.name = name;
     }
 

@@ -4,7 +4,7 @@ import com.sk89q.craftbook.AbstractMechanic;
 import com.sk89q.craftbook.AbstractMechanicFactory;
 import com.sk89q.craftbook.InvalidMechanismException;
 import com.sk89q.craftbook.LocalPlayer;
-import com.sk89q.craftbook.bukkit.BaseBukkitPlugin;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
@@ -31,14 +31,15 @@ import java.util.List;
  */
 public class ImprovedCauldron extends AbstractMechanic implements Listener {
 
+    private CraftBookPlugin plugin = CraftBookPlugin.inst();
+
     public static class Factory extends AbstractMechanicFactory<ImprovedCauldron> {
 
-        protected final MechanismsPlugin plugin;
+        private CraftBookPlugin plugin = CraftBookPlugin.inst();
         protected final ImprovedCauldronCookbook recipes;
 
-        public Factory(MechanismsPlugin plugin) {
+        public Factory() {
 
-            this.plugin = plugin;
             recipes = new ImprovedCauldronCookbook(YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder
                     (), "src/main/resources/cauldron-recipes.yml")),
                     plugin.getDataFolder());
@@ -47,7 +48,7 @@ public class ImprovedCauldron extends AbstractMechanic implements Listener {
         @Override
         public ImprovedCauldron detect(BlockWorldVector pos) throws InvalidMechanismException {
 
-            if (isCauldron(pos)) return new ImprovedCauldron(plugin, BukkitUtil.toBlock(pos), recipes);
+            if (isCauldron(pos)) return new ImprovedCauldron(BukkitUtil.toBlock(pos), recipes);
             return null;
         }
 
@@ -63,14 +64,12 @@ public class ImprovedCauldron extends AbstractMechanic implements Listener {
 
     }
 
-    private MechanismsPlugin plugin;
     private Block block;
     private ImprovedCauldronCookbook cookbook;
 
-    private ImprovedCauldron(MechanismsPlugin plugin, Block block, ImprovedCauldronCookbook recipes) {
+    private ImprovedCauldron(Block block, ImprovedCauldronCookbook recipes) {
 
         super();
-        this.plugin = plugin;
         this.block = block;
         cookbook = recipes;
     }
@@ -86,8 +85,8 @@ public class ImprovedCauldron extends AbstractMechanic implements Listener {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        if (!plugin.getLocalConfiguration().cauldronSettings.enableNew) return;
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        if (!plugin.getConfiguration().cauldronEnabled) return;
+        LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
         if (block.equals(event.getClickedBlock())) {
             if (!player.hasPermission("craftbook.mech.cauldron.use")) {
                 player.printError("mech.use-permission");
@@ -104,7 +103,7 @@ public class ImprovedCauldron extends AbstractMechanic implements Listener {
                     return;
                 }
 
-                if (!plugin.getLocalConfiguration().cauldronSettings.newSpoons) {
+                if (!plugin.getConfiguration().cauldronUseSpoons) {
                     cook(recipe, items);
                     player.print("You have cooked the " + ChatColor.AQUA + recipe.getName() + ChatColor.YELLOW + " " +
                             "recipe.");
@@ -114,7 +113,7 @@ public class ImprovedCauldron extends AbstractMechanic implements Listener {
                     if (event.getPlayer().getItemInHand() == null) return;
                     if (isItemSpoon(event.getPlayer().getItemInHand().getTypeId())) {
                         double chance = getSpoonChance(event.getPlayer().getItemInHand(), recipe.getChance());
-                        double ran = BaseBukkitPlugin.random.nextDouble();
+                        double ran = plugin.getRandom().nextDouble();
                         event.getPlayer().getItemInHand().setDurability((short) (event.getPlayer().getItemInHand()
                                 .getDurability() - (short) 1));
                         if (chance <= ran) {

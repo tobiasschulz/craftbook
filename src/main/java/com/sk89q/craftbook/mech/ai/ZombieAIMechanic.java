@@ -8,9 +8,9 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 
 public class ZombieAIMechanic extends BaseAIMechanic implements TargetAIMechanic {
 
-    public ZombieAIMechanic(MechanismsPlugin plugin, Entity entity) {
+    public ZombieAIMechanic(Entity entity) {
 
-        super(plugin, entity);
+        super(entity);
     }
 
     @Override

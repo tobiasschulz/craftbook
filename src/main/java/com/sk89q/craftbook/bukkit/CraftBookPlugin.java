@@ -1,6 +1,7 @@
 package com.sk89q.craftbook.bukkit;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.sk89q.bukkit.util.CommandsManagerRegistration;
+import com.sk89q.craftbook.LanguageManager;
 import com.sk89q.craftbook.LocalPlayer;
 import com.sk89q.craftbook.bukkit.commands.TopLevelCommands;
 import com.sk89q.minecraft.util.commands.*;
@@ -9,12 +10,12 @@ import com.sk89q.wepif.PermissionsResolverManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.GlobalRegionManager;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.util.FatalConfigurationLoadingException;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -25,6 +26,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
+import java.util.Random;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -47,7 +49,16 @@ public class CraftBookPlugin extends JavaPlugin {
      * The instance for CraftBook
      */
     private static CraftBookPlugin instance;
-    private static Server server;
+
+    /**
+     * The language manager
+     */
+    private LanguageManager languageManager;
+
+    /**
+     * The random
+     */
+    private Random random = new Random();
 
     /**
      * Manager for commands. This automatically handles nested commands,
@@ -69,7 +80,6 @@ public class CraftBookPlugin extends JavaPlugin {
 
         // Set the instance
         instance = this;
-        server = getServer();
 
         // Setup Config and the Commands Manager
         final CraftBookPlugin plugin = this;
@@ -107,6 +117,8 @@ public class CraftBookPlugin extends JavaPlugin {
                 return;
             }
         }
+        //
+        languageManager = new LanguageManager();
 
         // Set the proper command injector
         commands.setInjector(new SimpleInjector(this));
@@ -212,11 +224,30 @@ public class CraftBookPlugin extends JavaPlugin {
     }
 
     /**
+     * This retrives the CraftBookPlugin logger.
+     *
+     * @return Returns the CraftBookPlugin {@link Logger}
+     */
+    public static Server server() {
+
+        return inst().getServer();
+    }
+
+    /**
      * This is a method used to register events for a class under CraftBook.
      */
     public static void registerEvents(Listener listener) {
 
-        server.getPluginManager().registerEvents(listener, inst());
+        inst().getServer().getPluginManager().registerEvents(listener, inst());
+    }
+
+    /**
+     * This is a method used to register commands for a class.
+     */
+    public void registerCommands(Class clazz) {
+
+        final CommandsManagerRegistration reg = new CommandsManagerRegistration(this, commands);
+        reg.register(clazz);
     }
 
     /**
@@ -228,6 +259,26 @@ public class CraftBookPlugin extends JavaPlugin {
     public BukkitConfiguration getConfiguration() {
 
         return config;
+    }
+
+    /**
+     * This method is used to get the CraftBook {@link LanguageManager}.
+     *
+     * @return The CraftBook {@link LanguageManager}
+     */
+    public LanguageManager getLanguageManager() {
+
+        return languageManager;
+    }
+
+    /**
+     * This method is used to get CraftBook's {@link Random}.
+     *
+     * @return CraftBook's {@link Random}
+     */
+    public Random getRandom() {
+
+        return random;
     }
 
     /**
@@ -378,6 +429,14 @@ public class CraftBookPlugin extends JavaPlugin {
     }
 
     /**
+     * Reload configuration
+     */
+    public void reloadConfiguration() {
+
+        // TODO Work
+    }
+
+    /**
      * Create a default configuration file from the .jar.
      *
      * @param actual      The destination file
@@ -449,15 +508,14 @@ public class CraftBookPlugin extends JavaPlugin {
     }
 
     /**
-     * Get the ProtocolLib Plugin.
+     * This method is used to determine whether ProtocolLib is
+     * enabled on the server.
      *
-     * This method can return null.
-     *
-     * @return The {@link ProtocolLibrary} plugin
+     * @return True if ProtocolLib was found
      */
-    public ProtocolLibrary getProtocolLib() {
+    public boolean hasProtocolLib() {
 
-        return protocolLib;
+        return protocolLib != null;
     }
 
     /**
@@ -497,12 +555,12 @@ public class CraftBookPlugin extends JavaPlugin {
      */
     public boolean canBuild(Player player, Location loc) {
 
-        return worldGuardPlugin != null && worldGuardPlugin.getGlobalRegionManager().canBuild(player, loc);
+        return worldGuardPlugin == null || worldGuardPlugin.getGlobalRegionManager().canBuild(player, loc);
     }
 
     /**
      * Checks to see if a player can build at a location. This will return
-     * true if region protection is disabled.
+     * true if region protection is disabled or WorldGuard is not found.
      *
      * @param player The player to check
      * @param block  The block to check at.
@@ -513,41 +571,23 @@ public class CraftBookPlugin extends JavaPlugin {
      */
     public boolean canBuild(Player player, Block block) {
 
-        return worldGuardPlugin != null && worldGuardPlugin.getGlobalRegionManager().canBuild(player, block);
+        return worldGuardPlugin == null || worldGuardPlugin.getGlobalRegionManager().canBuild(player, block);
     }
 
     /**
-     * Replace macros in the text.
+     * Checks to see if a player can use at a location. This will return
+     * true if region protection is disabled or WorldGuard is not found.
      *
-     * The macros replaced are as follows:
-     * %name%: The name of {@code sender}. See {@link #toName(org.bukkit.command.CommandSender)}
-     * %id%: The unique name of the sender. See {@link #toUniqueName(org.bukkit.command.CommandSender)}
-     * %online%: The number of players currently online on the server
-     * If {@code sender} is a Player:
-     * %world%: The name of the world {@code sender} is located in
-     * %health%: The health of {@code sender}. See {@link org.bukkit.entity.Player#getHealth()}
+     * @param player The player to check.
+     * @param loc    The location to check at.
      *
-     * @param sender  The sender to check
-     * @param message The message to replace macros in
+     * @return whether {@code player} can build at {@code loc}
      *
-     * @return The message with macros replaced
+     * @see GlobalRegionManager#canBuild(org.bukkit.entity.Player, org.bukkit.Location)
      */
-    public String replaceMacros(CommandSender sender, String message) {
+    public boolean canUse(Player player, Location loc) {
 
-        Player[] online = getServer().getOnlinePlayers();
-
-        message = message.replace("%name%", toName(sender));
-        message = message.replace("%id%", toUniqueName(sender));
-        message = message.replace("%online%", String.valueOf(online.length));
-
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            World world = player.getWorld();
-
-            message = message.replace("%world%", world.getName());
-            message = message.replace("%health%", String.valueOf(player.getHealth()));
-        }
-
-        return message;
+        return worldGuardPlugin == null || worldGuardPlugin.getGlobalRegionManager().allows(new StateFlag("use",
+                true), loc, new com.sk89q.worldguard.bukkit.BukkitPlayer(worldGuardPlugin, player));
     }
 }

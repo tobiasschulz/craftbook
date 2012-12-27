@@ -16,6 +16,7 @@
 
 package com.sk89q.craftbook.circuits.ic;
 
+import com.sk89q.commandbook.CommandBook;
 import com.sk89q.craftbook.ChangedSign;
 import com.sk89q.craftbook.PersistentMechanic;
 import com.sk89q.craftbook.SourcedBlockRedstoneEvent;
@@ -40,16 +41,14 @@ import java.util.regex.Matcher;
  */
 public class ICMechanic extends PersistentMechanic {
 
-    protected final CircuitsPlugin plugin;
     protected final String id;
     protected final ICFamily family;
     protected final IC ic;
     protected final BlockWorldVector pos;
 
-    public ICMechanic(CircuitsPlugin plugin, String id, IC ic, ICFamily family, BlockWorldVector pos) {
+    public ICMechanic(String id, IC ic, ICFamily family, BlockWorldVector pos) {
 
         super(pos);
-        this.plugin = plugin;
         this.id = id;
         this.ic = ic;
         this.family = family;
@@ -91,7 +90,7 @@ public class ICMechanic extends PersistentMechanic {
             };
             // FIXME: these should be registered with a global scheduler so we can end up with one runnable actually
             // running per set of inputs in a given time window.
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, runnable, 2);
+            CommandBook.server().getScheduler().scheduleSyncDelayedTask(CommandBook.inst(), runnable, 2);
         }
     }
 

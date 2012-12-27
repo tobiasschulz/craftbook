@@ -19,6 +19,7 @@ package com.sk89q.craftbook.circuits;
 import com.sk89q.craftbook.AbstractMechanicFactory;
 import com.sk89q.craftbook.PersistentMechanic;
 import com.sk89q.craftbook.SourcedBlockRedstoneEvent;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
@@ -37,11 +38,9 @@ public class GlowStone extends PersistentMechanic {
 
     public static class Factory extends AbstractMechanicFactory<GlowStone> {
 
-        CircuitsPlugin plugin;
 
-        public Factory(CircuitsPlugin plugin) {
+        public Factory() {
 
-            this.plugin = plugin;
         }
 
         @Override
@@ -49,14 +48,13 @@ public class GlowStone extends PersistentMechanic {
 
             int type = BukkitUtil.toWorld(pt).getBlockTypeIdAt(BukkitUtil.toLocation(pt));
 
-            if (type == plugin.getLocalConfiguration().glowstoneOffBlock || type == BlockID.LIGHTSTONE)
-                return new GlowStone(pt, plugin);
-
+            if (type == CraftBookPlugin.inst().getConfiguration().glowstoneOffBlock || type == BlockID.LIGHTSTONE) {
+                return new GlowStone(pt);
+            }
             return null;
         }
     }
 
-    CircuitsPlugin plugin;
     BlockWorldVector pt;
 
     /**
@@ -64,10 +62,9 @@ public class GlowStone extends PersistentMechanic {
      *
      * @param pt
      */
-    private GlowStone(BlockWorldVector pt, CircuitsPlugin plugin) {
+    private GlowStone(BlockWorldVector pt) {
 
         super();
-        this.plugin = plugin;
         this.pt = pt;
     }
 
@@ -80,7 +77,7 @@ public class GlowStone extends PersistentMechanic {
         if (event.getNewCurrent() > 0) {
             event.getBlock().setTypeId(BlockID.LIGHTSTONE);
         } else {
-            event.getBlock().setTypeId(plugin.getLocalConfiguration().glowstoneOffBlock);
+            event.getBlock().setTypeId(CraftBookPlugin.inst().getConfiguration().glowstoneOffBlock);
         }
 
         event.getBlock().setData(event.getBlock().getData(), false);

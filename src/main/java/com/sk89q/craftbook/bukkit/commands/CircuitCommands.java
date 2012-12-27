@@ -1,5 +1,6 @@
 package com.sk89q.craftbook.bukkit.commands;
 
+import com.sk89q.craftbook.bukkit.CircuitCore;
 import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.NestedCommand;
@@ -15,6 +16,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CircuitCommands {
+
+    private static CircuitCore circuitCore = (CircuitCore) CircuitCore.inst();
 
     public CircuitCommands() {
 
@@ -33,7 +36,7 @@ public class CircuitCommands {
 
             if (!(sender instanceof Player)) return;
             Player player = (Player) sender;
-            CircuitsPlugin.getInst().generateICDocs(player, context.getString(0));
+            circuitCore.generateICDocs(player, context.getString(0));
         }
 
         @Command(aliases = {"list"}, desc = "List available IC's", min = 0, max = 2)
@@ -46,7 +49,7 @@ public class CircuitCommands {
                 ar = context.getString(1).toCharArray();
             } catch (Exception ignored) {
             }
-            String[] lines = CircuitsPlugin.getInst().generateICText(player, null, ar);
+            String[] lines = circuitCore.generateICText(player, null, ar);
             int pages = (lines.length - 1) / 9 + 1;
             int accessedPage;
 
@@ -79,7 +82,7 @@ public class CircuitCommands {
                 ar = context.getString(2).toCharArray();
             } catch (Exception ignored) {
             }
-            String[] lines = CircuitsPlugin.getInst().generateICText(player, context.getString(0), ar);
+            String[] lines = circuitCore.generateICText(player, context.getString(0), ar);
             int pages = (lines.length - 1) / 9 + 1;
             int accessedPage;
 
@@ -120,7 +123,7 @@ public class CircuitCommands {
                     return name.endsWith("mid") || name.endsWith(".midi");
                 }
             };
-            for (File f : CircuitsPlugin.getInst().midiFolder.listFiles(fnf)) {
+            for (File f : circuitCore.getMidiFolder().listFiles(fnf)) {
                 lines.add(f.getName().replace(".midi", "").replace(".mid", ""));
             }
             Collections.sort(lines, new Comparator<String>() {

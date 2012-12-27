@@ -1,6 +1,7 @@
 package com.sk89q.craftbook.mech.area;
 
 import com.sk89q.craftbook.*;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.BlockWorldVector;
@@ -25,12 +26,11 @@ public class Area extends AbstractMechanic {
 
     public static class Factory extends AbstractMechanicFactory<Area> {
 
-        public Factory(MechanismsPlugin plugin) {
+        public Factory() {
 
-            this.plugin = plugin;
         }
 
-        private final MechanismsPlugin plugin;
+        private final CraftBookPlugin plugin = CraftBookPlugin.inst();
 
         /**
          * Detect the mechanic at a placed sign.
@@ -41,7 +41,7 @@ public class Area extends AbstractMechanic {
         public Area detect(BlockWorldVector pt, LocalPlayer player,
                            ChangedSign sign) throws InvalidMechanismException, ProcessedMechanismException {
 
-            if (!plugin.getLocalConfiguration().areaSettings.enable) return null;
+            if (!plugin.getConfiguration().areaEnabled) return null;
 
             String[] lines = sign.getLines();
 
@@ -77,7 +77,7 @@ public class Area extends AbstractMechanic {
         @Override
         public Area detect(BlockWorldVector pt) throws InvalidMechanismException {
 
-            if (!plugin.getLocalConfiguration().areaSettings.enableRedstone) return null;
+            if (!plugin.getConfiguration().areaAllowRedstone) return null;
 
             Block block = BukkitUtil.toWorld(pt).getBlockAt(BukkitUtil.toLocation(pt));
             if (SignUtil.isSign(block.getTypeId())) {
@@ -89,7 +89,7 @@ public class Area extends AbstractMechanic {
                         // check if the namespace and area exists
                         isValidArea(sign);
                         boolean save = sign.getLine(1).equalsIgnoreCase("[SaveArea]");
-                        return new Area(pt, plugin, save);
+                        return new Area(pt, save);
                     }
                 }
             }
@@ -101,18 +101,18 @@ public class Area extends AbstractMechanic {
             String namespace = sign.getLine(0).trim();
             String areaOn = sign.getLine(2).trim();
             String areaOff = sign.getLine(3).trim();
-            if (CopyManager.isExistingArea(plugin, namespace, areaOn)) {
+            if (CopyManager.isExistingArea(plugin.getDataFolder(), namespace, areaOn)) {
                 if (areaOff == null || areaOff.isEmpty() || areaOff.equals("--")) return;
-                if (CopyManager.isExistingArea(plugin, namespace, areaOff)) return;
+                if (CopyManager.isExistingArea(plugin.getDataFolder(), namespace, areaOff)) return;
             }
             throw new InvalidMechanismException("The area or namespace does not exist.");
         }
     }
 
-    public final MechanismsPlugin plugin;
-    public final BlockWorldVector pt;
+    private CraftBookPlugin plugin;
+    private final BlockWorldVector pt;
     private boolean toggledOn;
-    protected boolean saveOnToggle = false;
+    private boolean saveOnToggle = false;
 
     /**
      * Raised when a block is right clicked.
@@ -122,7 +122,7 @@ public class Area extends AbstractMechanic {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
 
         if (!player.hasPermission("craftbook.mech.area.use")) {
             player.print("mech.use-permission");
@@ -149,7 +149,7 @@ public class Area extends AbstractMechanic {
     @Override
     public void onBlockRedstoneChange(SourcedBlockRedstoneEvent event) {
 
-        if (!plugin.getLocalConfiguration().areaSettings.enableRedstone) return;
+        if (!plugin.getConfiguration().areaAllowRedstone) return;
 
         // check if the sign still exists
         Sign sign = null;
@@ -162,16 +162,15 @@ public class Area extends AbstractMechanic {
     }
 
     /**
-     * @param pt     if you didn't already check if this is a signpost with appropriate text,
-     *               you're going on Santa's naughty list.
-     * @param plugin
+     * @param pt   if you didn't already check if this is a signpost with appropriate text,
+     *             you're going on Santa's naughty list.
+     * @param save Whether to save on toggle or not
      *
      * @throws InvalidMechanismException
      */
-    private Area(BlockWorldVector pt, MechanismsPlugin plugin, boolean save) throws InvalidMechanismException {
+    private Area(BlockWorldVector pt, boolean save) throws InvalidMechanismException {
 
         super();
-        this.plugin = plugin;
         this.pt = pt;
         saveOnToggle = save;
     }
@@ -191,17 +190,17 @@ public class Area extends AbstractMechanic {
             String id = sign.getLine(2).replace("-", "");
             String inactiveID = sign.getLine(3).replace("-", "");
 
-            CuboidCopy copy = CopyManager.getInstance().load(world, namespace, id, plugin);
+            CuboidCopy copy = CopyManager.getInstance().load(world, namespace, id);
 
             if (isToggledOn()) {
                 // if this is a save area save it before toggling off
                 if (saveOnToggle) {
                     copy.copy();
-                    CopyManager.getInstance().save(world, namespace, id, copy, plugin);
+                    CopyManager.getInstance().save(world, namespace, id, copy);
                 }
                 // if we are toggling to the second area we dont clear the old area
                 if (!inactiveID.isEmpty() && !inactiveID.equals("--")) {
-                    copy = CopyManager.getInstance().load(world, namespace, inactiveID, plugin);
+                    copy = CopyManager.getInstance().load(world, namespace, inactiveID);
                     copy.paste();
                 } else {
                     copy.clear();
@@ -212,7 +211,7 @@ public class Area extends AbstractMechanic {
                 // if this is a save area save it before toggling off
                 if (saveOnToggle && !inactiveID.isEmpty() && !inactiveID.equals("--")) {
                     copy.copy();
-                    CopyManager.getInstance().save(world, namespace, inactiveID, copy, plugin);
+                    CopyManager.getInstance().save(world, namespace, inactiveID, copy);
                 }
                 copy.paste();
                 setToggledState(sign, true);

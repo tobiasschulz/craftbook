@@ -16,7 +16,7 @@
 
 package com.sk89q.craftbook;
 
-import com.sk89q.craftbook.bukkit.BaseBukkitPlugin;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.craftbook.util.GeneralUtil;
 import com.sk89q.worldedit.BlockWorldVector;
@@ -60,11 +60,6 @@ public class MechanicManager {
     protected final Logger logger = Logger.getLogger("Minecraft.CraftBook");
 
     /**
-     * Plugin.
-     */
-    protected final BaseBukkitPlugin plugin;
-
-    /**
      * List of factories that will be used to detect mechanisms at a location.
      */
     public final LinkedList<MechanicFactory<? extends Mechanic>> factories;
@@ -93,12 +88,9 @@ public class MechanicManager {
 
     /**
      * Construct the manager.
-     *
-     * @param plugin
      */
-    public MechanicManager(BaseBukkitPlugin plugin) {
+    public MechanicManager() {
 
-        this.plugin = plugin;
         factories = new LinkedList<MechanicFactory<? extends Mechanic>>();
         triggersManager = new TriggerBlockManager();
         watchBlockManager = new WatchBlockManager();
@@ -144,7 +136,7 @@ public class MechanicManager {
         // See if this event could be occurring on any mechanism's triggering blocks
         Block block = event.getBlock();
         BlockWorldVector pos = toWorldVector(block);
-        LocalPlayer localPlayer = plugin.wrap(event.getPlayer());
+        LocalPlayer localPlayer = CraftBookPlugin.inst().wrapPlayer(event.getPlayer());
 
         BlockState state = event.getBlock().getState();
 
@@ -175,13 +167,16 @@ public class MechanicManager {
      * @return the number of mechanics to processed
      */
     public short dispatchBlockBreak(BlockBreakEvent event) {
+
+        CraftBookPlugin plugin = CraftBookPlugin.inst();
+
         // We don't need to handle events that no mechanic we use makes use of
         if (!passesFilter(event)) return 0;
 
         short returnValue = 0;
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
 
-        if (!plugin.canBuildInArea(event.getBlock().getLocation(), event.getPlayer())) {
+        if (!plugin.canBuild(event.getPlayer(), event.getBlock().getLocation())) {
             player.printError("area.permissions");
             return 0;
         }
@@ -216,13 +211,16 @@ public class MechanicManager {
      * @return the number of mechanics to processed
      */
     public short dispatchBlockRightClick(PlayerInteractEvent event) {
+
+        CraftBookPlugin plugin = CraftBookPlugin.inst();
+
         // We don't need to handle events that no mechanic we use makes use of
         if (!passesFilter(event)) return 0;
 
         short returnValue = 0;
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
 
-        if (!plugin.canUseInArea(event.getClickedBlock().getLocation(), event.getPlayer())) {
+        if (!plugin.canUse(event.getPlayer(), event.getClickedBlock().getLocation())) {
             player.printError("area.permissions");
             return 0;
         }
@@ -254,13 +252,16 @@ public class MechanicManager {
      * @return the number of mechanics to processed
      */
     public short dispatchBlockLeftClick(PlayerInteractEvent event) {
+
+        CraftBookPlugin plugin = CraftBookPlugin.inst();
+
         // We don't need to handle events that no mechanic we use makes use of
         if (!passesFilter(event)) return 0;
 
         short returnValue = 0;
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
 
-        if (!plugin.canUseInArea(event.getClickedBlock().getLocation(), event.getPlayer())) {
+        if (!plugin.canUse(event.getPlayer(), event.getClickedBlock().getLocation())) {
             player.printError("area.permissions");
             return 0;
         }

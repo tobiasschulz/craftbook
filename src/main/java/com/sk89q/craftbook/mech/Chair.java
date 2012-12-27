@@ -3,6 +3,7 @@ package com.sk89q.craftbook.mech;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.sk89q.craftbook.bukkit.BukkitPlayer;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.GeneralUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,9 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Chair implements Listener {
 
-    public Chair(MechanismsPlugin plugin) {
+    public Chair() {
 
-        this.plugin = plugin;
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new ChairChecker(), 40L, 40L);
     }
 
@@ -40,14 +40,14 @@ public class Chair implements Listener {
             // (CraftPlayer)player).getHandle(), 0,
             // block.getLocation().getBlockX(), block.getLocation().getBlockY(), block.getLocation().getBlockZ());
 
-            PacketContainer entitymeta = plugin.getProtocolManager().createPacket(40);
+            PacketContainer entitymeta = plugin.hasProtocolLib()..createPacket(40);
             entitymeta.getSpecificModifier(int.class).write(0, player.getEntityId());
             WrappedDataWatcher watcher = new WrappedDataWatcher();
             watcher.setObject(0, (byte) 4);
             entitymeta.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
             // Packet40EntityMetadata packet = new Packet40EntityMetadata(player.getEntityId(),
             // new ChairWatcher((byte) 4), false);
-            for (Player play : plugin.getServer().getOnlinePlayers()) {
+            for (Player play : plugin.g().getOnlinePlayers()) {
                 if (play.getWorld().equals(player.getPlayer().getWorld())) {
                     try {
                         plugin.getProtocolManager().sendServerPacket(play, entitymeta);
@@ -108,7 +108,7 @@ public class Chair implements Listener {
         return !disabled && chairs.containsValue(player);
     }
 
-    private MechanismsPlugin plugin;
+    private CraftBookPlugin plugin = CraftBookPlugin.inst();
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {

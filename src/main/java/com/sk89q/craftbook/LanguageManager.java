@@ -1,6 +1,6 @@
 package com.sk89q.craftbook;
 
-import com.sk89q.craftbook.bukkit.BaseBukkitPlugin;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.RegexUtil;
 import net.minecraft.server.v1_4_6.LocaleLanguage;
 import org.bukkit.ChatColor;
@@ -22,19 +22,18 @@ import java.util.logging.Level;
  */
 public class LanguageManager {
 
-    final BaseBukkitPlugin plugin;
+    final CraftBookPlugin plugin = CraftBookPlugin.inst();
 
     HashMap<String, HashMap<String, String>> languageMap = new HashMap<String, HashMap<String, String>>();
 
-    public LanguageManager(BaseBukkitPlugin plugin) {
+    public LanguageManager() {
 
-        this.plugin = plugin;
         checkForLanguages();
     }
 
     public void checkForLanguages() {
 
-        List<String> languages = CraftBookPlugin.getInstance().getLocalConfiguration().languages;
+        List<String> languages = plugin.getConfiguration().languages;
         for (String language : languages) {
             language = language.trim();
             HashMap<String, String> languageData = new HashMap<String, String>();
@@ -62,8 +61,7 @@ public class LanguageManager {
     @Deprecated
     public String getString(String message) {
 
-        HashMap<String, String> languageData = languageMap.get(CraftBookPlugin.getInstance().getLocalConfiguration()
-                .language);
+        HashMap<String, String> languageData = languageMap.get(plugin.getConfiguration().language);
         if (languageData == null) return "Missing Language File!";
         String translated = languageData.get(ChatColor.stripColor(message));
         if (translated == null) return message;
@@ -76,7 +74,7 @@ public class LanguageManager {
         if (languageData == null) return getString(message);
         String translated = languageData.get(ChatColor.stripColor(message));
         if (translated == null) {
-            languageData = languageMap.get(CraftBookPlugin.getInstance().getLocalConfiguration().language);
+            languageData = languageMap.get(plugin.getConfiguration().language);
             translated = languageData.get(ChatColor.stripColor(message));
             if (translated == null) return message;
             else return translated;
@@ -91,7 +89,7 @@ public class LanguageManager {
             d.setAccessible(true);
             return (String) d.get(((CraftPlayer) p).getHandle().getLocale());
         } catch (Throwable e) {
-            return CraftBookPlugin.getInstance().getLocalConfiguration().language;
+            return plugin.getConfiguration().language;
         }
     }
 
