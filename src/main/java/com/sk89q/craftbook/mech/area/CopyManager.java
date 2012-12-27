@@ -16,7 +16,6 @@ package com.sk89q.craftbook.mech.area;
  * see <http://www.gnu.org/licenses/>.
  */
 
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.craftbook.util.HistoryHashMap;
 import com.sk89q.worldedit.data.DataException;
 import org.bukkit.World;

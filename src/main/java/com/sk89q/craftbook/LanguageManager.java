@@ -1,7 +1,6 @@
 package com.sk89q.craftbook;
 
 import com.sk89q.craftbook.bukkit.BaseBukkitPlugin;
-import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.RegexUtil;
 import net.minecraft.server.v1_4_6.LocaleLanguage;
 import org.bukkit.ChatColor;

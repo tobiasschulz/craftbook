@@ -1,6 +1,5 @@
 package com.sk89q.craftbook.bukkit.commands;
 
-import com.sk89q.craftbook.bukkit.VehiclesPlugin;
 import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandPermissions;

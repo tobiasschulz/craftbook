@@ -1,7 +1,6 @@
 package com.sk89q.craftbook.mech;
 
 import com.sk89q.craftbook.LocalPlayer;
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import org.bukkit.Art;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;

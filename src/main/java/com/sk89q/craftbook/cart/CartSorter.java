@@ -1,6 +1,5 @@
 package com.sk89q.craftbook.cart;
 
-import com.sk89q.craftbook.bukkit.VehiclesPlugin;
 import com.sk89q.craftbook.util.RegexUtil;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.blocks.BlockID;

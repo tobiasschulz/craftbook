@@ -1,6 +1,5 @@
 package com.sk89q.craftbook.circuits.jinglenote;
 
-import com.sk89q.craftbook.bukkit.CircuitsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 

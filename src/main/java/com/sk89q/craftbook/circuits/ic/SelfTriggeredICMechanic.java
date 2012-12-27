@@ -17,7 +17,6 @@
 package com.sk89q.craftbook.circuits.ic;
 
 import com.sk89q.craftbook.SelfTriggeringMechanic;
-import com.sk89q.craftbook.bukkit.CircuitsPlugin;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;

@@ -17,7 +17,6 @@
 package com.sk89q.craftbook.mech;
 
 import com.sk89q.craftbook.*;
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.craftbook.util.RegexUtil;
 import com.sk89q.worldedit.BlockWorldVector;

@@ -20,7 +20,6 @@ import com.sk89q.craftbook.AbstractMechanicFactory;
 import com.sk89q.craftbook.ChangedSign;
 import com.sk89q.craftbook.InvalidMechanismException;
 import com.sk89q.craftbook.LocalPlayer;
-import com.sk89q.craftbook.bukkit.CircuitsPlugin;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.craftbook.util.RegexUtil;
 import com.sk89q.worldedit.BlockWorldVector;

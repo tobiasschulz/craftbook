@@ -20,7 +20,6 @@ import com.sk89q.craftbook.AbstractMechanic;
 import com.sk89q.craftbook.AbstractMechanicFactory;
 import com.sk89q.craftbook.LocalPlayer;
 import com.sk89q.craftbook.bukkit.BaseBukkitPlugin;
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;
 import org.bukkit.event.player.PlayerInteractEvent;

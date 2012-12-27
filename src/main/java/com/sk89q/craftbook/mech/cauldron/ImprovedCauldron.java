@@ -5,7 +5,6 @@ import com.sk89q.craftbook.AbstractMechanicFactory;
 import com.sk89q.craftbook.InvalidMechanismException;
 import com.sk89q.craftbook.LocalPlayer;
 import com.sk89q.craftbook.bukkit.BaseBukkitPlugin;
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.bukkit.BukkitUtil;

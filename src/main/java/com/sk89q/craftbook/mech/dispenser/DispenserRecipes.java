@@ -1,6 +1,5 @@
 package com.sk89q.craftbook.mech.dispenser;
 
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.craftbook.util.ItemUtil;
 import org.bukkit.block.Dispenser;
 import org.bukkit.event.EventHandler;

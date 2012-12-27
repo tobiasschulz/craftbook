@@ -16,7 +16,6 @@
 
 package com.sk89q.craftbook.circuits.ic;
 
-import com.sk89q.craftbook.bukkit.CircuitsPlugin;
 import com.sk89q.craftbook.util.RegexUtil;
 import com.sk89q.worldedit.BlockWorldVector;
 

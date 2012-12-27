@@ -1,6 +1,5 @@
 package com.sk89q.craftbook.mech.ai;
 
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import org.bukkit.entity.Entity;
 
 public class BaseAIMechanic {

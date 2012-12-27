@@ -1,6 +1,5 @@
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.craftbook.util.GeneralUtil;
 import com.sk89q.craftbook.util.RegexUtil;
 import org.bukkit.Material;
@@ -174,10 +173,10 @@ public class CustomCrafting implements Listener {
                     String[] items = RegexUtil.COMMA_PATTERN.split(contents);
                     r.shape(getShapeData(RegexUtil.COLON_PATTERN.split(items[0])[0]) + getShapeData(RegexUtil
                             .COLON_PATTERN.split
-                            (items[1])[0]),
+                                    (items[1])[0]),
                             getShapeData(RegexUtil.COLON_PATTERN.split(items[2])[0]) + getShapeData(RegexUtil
                                     .COLON_PATTERN.split
-                                    (items[3])[0]));
+                                            (items[3])[0]));
                     plugin.getLogger().severe(Arrays.toString(r.getShape()));
                     for (String item : items) {
                         String[] itemSplit = RegexUtil.COLON_PATTERN.split(item);
@@ -212,16 +211,16 @@ public class CustomCrafting implements Listener {
                     String[] items = RegexUtil.COMMA_PATTERN.split(contents);
                     r.shape(getShapeData(RegexUtil.COLON_PATTERN.split(items[0])[0]) + getShapeData(RegexUtil
                             .COLON_PATTERN.split
-                            (items[1])[0])
+                                    (items[1])[0])
                             + getShapeData(RegexUtil.COLON_PATTERN.split(items[2])[0]),
                             getShapeData(RegexUtil.COLON_PATTERN.split
-                            (items[3])[0])
-                            + getShapeData(RegexUtil.COLON_PATTERN.split(items[4])[0]) + getShapeData(RegexUtil
+                                    (items[3])[0])
+                                    + getShapeData(RegexUtil.COLON_PATTERN.split(items[4])[0]) + getShapeData(RegexUtil
                                     .COLON_PATTERN.split
-                            (items[5])[0]),
+                                            (items[5])[0]),
                             getShapeData(RegexUtil.COLON_PATTERN.split(items[6])[0]) + getShapeData(RegexUtil
                                     .COLON_PATTERN.split
-                                    (items[7])[0])
+                                            (items[7])[0])
                                     + getShapeData(RegexUtil.COLON_PATTERN.split(items[8])[0]));
                     for (String item : items) {
                         String[] itemSplit = RegexUtil.COLON_PATTERN.split(item);

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.sk89q.craftbook.ChangedSign;
-import com.sk89q.craftbook.bukkit.CircuitsPlugin;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.craftbook.circuits.ic.*;
 import com.sk89q.craftbook.util.GeneralUtil;
