@@ -1,11 +1,7 @@
 package com.sk89q.craftbook.circuits.gates.world.items;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.bukkit.CircuitCore;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.craftbook.circuits.ic.*;
 import com.sk89q.craftbook.util.GeneralUtil;
@@ -20,27 +16,13 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.material.PistonBaseMaterial;
 
-import com.sk89q.craftbook.ChangedSign;
-import com.sk89q.craftbook.bukkit.BukkitUtil;
-import com.sk89q.craftbook.bukkit.CircuitsPlugin;
-import com.sk89q.craftbook.ic.AbstractIC;
-import com.sk89q.craftbook.ic.AbstractICFactory;
-import com.sk89q.craftbook.ic.ChipState;
-import com.sk89q.craftbook.ic.IC;
-import com.sk89q.craftbook.ic.ICFactory;
-import com.sk89q.craftbook.ic.PipeInputIC;
-import com.sk89q.craftbook.util.GeneralUtil;
-import com.sk89q.craftbook.util.ItemUtil;
-import com.sk89q.craftbook.util.SignUtil;
-import com.sk89q.worldedit.BlockWorldVector;
-import com.sk89q.worldedit.blocks.BlockID;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class AutomaticCrafter extends AbstractIC implements PipeInputIC {
 
@@ -118,7 +100,7 @@ public class AutomaticCrafter extends AbstractIC implements PipeInputIC {
 
         boolean pipes = false;
 
-        if (CircuitsPlugin.getInst().pipeFactory != null) {
+        if (((CircuitCore) CircuitCore.inst()).getPipeFactory() != null) {
             Block b = disp.getBlock().getRelative(((org.bukkit.material.Dispenser) disp.getData()).getFacing());
             if (b.getTypeId() == BlockID.PISTON_STICKY_BASE) {
 
@@ -126,8 +108,9 @@ public class AutomaticCrafter extends AbstractIC implements PipeInputIC {
                 if (p.getFacing() == ((org.bukkit.material.Dispenser) disp.getData()).getFacing().getOppositeFace()) {
                     List<ItemStack> items = new ArrayList<ItemStack>();
                     items.add(recipe.getResult());
-                    if (CircuitsPlugin.getInst().pipeFactory != null)
-                        if (CircuitsPlugin.getInst().pipeFactory.detect(BukkitUtil.toWorldVector(b), items) != null) {
+                    if (((CircuitCore) CircuitCore.inst()).getPipeFactory() != null)
+                        if (((CircuitCore) CircuitCore.inst()).getPipeFactory()
+                                .detect(BukkitUtil.toWorldVector(b), items) != null) {
                             pipes = true;
                         }
                 }
@@ -145,42 +128,42 @@ public class AutomaticCrafter extends AbstractIC implements PipeInputIC {
     public boolean collect(Dispenser disp) {
 
         outer:
-            for (Entity en : BukkitUtil.toSign(getSign()).getChunk().getEntities()) {
-                if (!(en instanceof Item)) {
-                    continue;
-                }
-                Item item = (Item) en;
-                if (!ItemUtil.isStackValid(item.getItemStack()) || item.isDead() || !item.isValid()) {
-                    continue;
-                }
-                Location loc = item.getLocation();
-                int ix = loc.getBlockX();
-                int iy = loc.getBlockY();
-                int iz = loc.getBlockZ();
-                boolean delete = true;
-                if (ix == getSign().getX() && iy == getSign().getY() && iz == getSign().getZ()) {
-                    int newAmount = item.getItemStack().getAmount();
-                    for (int i = 0; i < item.getItemStack().getAmount(); i++) {
-                        ItemStack it = ItemUtil.getSmallestStackOfType(disp.getInventory().getContents(),
-                                item.getItemStack());
-                        if (it == null) continue outer;
-                        if (it.getAmount() < 64) {
-                            it.setAmount(it.getAmount() + 1);
-                            newAmount -= 1;
-                        } else if (newAmount > 0) {
-                            delete = false;
-                            break;
-                        }
-                    }
-
-                    item.getItemStack().setAmount(newAmount);
-
-                    if (newAmount > 0) delete = false;
-
-                    if (delete) item.remove();
-                }
+        for (Entity en : BukkitUtil.toSign(getSign()).getChunk().getEntities()) {
+            if (!(en instanceof Item)) {
+                continue;
             }
-    return false;
+            Item item = (Item) en;
+            if (!ItemUtil.isStackValid(item.getItemStack()) || item.isDead() || !item.isValid()) {
+                continue;
+            }
+            Location loc = item.getLocation();
+            int ix = loc.getBlockX();
+            int iy = loc.getBlockY();
+            int iz = loc.getBlockZ();
+            boolean delete = true;
+            if (ix == getSign().getX() && iy == getSign().getY() && iz == getSign().getZ()) {
+                int newAmount = item.getItemStack().getAmount();
+                for (int i = 0; i < item.getItemStack().getAmount(); i++) {
+                    ItemStack it = ItemUtil.getSmallestStackOfType(disp.getInventory().getContents(),
+                            item.getItemStack());
+                    if (it == null) continue outer;
+                    if (it.getAmount() < 64) {
+                        it.setAmount(it.getAmount() + 1);
+                        newAmount -= 1;
+                    } else if (newAmount > 0) {
+                        delete = false;
+                        break;
+                    }
+                }
+
+                item.getItemStack().setAmount(newAmount);
+
+                if (newAmount > 0) delete = false;
+
+                if (delete) item.remove();
+            }
+        }
+        return false;
     }
 
     /**
