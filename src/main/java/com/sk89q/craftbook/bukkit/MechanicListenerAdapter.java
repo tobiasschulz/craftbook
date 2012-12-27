@@ -36,7 +36,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.material.Diode;
-import org.bukkit.plugin.PluginManager;
 
 /**
  * This adapter hooks a mechanic manager up to Bukkit.
@@ -46,18 +45,10 @@ import org.bukkit.plugin.PluginManager;
 public class MechanicListenerAdapter {
 
     /**
-     * Holds the plugin that events are registered through.
-     */
-    protected final BaseBukkitPlugin plugin;
-
-    /**
      * Constructs the adapter.
-     *
-     * @param plugin
      */
-    public MechanicListenerAdapter(BaseBukkitPlugin plugin) {
+    public MechanicListenerAdapter() {
 
-        this.plugin = plugin;
     }
 
     /**
@@ -67,14 +58,9 @@ public class MechanicListenerAdapter {
      */
     public void register(MechanicManager manager) {
 
-        PluginManager pluginManager = plugin.getServer().getPluginManager();
-        Listener playerListener = new MechanicPlayerListener(manager, plugin);
-        Listener blockListener = new MechanicBlockListener(manager, plugin);
-        Listener worldListener = new MechanicWorldListener(manager, plugin);
-
-        pluginManager.registerEvents(playerListener, plugin);
-        pluginManager.registerEvents(blockListener, plugin);
-        pluginManager.registerEvents(worldListener, plugin);
+        CraftBookPlugin.registerEvents(new MechanicPlayerListener(manager));
+        CraftBookPlugin.registerEvents(new MechanicBlockListener(manager));
+        CraftBookPlugin.registerEvents(new MechanicWorldListener(manager));
     }
 
     /**
@@ -85,18 +71,15 @@ public class MechanicListenerAdapter {
     protected static class MechanicPlayerListener implements Listener {
 
         protected final MechanicManager manager;
-        protected final BaseBukkitPlugin plugin;
 
         /**
          * Construct the listener.
          *
          * @param manager
-         * @param plugin
          */
-        public MechanicPlayerListener(MechanicManager manager, BaseBukkitPlugin plugin) {
+        public MechanicPlayerListener(MechanicManager manager) {
 
             this.manager = manager;
-            this.plugin = plugin;
         }
 
         @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -120,18 +103,15 @@ public class MechanicListenerAdapter {
     protected static class MechanicBlockListener implements Listener {
 
         protected final MechanicManager manager;
-        protected final BaseBukkitPlugin plugin;
 
         /**
          * Construct the listener.
          *
          * @param manager
-         * @param plugin
          */
-        public MechanicBlockListener(MechanicManager manager, BaseBukkitPlugin plugin) {
+        public MechanicBlockListener(MechanicManager manager) {
 
             this.manager = manager;
-            this.plugin = plugin;
         }
 
         // @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -183,7 +163,7 @@ public class MechanicListenerAdapter {
 
             if (type == BlockID.REDSTONE_WIRE) {
 
-                if (CraftBookPlugin.getInstance().getLocalConfiguration().indirectRedstone) {
+                if (CraftBookPlugin.inst().getConfiguration().indirectRedstone) {
 
                     // power all blocks around the redstone wire on the same y level
                     // north/south
@@ -265,7 +245,7 @@ public class MechanicListenerAdapter {
         @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
         public void onPhysicsUpdate(BlockPhysicsEvent event) {
 
-            if (!CraftBookPlugin.getInstance().getLocalConfiguration().experimentalRepeaters) return;
+            if (!CraftBookPlugin.inst().getConfiguration().experimentalRepeaters) return;
             int type = event.getChangedTypeId();
             if (type == BlockID.REDSTONE_REPEATER_OFF || type == BlockID.REDSTONE_REPEATER_ON) {
 
@@ -320,17 +300,15 @@ public class MechanicListenerAdapter {
     protected class MechanicWorldListener implements Listener {
 
         protected final MechanicManager manager;
-        protected final BaseBukkitPlugin plugin;
 
         /**
          * Construct the listener.
          *
          * @param manager
          */
-        public MechanicWorldListener(MechanicManager manager, BaseBukkitPlugin plugin) {
+        public MechanicWorldListener(MechanicManager manager) {
 
             this.manager = manager;
-            this.plugin = plugin;
         }
 
         /**
@@ -339,7 +317,7 @@ public class MechanicListenerAdapter {
         @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
         public void onChunkLoad(final ChunkLoadEvent event) {
 
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+            CraftBookPlugin.server().getScheduler().scheduleSyncDelayedTask(CraftBookPlugin.inst(), new Runnable() {
 
                 @Override
                 public void run() {

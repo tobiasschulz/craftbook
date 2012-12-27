@@ -38,11 +38,8 @@ public class JackOLantern extends PersistentMechanic {
 
     public static class Factory extends AbstractMechanicFactory<JackOLantern> {
 
-        CircuitsPlugin plugin;
+        public Factory() {
 
-        public Factory(CircuitsPlugin plugin) {
-
-            this.plugin = plugin;
         }
 
         @Override
@@ -50,13 +47,12 @@ public class JackOLantern extends PersistentMechanic {
 
             int type = BukkitUtil.toWorld(pt).getBlockTypeIdAt(BukkitUtil.toLocation(pt));
 
-            if (type == BlockID.PUMPKIN || type == BlockID.JACKOLANTERN) return new JackOLantern(plugin, pt);
+            if (type == BlockID.PUMPKIN || type == BlockID.JACKOLANTERN) return new JackOLantern(pt);
 
             return null;
         }
     }
 
-    CircuitsPlugin plugin;
     BlockWorldVector pt;
 
     /**
@@ -64,10 +60,9 @@ public class JackOLantern extends PersistentMechanic {
      *
      * @param pt
      */
-    private JackOLantern(CircuitsPlugin plugin, BlockWorldVector pt) {
+    private JackOLantern(BlockWorldVector pt) {
 
         super();
-        this.plugin = plugin;
         this.pt = pt;
     }
 

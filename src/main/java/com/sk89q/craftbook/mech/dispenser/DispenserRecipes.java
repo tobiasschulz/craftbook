@@ -1,5 +1,6 @@
 package com.sk89q.craftbook.mech.dispenser;
 
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.ItemUtil;
 import org.bukkit.block.Dispenser;
 import org.bukkit.event.EventHandler;
@@ -16,13 +17,12 @@ import java.util.ArrayList;
  */
 public class DispenserRecipes implements Listener {
 
-    private final MechanismsPlugin plugin;
+    private final CraftBookPlugin plugin = CraftBookPlugin.inst();
 
     private final ArrayList<Recipe> recipes = new ArrayList<Recipe>();
 
-    public DispenserRecipes(MechanismsPlugin plugin) {
+    public DispenserRecipes() {
 
-        this.plugin = plugin;
         addRecipe(new XPShooter());
         addRecipe(new SnowShooter());
         addRecipe(new FireArrows());
@@ -33,7 +33,7 @@ public class DispenserRecipes implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent event) {
 
-        if (plugin.getLocalConfiguration().dispenserSettings.enable) {
+        if (plugin.getConfiguration().customDispensingEnabled) {
             if (!(event.getBlock().getState() instanceof Dispenser)) return; // Heh? Isn't this just for dispensers?
             Dispenser dis = (Dispenser) event.getBlock().getState();
             if (dispenseNew(dis, event.getItem(), event.getVelocity(), event)) {

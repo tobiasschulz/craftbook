@@ -19,6 +19,7 @@ package com.sk89q.craftbook.mech;
 import com.sk89q.craftbook.AbstractMechanic;
 import com.sk89q.craftbook.AbstractMechanicFactory;
 import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.blocks.BlockType;
@@ -32,23 +33,22 @@ import org.bukkit.event.player.PlayerInteractEvent;
  */
 public class Ammeter extends AbstractMechanic {
 
-    protected final MechanismsPlugin plugin;
+    protected final CraftBookPlugin plugin = CraftBookPlugin.inst();
 
-    public Ammeter(MechanismsPlugin plugin) {
+    public Ammeter() {
 
         super();
-        this.plugin = plugin;
     }
 
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
 
         if (!player.hasPermission("craftbook.mech.ammeter.use")) return;
 
         Block block = event.getClickedBlock();
-        if (event.getPlayer().getItemInHand().getTypeId() == plugin.getLocalConfiguration().ammeterSettings.id
+        if (event.getPlayer().getItemInHand().getTypeId() == plugin.getConfiguration().ammeterItem
                 && (BlockType.canTransferRedstone(block.getTypeId()) || BlockType.isRedstoneSource(block.getTypeId())
         )) {
             int data = getSpecialData(block);
@@ -120,11 +120,9 @@ public class Ammeter extends AbstractMechanic {
 
     public static class Factory extends AbstractMechanicFactory<Ammeter> {
 
-        protected final MechanismsPlugin plugin;
 
-        public Factory(MechanismsPlugin plugin) {
+        public Factory() {
 
-            this.plugin = plugin;
         }
 
         @Override
@@ -132,7 +130,7 @@ public class Ammeter extends AbstractMechanic {
 
             Block block = BukkitUtil.toWorld(pt).getBlockAt(BukkitUtil.toLocation(pt));
             if (BlockType.canTransferRedstone(block.getTypeId()) || BlockType.isRedstoneSource(block.getTypeId()))
-                return new Ammeter(plugin);
+                return new Ammeter();
 
             return null;
         }

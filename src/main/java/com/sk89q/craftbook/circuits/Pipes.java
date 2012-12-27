@@ -3,6 +3,8 @@ package com.sk89q.craftbook.circuits;
 import com.sk89q.craftbook.AbstractMechanic;
 import com.sk89q.craftbook.AbstractMechanicFactory;
 import com.sk89q.craftbook.SourcedBlockRedstoneEvent;
+import com.sk89q.craftbook.bukkit.BukkitConfiguration;
+import com.sk89q.craftbook.bukkit.CircuitCore;
 import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.circuits.ic.ICMechanic;
 import com.sk89q.craftbook.circuits.ic.PipeInputIC;
@@ -73,44 +75,37 @@ public class Pipes extends AbstractMechanic {
 
     public void searchNearbyPipes(Block block) {
 
+        BukkitConfiguration config = CraftBookPlugin.inst().getConfiguration();
+
         for (int x = -1; x < 2; x++) {
             for (int y = -1; y < 2; y++) {
                 for (int z = -1; z < 2; z++) {
 
-                    if (!plugin.getLocalConfiguration().pipeSettings.diagonals) {
+                    if (!config.pipesDiagonal) {
                         if (x != 0 && y != 0) continue;
                         if (x != 0 && z != 0) continue;
                         if (y != 0 && z != 0) continue;
                     } else {
 
                         if (Math.abs(x) == Math.abs(y) && Math.abs(x) == Math.abs(z) && Math.abs(y) == Math.abs(z)) {
-                            if (block.getRelative(x, 0, 0).getTypeId() == plugin.getLocalConfiguration().pipeSettings
-                                    .insulator
-                                    && block.getRelative(0, y, 0).getTypeId() == plugin.getLocalConfiguration()
-                                    .pipeSettings.insulator
-                                    && block.getRelative(0, 0, z).getTypeId() == plugin.getLocalConfiguration()
-                                    .pipeSettings.insulator) {
+                            if (block.getRelative(x, 0, 0).getTypeId() == config.pipeInsulator
+                                    && block.getRelative(0, y, 0).getTypeId() == config.pipeInsulator
+                                    && block.getRelative(0, 0, z).getTypeId() == config.pipeInsulator) {
                                 continue;
                             }
                         } else if (Math.abs(x) == Math.abs(y)) {
-                            if (block.getRelative(x, 0, 0).getTypeId() == plugin.getLocalConfiguration().pipeSettings
-                                    .insulator
-                                    && block.getRelative(0, y, 0).getTypeId() == plugin.getLocalConfiguration()
-                                    .pipeSettings.insulator) {
+                            if (block.getRelative(x, 0, 0).getTypeId() == config.pipeInsulator
+                                    && block.getRelative(0, y, 0).getTypeId() == config.pipeInsulator) {
                                 continue;
                             }
                         } else if (Math.abs(x) == Math.abs(z)) {
-                            if (block.getRelative(x, 0, 0).getTypeId() == plugin.getLocalConfiguration().pipeSettings
-                                    .insulator
-                                    && block.getRelative(0, 0, z).getTypeId() == plugin.getLocalConfiguration()
-                                    .pipeSettings.insulator) {
+                            if (block.getRelative(x, 0, 0).getTypeId() == config.pipeInsulator
+                                    && block.getRelative(0, 0, z).getTypeId() == config.pipeInsulator) {
                                 continue;
                             }
                         } else if (Math.abs(y) == Math.abs(z)) {
-                            if (block.getRelative(0, y, 0).getTypeId() == plugin.getLocalConfiguration().pipeSettings
-                                    .insulator
-                                    && block.getRelative(0, 0, z).getTypeId() == plugin.getLocalConfiguration()
-                                    .pipeSettings.insulator) {
+                            if (block.getRelative(0, y, 0).getTypeId() == config.pipeInsulator
+                                    && block.getRelative(0, 0, z).getTypeId() == config.pipeInsulator) {
                                 continue;
                             }
                         }
@@ -147,11 +142,11 @@ public class Pipes extends AbstractMechanic {
                             if (!items.isEmpty()) searchNearbyPipes(block);
                         } else if (fac.getTypeId() == BlockID.WALL_SIGN) {
 
-                            if (CircuitsPlugin.getInst().icFactory == null) continue;
+                            CircuitCore circuitCore = (CircuitCore) CircuitCore.inst();
+                            if (circuitCore.getICFactory() == null) continue;
 
                             try {
-                                ICMechanic icmech = CircuitsPlugin.getInst().icFactory.detect(BukkitUtil
-                                        .toWorldVector(fac));
+                                ICMechanic icmech = circuitCore.getICFactory().detect(BukkitUtil.toWorldVector(fac));
                                 if (icmech == null) continue;
                                 if (!(icmech.getIC() instanceof PipeInputIC)) continue;
                                 List<ItemStack> newItems = ((PipeInputIC) icmech.getIC()).onPipeTransfer(BukkitUtil

@@ -1,6 +1,7 @@
 package com.sk89q.craftbook.mech;
 
 import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import org.bukkit.Art;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
@@ -18,13 +19,12 @@ import java.util.HashMap;
  */
 public class PaintingSwitch implements Listener {
 
-    MechanismsPlugin plugin;
+    CraftBookPlugin plugin = CraftBookPlugin.inst();
     HashMap<Painting, String> paintings = new HashMap<Painting, String>();
     HashMap<String, Painting> players = new HashMap<String, Painting>();
 
-    public PaintingSwitch(MechanismsPlugin plugin) {
+    public PaintingSwitch() {
 
-        this.plugin = plugin;
     }
 
     public boolean isBeingEdited(Painting paint) {
@@ -41,10 +41,10 @@ public class PaintingSwitch implements Listener {
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
 
         if (event.getRightClicked() instanceof Painting) {
-            LocalPlayer player = plugin.wrap(event.getPlayer());
-            if (!plugin.getLocalConfiguration().paintingSettings.enabled) return;
+            LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
+            if (!plugin.getConfiguration().paintingsEnabled) return;
             Painting paint = (Painting) event.getRightClicked();
-            if (!plugin.canUseInArea(paint.getLocation(), event.getPlayer())) return;
+            if (!plugin.ca(paint.getLocation(), event.getPlayer())) return;
             if (player.hasPermission("craftbook.mech.paintingswitch.use")) {
                 if (!isBeingEdited(paint)) {
                     paintings.put(paint, player.getName());
@@ -67,8 +67,8 @@ public class PaintingSwitch implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHeldItemChange(PlayerItemHeldEvent event) {
 
-        if (!plugin.getLocalConfiguration().paintingSettings.enabled) return;
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        if (!plugin.getConfiguration().paintingsEnabled) return;
+        LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
         if (!player.hasPermission("craftbook.mech.paintingswitch.use")) return;
         if (players.get(player.getName()) == null || players.get(player.getName()).isDead() || !players.get(player
                 .getName()).isValid())

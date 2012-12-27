@@ -16,6 +16,7 @@ package com.sk89q.craftbook.mech.area;
  * see <http://www.gnu.org/licenses/>.
  */
 
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.HistoryHashMap;
 import com.sk89q.worldedit.data.DataException;
 import org.bukkit.World;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
  */
 public class CopyManager {
 
+    private static CraftBookPlugin plugin = CraftBookPlugin.inst();
     private static final CopyManager INSTANCE = new CopyManager();
     private static final Pattern NAME_PATTERN = Pattern.compile("^[a-z0-9_]+$", Pattern.CASE_INSENSITIVE);
 
@@ -86,14 +88,13 @@ public class CopyManager {
     /**
      * Checks if the area and namespace exists.
      *
-     * @param plugin
      * @param namespace to check
      * @param area      to check
      */
-    public static boolean isExistingArea(MechanismsPlugin plugin, String namespace, String area) {
+    public static boolean isExistingArea(File dataFolder, String namespace, String area) {
 
-        area = area.replace("-", "") + getFileSuffix(plugin);
-        File file = new File(plugin.getDataFolder(), "areas/" + namespace);
+        area = area.replace("-", "") + getFileSuffix();
+        File file = new File(dataFolder, "areas/" + namespace);
         return new File(file, area).exists();
     }
 
@@ -112,7 +113,7 @@ public class CopyManager {
      * @throws MissingCuboidCopyException
      * @throws CuboidCopyException
      */
-    public CuboidCopy load(World world, String namespace, String id, MechanismsPlugin plugin) throws IOException,
+    public CuboidCopy load(World world, String namespace, String id) throws IOException,
             CuboidCopyException {
 
         id = id.toLowerCase();
@@ -131,7 +132,7 @@ public class CopyManager {
 
         if (copy == null) {
             File folder = new File(new File(plugin.getDataFolder(), "areas"), namespace);
-            copy = CuboidCopy.load(new File(folder, id + getFileSuffix(plugin)), world);
+            copy = CuboidCopy.load(new File(folder, id + getFileSuffix()), world);
             missing.remove(cacheKey);
             cache.put(cacheKey, copy);
             return copy;
@@ -148,8 +149,7 @@ public class CopyManager {
      *
      * @throws IOException
      */
-    public void save(World world, String namespace, String id, CuboidCopy copyFlat,
-                     MechanismsPlugin plugin) throws IOException, DataException {
+    public void save(World world, String namespace, String id, CuboidCopy copyFlat) throws IOException, DataException {
 
         HistoryHashMap<String, CuboidCopy> cache = getCache(world.getUID().toString());
 
@@ -163,7 +163,7 @@ public class CopyManager {
 
         String cacheKey = namespace + "/" + id;
 
-        copyFlat.save(new File(folder, id + getFileSuffix(plugin)));
+        copyFlat.save(new File(folder, id + getFileSuffix()));
         missing.remove(cacheKey);
         cache.put(cacheKey, copyFlat);
     }
@@ -176,9 +176,9 @@ public class CopyManager {
      *
      * @return -1 if the copy can be made, some other number for the count
      */
-    public int meetsQuota(World world, String namespace, String ignore, int quota, MechanismsPlugin plugin) {
+    public int meetsQuota(World world, String namespace, String ignore, int quota) {
 
-        String ignoreFilename = ignore + getFileSuffix(plugin);
+        String ignoreFilename = ignore + getFileSuffix();
 
         String[] files = new File(new File(plugin.getDataFolder(), "areas"), namespace).list();
 
@@ -221,8 +221,8 @@ public class CopyManager {
         }
     }
 
-    private static String getFileSuffix(MechanismsPlugin plugin) {
+    private static String getFileSuffix() {
 
-        return plugin.getLocalConfiguration().areaSettings.useSchematics ? ".schematic" : ".cbcopy";
+        return plugin.getConfiguration().areaUseSchematics ? ".schematic" : ".cbcopy";
     }
 }

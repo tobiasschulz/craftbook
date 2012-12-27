@@ -17,6 +17,7 @@
 package com.sk89q.craftbook.circuits.ic;
 
 import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.bukkit.CircuitCore;
 import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.RegexUtil;
 import org.bukkit.Server;
@@ -70,7 +71,7 @@ public abstract class AbstractIC implements IC {
     public void onRightClick(Player p) {
 
         if (p.isSneaking()) {
-            CraftBookPlugin.inst().generateICDocs(p, RegexUtil.RIGHT_BRACKET_PATTERN.split(RegexUtil
+            ((CircuitCore) CircuitCore.inst()).generateICDocs(p, RegexUtil.RIGHT_BRACKET_PATTERN.split(RegexUtil
                     .LEFT_BRACKET_PATTERN.split(getSign
                             ().getLine(1))[1])[0]);
         }

@@ -12,9 +12,9 @@ public class FireArrow extends AbstractArrow {
 
     ShapelessRecipe recipe;
 
-    public FireArrow(MechanismsPlugin plugin) {
+    public FireArrow() {
 
-        super(plugin, "Fire Arrow");
+        super("Fire Arrow");
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.sk89q.craftbook.mech.crafting;
 
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.GeneralUtil;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.FurnaceRecipe;
@@ -18,11 +19,10 @@ import java.util.Map.Entry;
 public class CustomCrafting {
 
     protected final RecipeManager recipes;
-    protected final MechanismsPlugin plugin;
+    protected final CraftBookPlugin plugin = CraftBookPlugin.inst();
 
-    public CustomCrafting(MechanismsPlugin plugin) {
+    public CustomCrafting() {
 
-        this.plugin = plugin;
         recipes = new RecipeManager(YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(),
                 "src/main/resources/crafting-recipes.yml")),
                 plugin.getDataFolder());

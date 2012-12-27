@@ -17,7 +17,6 @@ public class MinecartManager {
 
     public MinecartManager(VehiclesPlugin plugin) {
 
-        this.plugin = plugin;
         reloadConfiguration(plugin.getLocalConfiguration());
     }
 

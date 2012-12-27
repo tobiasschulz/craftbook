@@ -19,7 +19,7 @@ package com.sk89q.craftbook.mech;
 import com.sk89q.craftbook.AbstractMechanic;
 import com.sk89q.craftbook.AbstractMechanicFactory;
 import com.sk89q.craftbook.LocalPlayer;
-import com.sk89q.craftbook.bukkit.BaseBukkitPlugin;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -36,18 +36,16 @@ public class Bookcase extends AbstractMechanic {
     /**
      * Configuration.
      */
-    protected final MechanismsPlugin plugin;
+    protected final CraftBookPlugin plugin = CraftBookPlugin.inst();
 
     /**
      * Construct a bookcase for a location.
      *
      * @param pt
-     * @param plugin
      */
-    public Bookcase(BlockWorldVector pt, MechanismsPlugin plugin) {
+    public Bookcase(BlockWorldVector pt) {
 
         super();
-        this.plugin = plugin;
     }
 
     /**
@@ -83,13 +81,13 @@ public class Bookcase extends AbstractMechanic {
      */
     protected String getBookLine() throws IOException {
 
-        LineNumberReader lnr = new LineNumberReader(new FileReader(new File(plugin.getLocalConfiguration()
-                .dataFolder, "src/main/resources/books.txt")));
+        LineNumberReader lnr = new LineNumberReader(new FileReader(new File(plugin.getDataFolder(),
+                "src/main/resources/books.txt")));
         lnr.skip(Long.MAX_VALUE);
         int lines = lnr.getLineNumber();
         lnr.close();
-        int toRead = BaseBukkitPlugin.random.nextInt(lines);
-        BufferedReader br = new BufferedReader(new FileReader(new File(plugin.getLocalConfiguration().dataFolder,
+        int toRead = plugin.getRandom().nextInt(lines);
+        BufferedReader br = new BufferedReader(new FileReader(new File(plugin.getDataFolder(),
                 "src/main/resources/books.txt")));
         String line;
         int passes = 0;
@@ -111,27 +109,25 @@ public class Bookcase extends AbstractMechanic {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        if (!plugin.getLocalConfiguration().bookcaseSettings.enable) return;
+        if (!plugin.getConfiguration().bookcaseEnabled) return;
 
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
         if (player.getTypeInHand() == 0 || !player.isHoldingBlock()) {
-            read(player, plugin.getLocalConfiguration().bookcaseSettings.readLine);
+            read(player, plugin.getConfiguration().bookcaseReadLine);
         }
     }
 
     public static class Factory extends AbstractMechanicFactory<Bookcase> {
 
-        protected final MechanismsPlugin plugin;
 
-        public Factory(MechanismsPlugin plugin) {
+        public Factory() {
 
-            this.plugin = plugin;
         }
 
         @Override
         public Bookcase detect(BlockWorldVector pt) {
 
-            if (pt.getWorld().getBlockType(pt) == BlockID.BOOKCASE) return new Bookcase(pt, plugin);
+            if (pt.getWorld().getBlockType(pt) == BlockID.BOOKCASE) return new Bookcase(pt);
 
             return null;
         }

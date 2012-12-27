@@ -20,6 +20,7 @@ import com.sk89q.craftbook.AbstractMechanicFactory;
 import com.sk89q.craftbook.ChangedSign;
 import com.sk89q.craftbook.InvalidMechanismException;
 import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.craftbook.util.RegexUtil;
 import com.sk89q.worldedit.BlockWorldVector;
@@ -40,19 +41,12 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
     protected final ICManager manager;
 
     /**
-     * Holds the reference to the plugin.
-     */
-    protected final CircuitsPlugin plugin;
-
-    /**
      * Construct the object.
      *
-     * @param plugin
      * @param manager
      */
-    public ICMechanicFactory(CircuitsPlugin plugin, ICManager manager) {
+    public ICMechanicFactory(ICManager manager) {
 
-        this.plugin = plugin;
         this.manager = manager;
     }
 
@@ -116,9 +110,8 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
         }
 
         // okay, everything checked out. we can finally make it.
-        if (ic instanceof SelfTriggeredIC)
-            return new SelfTriggeredICMechanic(plugin, id, (SelfTriggeredIC) ic, family, pt);
-        else return new ICMechanic(plugin, id, ic, family, pt);
+        if (ic instanceof SelfTriggeredIC) return new SelfTriggeredICMechanic(id, (SelfTriggeredIC) ic, family, pt);
+        else return new ICMechanic(id, ic, family, pt);
     }
 
     /**
@@ -195,9 +188,9 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
             ICMechanic mechanic;
 
             if (ic instanceof SelfTriggeredIC) {
-                mechanic = new SelfTriggeredICMechanic(plugin, id, (SelfTriggeredIC) ic, family, pt);
+                mechanic = new SelfTriggeredICMechanic(id, (SelfTriggeredIC) ic, family, pt);
             } else {
-                mechanic = new ICMechanic(plugin, id, ic, family, pt);
+                mechanic = new ICMechanic(id, ic, family, pt);
             }
 
             if (!shortHand) {
@@ -207,7 +200,7 @@ public class ICMechanicFactory extends AbstractMechanicFactory<ICMechanic> {
             player.print("You've created " + registration.getId() + ": " + ic.getTitle() + ".");
 
             return mechanic;
-        } else if (plugin.getLocalConfiguration().icSettings.shorthand && sign.getLine(0).startsWith("=")) {
+        } else if (CraftBookPlugin.inst().getConfiguration().ICShortHandEnabled && sign.getLine(0).startsWith("=")) {
             String id = sign.getLine(0).substring(1);
 
             if (block.getTypeId() != BlockID.WALL_SIGN)

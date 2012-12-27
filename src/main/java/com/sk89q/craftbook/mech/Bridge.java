@@ -18,6 +18,7 @@ package com.sk89q.craftbook.mech;
 
 import com.sk89q.craftbook.*;
 import com.sk89q.craftbook.bukkit.BukkitPlayer;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.BlockVector;
@@ -41,12 +42,9 @@ public class Bridge extends AbstractMechanic {
 
     public static class Factory extends AbstractMechanicFactory<Bridge> {
 
-        public Factory(MechanismsPlugin plugin) {
+        public Factory() {
 
-            this.plugin = plugin;
         }
-
-        private final MechanismsPlugin plugin;
 
         /**
          * Explore around the trigger to find a Bridge; throw if things look funny.
@@ -67,7 +65,7 @@ public class Bridge extends AbstractMechanic {
 
             // okay, now we can start doing exploration of surrounding blocks
             // and if something goes wrong in here then we throw fits.
-            return new Bridge(block, plugin);
+            return new Bridge(block);
         }
 
         /**
@@ -119,7 +117,7 @@ public class Bridge extends AbstractMechanic {
      *
      * @throws InvalidMechanismException
      */
-    private Bridge(Block trigger, MechanismsPlugin plugin) throws InvalidMechanismException {
+    private Bridge(Block trigger) throws InvalidMechanismException {
 
         super();
 
@@ -127,8 +125,6 @@ public class Bridge extends AbstractMechanic {
         BlockFace dir = SignUtil.getFacing(trigger);
 
         this.trigger = trigger;
-        this.plugin = plugin;
-        settings = plugin.getLocalConfiguration().bridgeSettings;
 
         // Attempt to detect whether the bridge is above or below the sign,
         // first assuming that the bridge is above
@@ -224,7 +220,7 @@ public class Bridge extends AbstractMechanic {
                 (trigger)));
     }
 
-    private MechanismsPlugin plugin;
+    private CraftBookPlugin plugin = CraftBookPlugin.inst();
     private MechanismsConfiguration.BridgeSettings settings;
 
     /**
@@ -252,7 +248,7 @@ public class Bridge extends AbstractMechanic {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        if (!plugin.getLocalConfiguration().bridgeSettings.enable) return;
+        if (!plugin.getConfiguration().bridgeEnabled) return;
         if (!BukkitUtil.toWorldVector(event.getClickedBlock()).equals(BukkitUtil.toWorldVector(trigger)))
             return; // wth? our manager is insane
 
@@ -307,7 +303,7 @@ public class Bridge extends AbstractMechanic {
     @Override
     public void onBlockRedstoneChange(SourcedBlockRedstoneEvent event) {
 
-        if (!plugin.getLocalConfiguration().bridgeSettings.enableRedstone) return;
+        if (!plugin.getConfiguration().bridgeAllowRedstone) return;
         if (!BukkitUtil.toWorldVector(event.getBlock()).equals(BukkitUtil.toWorldVector(trigger))) return;
         if (event.getNewCurrent() == event.getOldCurrent()) return;
 
@@ -346,7 +342,7 @@ public class Bridge extends AbstractMechanic {
                 int oldType = b.getTypeId();
                 if (b.getTypeId() == getBridgeMaterial() || canPassThrough(b.getTypeId())) {
                     b.setTypeId(BlockID.AIR);
-                    if (plugin.getLocalConfiguration().mechSettings.stopDestruction) {
+                    if (plugin.getConfiguration().safeDistruction) {
                         ChangedSign s = BukkitUtil.toChangedSign(trigger);
                         if (oldType != 0) {
                             addBlocks(s, 1);
@@ -371,17 +367,19 @@ public class Bridge extends AbstractMechanic {
 
             for (BlockVector bv : toggle) {
                 Block b = trigger.getWorld().getBlockAt(bv.getBlockX(), bv.getBlockY(), bv.getBlockZ());
-                if (canPassThrough(b.getTypeId())) if (plugin.getLocalConfiguration().mechSettings.stopDestruction) {
-                    ChangedSign s = BukkitUtil.toChangedSign(trigger);
-                    if (hasEnoughBlocks(s)) {
-                        b.setTypeId(getBridgeMaterial());
-                        b.setData(getBridgeData());
-                        removeBlocks(s, 1);
-                    } else {
-                        if (player != null) {
-                            player.printError("Not enough blocks for mechanic to function!");
+                if (canPassThrough(b.getTypeId())) {
+                    if (plugin.getConfiguration().safeDistruction) {
+                        ChangedSign s = BukkitUtil.toChangedSign(trigger);
+                        if (hasEnoughBlocks(s)) {
+                            b.setTypeId(getBridgeMaterial());
+                            b.setData(getBridgeData());
+                            removeBlocks(s, 1);
+                        } else {
+                            if (player != null) {
+                                player.printError("Not enough blocks for mechanic to function!");
+                            }
+                            return;
                         }
-                        return;
                     }
                 } else {
                     b.setTypeId(getBridgeMaterial());
