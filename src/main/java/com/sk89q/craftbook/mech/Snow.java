@@ -2,7 +2,6 @@ package com.sk89q.craftbook.mech;
 
 import com.sk89q.craftbook.LocalPlayer;
 import com.sk89q.craftbook.bukkit.BaseBukkitPlugin;
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.worldedit.blocks.BlockID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

@@ -3,7 +3,7 @@ package com.sk89q.craftbook.circuits;
 import com.sk89q.craftbook.AbstractMechanic;
 import com.sk89q.craftbook.AbstractMechanicFactory;
 import com.sk89q.craftbook.SourcedBlockRedstoneEvent;
-import com.sk89q.craftbook.bukkit.CircuitsPlugin;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.circuits.ic.ICMechanic;
 import com.sk89q.craftbook.circuits.ic.PipeInputIC;
 import com.sk89q.craftbook.util.GeneralUtil;
@@ -23,13 +23,12 @@ import java.util.List;
 
 public class Pipes extends AbstractMechanic {
 
+    final CraftBookPlugin plugin = CraftBookPlugin.inst();
+
     public static class Factory extends AbstractMechanicFactory<Pipes> {
 
-        CircuitsPlugin plugin;
+        public Factory() {
 
-        public Factory(CircuitsPlugin plugin) {
-
-            this.plugin = plugin;
         }
 
         @Override
@@ -37,7 +36,7 @@ public class Pipes extends AbstractMechanic {
 
             int type = BukkitUtil.toWorld(pt).getBlockTypeIdAt(BukkitUtil.toLocation(pt));
 
-            if (type == BlockID.PISTON_STICKY_BASE || type == BlockID.PISTON_BASE) return new Pipes(plugin, pt);
+            if (type == BlockID.PISTON_STICKY_BASE || type == BlockID.PISTON_BASE) return new Pipes(pt);
 
             return null;
         }
@@ -46,29 +45,25 @@ public class Pipes extends AbstractMechanic {
 
             int type = BukkitUtil.toWorld(pt).getBlockTypeIdAt(BukkitUtil.toLocation(pt));
 
-            if (type == BlockID.PISTON_STICKY_BASE || type == BlockID.PISTON_BASE) return new Pipes(plugin, pt, items);
+            if (type == BlockID.PISTON_STICKY_BASE || type == BlockID.PISTON_BASE) return new Pipes(pt, items);
 
             return null;
         }
     }
-
-    CircuitsPlugin plugin;
 
     /**
      * Construct the mechanic for a location.
      *
      * @param pt
      */
-    private Pipes(CircuitsPlugin plugin, BlockWorldVector pt) {
+    private Pipes(BlockWorldVector pt) {
 
         super();
-        this.plugin = plugin;
     }
 
-    private Pipes(CircuitsPlugin plugin, BlockWorldVector pt, List<ItemStack> items) {
+    private Pipes(BlockWorldVector pt, List<ItemStack> items) {
 
         super();
-        this.plugin = plugin;
         this.items.addAll(items);
         startPipe(BukkitUtil.toBlock(pt));
     }

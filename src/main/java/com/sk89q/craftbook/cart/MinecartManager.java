@@ -2,7 +2,6 @@ package com.sk89q.craftbook.cart;
 
 import com.sk89q.craftbook.InvalidMechanismException;
 import com.sk89q.craftbook.VehiclesConfiguration;
-import com.sk89q.craftbook.bukkit.VehiclesPlugin;
 import com.sk89q.craftbook.util.ItemInfo;
 import org.bukkit.Location;
 import org.bukkit.block.Block;

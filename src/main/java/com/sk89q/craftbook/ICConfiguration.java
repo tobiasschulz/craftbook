@@ -1,6 +1,5 @@
 package com.sk89q.craftbook;
 
-import com.sk89q.craftbook.bukkit.CircuitsPlugin;
 import com.sk89q.craftbook.circuits.ic.RegisteredICFactory;
 import org.bukkit.configuration.file.FileConfiguration;
 

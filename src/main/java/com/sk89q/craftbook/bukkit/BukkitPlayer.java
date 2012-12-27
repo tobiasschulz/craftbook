@@ -28,7 +28,7 @@ import org.bukkit.entity.Player;
 
 public class BukkitPlayer implements LocalPlayer {
 
-    protected final BaseBukkitPlugin plugin;
+    protected final CraftBookPlugin plugin;
     protected final Player player;
 
     public Player getPlayer() {
@@ -36,7 +36,7 @@ public class BukkitPlayer implements LocalPlayer {
         return player;
     }
 
-    public BukkitPlayer(BaseBukkitPlugin plugin, Player player) {
+    public BukkitPlayer(CraftBookPlugin plugin, Player player) {
 
         this.plugin = plugin;
         this.player = player;

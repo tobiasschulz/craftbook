@@ -1,6 +1,5 @@
 package com.sk89q.craftbook.bukkit.commands;
 
-import com.sk89q.craftbook.bukkit.CircuitsPlugin;
 import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.NestedCommand;
@@ -98,7 +97,7 @@ public class CircuitCommands {
             player.sendMessage(ChatColor.BLUE + "  ");
             player.sendMessage(ChatColor.BLUE + "CraftBook ICs \"" + context.getString(0) + "\" (Page " +
                     (accessedPage +
-                    1) + " of " + pages + "):");
+                            1) + " of " + pages + "):");
 
             for (int i = accessedPage * 9; i < lines.length && i < (accessedPage + 1) * 9; i++) {
                 player.sendMessage(lines[i]);

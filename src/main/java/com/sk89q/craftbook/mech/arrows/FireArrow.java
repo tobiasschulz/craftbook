@@ -1,6 +1,5 @@
 package com.sk89q.craftbook.mech.arrows;
 
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.worldedit.blocks.ItemID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

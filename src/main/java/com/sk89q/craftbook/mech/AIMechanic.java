@@ -1,6 +1,5 @@
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.craftbook.mech.ai.*;
 import com.sk89q.craftbook.util.GeneralUtil;
 import org.bukkit.Bukkit;

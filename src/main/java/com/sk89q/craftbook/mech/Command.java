@@ -1,7 +1,6 @@
 package com.sk89q.craftbook.mech;
 
 import com.sk89q.craftbook.*;
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
 import org.bukkit.Bukkit;

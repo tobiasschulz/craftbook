@@ -1,7 +1,6 @@
 package com.sk89q.craftbook.circuits.gates.logic;
 
 import com.sk89q.craftbook.ChangedSign;
-import com.sk89q.craftbook.bukkit.CircuitsPlugin;
 import com.sk89q.craftbook.circuits.ic.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;

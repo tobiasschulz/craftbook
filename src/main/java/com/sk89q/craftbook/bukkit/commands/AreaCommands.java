@@ -2,7 +2,6 @@ package com.sk89q.craftbook.bukkit.commands;
 
 import com.sk89q.craftbook.LocalPlayer;
 import com.sk89q.craftbook.MechanismsConfiguration;
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.craftbook.mech.area.CopyManager;
 import com.sk89q.craftbook.mech.area.CuboidCopy;
 import com.sk89q.craftbook.mech.area.FlatCuboidCopy;

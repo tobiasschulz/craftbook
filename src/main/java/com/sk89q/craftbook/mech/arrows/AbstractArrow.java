@@ -1,6 +1,5 @@
 package com.sk89q.craftbook.mech.arrows;
 
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;

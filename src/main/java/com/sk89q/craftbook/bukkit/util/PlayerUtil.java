@@ -1,6 +1,5 @@
 package com.sk89q.craftbook.bukkit.util;
 
-import com.sk89q.craftbook.bukkit.CircuitsPlugin;
 import com.sk89q.minecraft.util.commands.CommandException;
 import org.bukkit.ChatColor;
 import org.bukkit.World;

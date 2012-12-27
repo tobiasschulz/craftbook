@@ -17,7 +17,6 @@
 package com.sk89q.craftbook.mech;
 
 import com.sk89q.craftbook.bukkit.BaseBukkitPlugin;
-import com.sk89q.craftbook.bukkit.MechanismsPlugin;
 import com.sk89q.craftbook.util.RegexUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
