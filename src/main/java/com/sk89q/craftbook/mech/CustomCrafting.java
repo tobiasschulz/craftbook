@@ -1,5 +1,6 @@
 package com.sk89q.craftbook.mech;
 
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.GeneralUtil;
 import com.sk89q.craftbook.util.RegexUtil;
 import org.bukkit.Material;
@@ -21,15 +22,15 @@ import java.util.regex.Pattern;
 @Deprecated
 public class CustomCrafting implements Listener {
 
+    // TODO Why is this here?
     private static final Pattern AT_LEFT_BRACKET_PATTERN = Pattern.compile("@[", Pattern.LITERAL);
     private static final Pattern DOLLAR_LEFT_BRACKET_PATTERN = Pattern.compile("$[", Pattern.LITERAL);
     private static final Pattern AMPERSAND_LEFT_BRACKET_PATTERN = Pattern.compile("&[", Pattern.LITERAL);
     private static final Pattern ASTERISK_LEFT_BRACKET_PATTERN = Pattern.compile("*[", Pattern.LITERAL);
-    final MechanismsPlugin plugin;
+    private CraftBookPlugin plugin = CraftBookPlugin.inst();
 
-    public CustomCrafting(MechanismsPlugin plugin) {
+    public CustomCrafting() {
 
-        this.plugin = plugin;
         addRecipes();
     }
 

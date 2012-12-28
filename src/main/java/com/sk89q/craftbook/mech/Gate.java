@@ -17,6 +17,7 @@
 package com.sk89q.craftbook.mech;
 
 import com.sk89q.craftbook.*;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.BlockWorldVector;
@@ -49,35 +50,29 @@ import java.util.Set;
  */
 public class Gate extends AbstractMechanic {
 
-    /**
-     * Plugin.
-     */
-    protected final MechanismsPlugin plugin;
+    private CraftBookPlugin plugin = CraftBookPlugin.inst();
 
     /**
      * Location of the gate.
      */
-    protected final BlockWorldVector pt;
+    private final BlockWorldVector pt;
 
     /**
      * Indicates a DGate.
      */
-    protected final boolean smallSearchSize;
-
-    protected Sign sign;
+    private final boolean smallSearchSize;
+    private Sign sign;
 
     /**
      * Construct a gate for a location.
      *
      * @param pt
-     * @param plugin
      * @param smallSearchSize
      */
-    public Gate(BlockWorldVector pt, MechanismsPlugin plugin, boolean smallSearchSize) {
+    public Gate(BlockWorldVector pt, boolean smallSearchSize) {
 
         super();
         this.pt = pt;
-        this.plugin = plugin;
         this.smallSearchSize = smallSearchSize;
 
         int id = BukkitUtil.toBlock(pt).getTypeId();
@@ -198,8 +193,8 @@ public class Gate extends AbstractMechanic {
     private boolean recurseColumn(LocalPlayer player, WorldVector pt, Set<BlockVector> visitedColumns, Boolean close) {
 
         World world = ((BukkitWorld) pt.getWorld()).getWorld();
-        if (plugin.getLocalConfiguration().gateSettings.limitColumns
-                && visitedColumns.size() > plugin.getLocalConfiguration().gateSettings.maxColumns) return false;
+        if (plugin.getConfiguration().gateSettings.limitColumns
+                && visitedColumns.size() > plugin.getConfiguration().gateSettings.maxColumns) return false;
         if (visitedColumns.contains(pt.setY(0).toBlockVector())) return false;
         if (!isValidGateBlock(world.getBlockAt(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ()))) return false;
 
@@ -284,7 +279,7 @@ public class Gate extends AbstractMechanic {
                 }
 
             // bag.setBlockID(w, x, y1, z, ID);
-            if (plugin.getLocalConfiguration().mechSettings.stopDestruction) {
+            if (plugin.getConfiguration().safeDestruction) {
                 if (ID == 0 || hasEnoughBlocks(sign, otherSign)) {
                     if (ID == 0 && isValidGateBlock(world.getBlockAt(x, y1, z))) {
                         addBlocks(sign, 1);
@@ -331,9 +326,9 @@ public class Gate extends AbstractMechanic {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        if (!plugin.getLocalConfiguration().gateSettings.enable) return;
+        if (!plugin.getConfiguration().gateSettings.enable) return;
 
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
 
         Sign sign = null;
 
@@ -393,7 +388,7 @@ public class Gate extends AbstractMechanic {
     @Override
     public void onBlockRedstoneChange(final SourcedBlockRedstoneEvent event) {
 
-        if (!plugin.getLocalConfiguration().gateSettings.enableRedstone) return;
+        if (!plugin.getConfiguration().gateSettings.enableRedstone) return;
 
         if (event.getNewCurrent() == event.getOldCurrent()) return;
 
@@ -409,12 +404,7 @@ public class Gate extends AbstractMechanic {
 
     public static class Factory extends AbstractMechanicFactory<Gate> {
 
-        protected final MechanismsPlugin plugin;
-
-        public Factory(MechanismsPlugin plugin) {
-
-            this.plugin = plugin;
-        }
+        public Factory() {}
 
         @Override
         public Gate detect(BlockWorldVector pt) {
@@ -428,7 +418,7 @@ public class Gate extends AbstractMechanic {
                         // this is a little funky because we don't actually look for the blocks that make up the movable
                         // parts of the gate until we're running the event later... so the factory can succeed even if
                         // the signpost doesn't actually operate any gates correctly. but it works!
-                        return new Gate(pt, plugin, sign.getLine(1).equalsIgnoreCase("[DGate]"));
+                        return new Gate(pt, sign.getLine(1).equalsIgnoreCase("[DGate]"));
                 }
             }
 
@@ -499,7 +489,7 @@ public class Gate extends AbstractMechanic {
 
         public boolean isValidGateBlock(int block) {
 
-            return plugin.getLocalConfiguration().gateSettings.canUseBlock(block);
+            return CraftBookPlugin.inst().getConfiguration().gateSettings.canUseBlock(block);
         }
     }
 
@@ -525,9 +515,9 @@ public class Gate extends AbstractMechanic {
                 int id = Integer.parseInt(sign.getLine(0));
                 return block == id;
             } catch (Exception e) {
-                return plugin.getLocalConfiguration().gateSettings.canUseBlock(block);
+                return plugin.getConfiguration().gateSettings.canUseBlock(block);
             }
-        } else return plugin.getLocalConfiguration().gateSettings.canUseBlock(block);
+        } else return plugin.getConfiguration().gateSettings.canUseBlock(block);
     }
 
     public boolean isValidGateItem(ItemStack block) {
@@ -552,9 +542,9 @@ public class Gate extends AbstractMechanic {
                 int id = Integer.parseInt(sign.getLine(0));
                 return block == id;
             } catch (Exception e) {
-                return plugin.getLocalConfiguration().gateSettings.canUseBlock(block);
+                return plugin.getConfiguration().gateSettings.canUseBlock(block);
             }
-        } else return plugin.getLocalConfiguration().gateSettings.canUseBlock(block);
+        } else return plugin.getConfiguration().gateSettings.canUseBlock(block);
     }
 
     @Override

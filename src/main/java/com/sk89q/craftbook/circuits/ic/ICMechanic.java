@@ -20,6 +20,7 @@ import com.sk89q.commandbook.CommandBook;
 import com.sk89q.craftbook.ChangedSign;
 import com.sk89q.craftbook.PersistentMechanic;
 import com.sk89q.craftbook.SourcedBlockRedstoneEvent;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.craftbook.util.RegexUtil;
 import com.sk89q.craftbook.util.SignUtil;
@@ -90,7 +91,7 @@ public class ICMechanic extends PersistentMechanic {
             };
             // FIXME: these should be registered with a global scheduler so we can end up with one runnable actually
             // running per set of inputs in a given time window.
-            CommandBook.server().getScheduler().scheduleSyncDelayedTask(CommandBook.inst(), runnable, 2);
+            CraftBookPlugin.server().getScheduler().scheduleSyncDelayedTask(CraftBookPlugin.inst(), runnable, 2);
         }
     }
 

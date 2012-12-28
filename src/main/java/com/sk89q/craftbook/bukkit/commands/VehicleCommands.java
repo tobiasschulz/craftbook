@@ -1,5 +1,7 @@
 package com.sk89q.craftbook.bukkit.commands;
 
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.bukkit.VehicleCore;
 import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandPermissions;
@@ -9,14 +11,11 @@ import org.bukkit.entity.Player;
 
 public class VehicleCommands {
 
-    VehiclesPlugin plugin;
+    VehicleCore vc = (VehicleCore) VehicleCore.inst();
 
-    public VehicleCommands(VehiclesPlugin plugin) {
+    public VehicleCommands() {}
 
-        this.plugin = plugin;
-    }
-
-    @Command(aliases = {"st"}, desc = "Commands to manage Craftbook station selection")
+    @Command(aliases = {"station", "st"}, desc = "Commands to manage Craftbook station selection")
     public void st(CommandContext context, CommandSender sender) {
 
         if (!(sender instanceof Player)) {
@@ -25,7 +24,7 @@ public class VehicleCommands {
         }
         Player player = (Player) sender;
         if (context.argsLength() == 0) {
-            String stationName = plugin.getStation(player.getName());
+            String stationName = vc.getStation(player.getName());
 
             if (stationName == null) {
                 sender.sendMessage("You have no station selected.");
@@ -34,33 +33,9 @@ public class VehicleCommands {
             }
         } else {
             String stationName = context.getString(0);
-            plugin.setStation(player.getName(), stationName);
+            vc.setStation(player.getName(), stationName);
             sender.sendMessage("Station set to: " + stationName);
         }
 
-    }
-
-    @Command(aliases = {"cbvehicles"}, desc = "Handles the basic Craftbook Vehicles commands.")
-    @NestedCommand(NestedCommands.class)
-    public void cbvehicles(CommandContext context, CommandSender sender) {
-
-    }
-
-    public static class NestedCommands {
-
-        private final VehiclesPlugin plugin;
-
-        public NestedCommands(VehiclesPlugin plugin) {
-
-            this.plugin = plugin;
-        }
-
-        @Command(aliases = {"reload"}, desc = "Reloads the craftbook vehicles config")
-        @CommandPermissions("craftbook.vehicles.reload")
-        public void reload(CommandContext context, CommandSender sender) {
-
-            plugin.reloadConfiguration();
-            sender.sendMessage("Config has been reloaded successfully!");
-        }
     }
 }

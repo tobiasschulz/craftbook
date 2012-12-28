@@ -120,10 +120,10 @@ public class PlayerUtil {
      */
     public static Iterable<Player> matchPlayers(CommandSender source, String filter) throws CommandException {
 
-        if (CircuitsPlugin.server.getOnlinePlayers().length == 0)
+        if (CraftBookPlugin.server().getOnlinePlayers().length == 0)
             throw new CommandException("No players matched query.");
 
-        if (filter.equals("*")) return checkPlayerMatch(Arrays.asList(CircuitsPlugin.server.getOnlinePlayers()));
+        if (filter.equals("*")) return checkPlayerMatch(Arrays.asList(CraftBookPlugin.server().getOnlinePlayers()));
 
         // Handle special hash tag groups
         if (filter.charAt(0) == '#') // Handle #world, which matches player of the same world as the
@@ -133,7 +133,7 @@ public class PlayerUtil {
                 Player sourcePlayer = checkPlayer(source);
                 World sourceWorld = sourcePlayer.getWorld();
 
-                for (Player player : CircuitsPlugin.server.getOnlinePlayers()) {
+                for (Player player : CraftBookPlugin.server().getOnlinePlayers()) {
                     if (player.getWorld().equals(sourceWorld)) {
                         players.add(player);
                     }
@@ -148,7 +148,7 @@ public class PlayerUtil {
                 World sourceWorld = sourcePlayer.getWorld();
                 org.bukkit.util.Vector sourceVector = sourcePlayer.getLocation().toVector();
 
-                for (Player player : CircuitsPlugin.server.getOnlinePlayers()) {
+                for (Player player : CraftBookPlugin.server().getOnlinePlayers()) {
                     if (player.getWorld().equals(sourceWorld) && player.getLocation().toVector().distanceSquared
                             (sourceVector) < 900) {
                         players.add(player);
@@ -176,7 +176,7 @@ public class PlayerUtil {
      */
     public static Player matchPlayerExactly(CommandSender sender, String filter) throws CommandException {
 
-        Player[] players = CircuitsPlugin.server.getOnlinePlayers();
+        Player[] players = CraftBookPlugin.server().getOnlinePlayers();
         for (Player player : players) {
             if (player.getName().equalsIgnoreCase(filter) || player.getDisplayName().equalsIgnoreCase(filter))
                 return player;
@@ -223,9 +223,9 @@ public class PlayerUtil {
     public static CommandSender matchPlayerOrConsole(CommandSender sender, String filter) throws CommandException {
 
         // Let's see if console is wanted
-        if (filter.equalsIgnoreCase("#console") || filter.equalsIgnoreCase("*console*") || filter.equals("!"))
-            return CircuitsPlugin.server.getConsoleSender();
-
+        if (filter.equalsIgnoreCase("#console") || filter.equalsIgnoreCase("*console*") || filter.equals("!")) {
+            return CraftBookPlugin.server().getConsoleSender();
+        }
         return matchSinglePlayer(sender, filter);
     }
 

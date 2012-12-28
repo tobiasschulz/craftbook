@@ -2,6 +2,7 @@ package com.sk89q.craftbook.cart;
 
 import com.sk89q.craftbook.InvalidMechanismException;
 import com.sk89q.craftbook.VehiclesConfiguration;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.ItemInfo;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -15,12 +16,8 @@ import java.util.Map;
 
 public class MinecartManager {
 
-    public MinecartManager(VehiclesPlugin plugin) {
+    public MinecartManager() {}
 
-        reloadConfiguration(plugin.getLocalConfiguration());
-    }
-
-    private final VehiclesPlugin plugin;
     private Map<ItemInfo, CartMechanism> mechanisms;
 
     /**
@@ -43,7 +40,7 @@ public class MinecartManager {
         if (cfg.matTeleport.getId() > 0) mechanisms.put(cfg.matTeleport, new CartTeleporter());
         if (cfg.matLift.getId() > 0) mechanisms.put(cfg.matLift, new CartLift());
         if (cfg.matDispenser.getId() > 0) mechanisms.put(cfg.matDispenser, new CartDispenser());
-        if (cfg.matMessager.getId() > 0) mechanisms.put(cfg.matMessager, new CartMessager(plugin));
+        if (cfg.matMessager.getId() > 0) mechanisms.put(cfg.matMessager, new CartMessenger());
         for (Map.Entry<ItemInfo, CartMechanism> ent : mechanisms.entrySet()) {
             ent.getValue().setMaterial(ent.getKey());
         }
@@ -99,7 +96,8 @@ public class MinecartManager {
 
     public void impact(BlockRedstoneEvent event) {
 
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new DelayedImpact(event));
+        CraftBookPlugin.server().getScheduler().scheduleSyncDelayedTask(CraftBookPlugin.inst(),
+                new DelayedImpact(event));
     }
 
     /**

@@ -40,12 +40,17 @@ public abstract class LocalConfiguration {
     public boolean areaEnabled = true;
     public boolean areaAllowRedstone = true;
     public boolean areaUseSchematics = true;
+    public int areaMaxAreaSize;
+    public int areaMaxAreaPerUser;
     // Mechanics - Bookcase
     public boolean bookcaseEnabled = true;
     public String bookcaseReadLine = "You pick up a book...";
     // Mechanics - Bridge
     public boolean bridgeEnabled = true;
     public boolean bridgeAllowRedstone = true;
+    public int bridgeMaxLength;
+    public int bridgeMaxWidth;
+    public List<Integer> bridgeBlocks = Arrays.asList();
     // Mechanics - Cauldron
     public boolean cauldronEnabled = true;
     public boolean cauldronUseSpoons = true;
@@ -59,11 +64,17 @@ public abstract class LocalConfiguration {
     // Mechanics - Door
     public boolean doorEnabled = true;
     public boolean doorAllowRedstone = true;
+    public int doorMaxLength;
+    public int doorMaxWidth;
+    public List<Integer> doorBlocks = Arrays.asList();
     // Mechanics - Custom Dispensing
     public boolean customDispensingEnabled = true;
     // Mechanics - Paintings
     public boolean paintingsEnabled = true;
 
+    // Vehicles
+    // Vehicles - Messenger
+    public boolean messengerEnabled = true;
 
     /**
      * Loads the configuration.

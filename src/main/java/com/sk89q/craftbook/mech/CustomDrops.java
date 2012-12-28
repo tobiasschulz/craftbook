@@ -1,5 +1,6 @@
 package com.sk89q.craftbook.mech;
 
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.ItemUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -12,23 +13,20 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 public class CustomDrops implements Listener {
 
-    final MechanismsPlugin plugin;
+    private CraftBookPlugin plugin = CraftBookPlugin.inst();
 
-    public CustomDrops(MechanismsPlugin plugin) {
-
-        this.plugin = plugin;
-    }
+    public CustomDrops() {}
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void handleCustomBlockDrops(BlockBreakEvent event) {
 
-        if (plugin.getLocalConfiguration().customDropSettings.requirePermissions
-                && !plugin.wrap(event.getPlayer()).hasPermission("craftbook.mech.drops")) return;
+        if (plugin.getConfiguration().customDropSettings.requirePermissions
+                && !plugin.wrapPlayer(event.getPlayer()).hasPermission("craftbook.mech.drops")) return;
 
         int id = event.getBlock().getTypeId();
         byte data = event.getBlock().getData();
 
-        CustomDropManager.CustomItemDrop drop = plugin.getLocalConfiguration().customDrops.getBlockDrops(id);
+        CustomDropManager.CustomItemDrop drop = plugin.getConfiguration().customDrops.getBlockDrops(id);
 
         if (drop != null) {
             CustomDropManager.DropDefinition[] drops = drop.getDrop(data);
@@ -55,7 +53,7 @@ public class CustomDrops implements Listener {
 
         EntityType entityType = event.getEntityType();
         if (entityType == null || !entityType.isAlive() || entityType.equals(EntityType.PLAYER)) return;
-        CustomDropManager.DropDefinition[] drops = plugin.getLocalConfiguration().customDrops.getMobDrop(entityType
+        CustomDropManager.DropDefinition[] drops = plugin.getConfiguration().customDrops.getMobDrop(entityType
                 .getName());
         if (drops != null) {
             if (!drops[0].append) event.getDrops().clear();

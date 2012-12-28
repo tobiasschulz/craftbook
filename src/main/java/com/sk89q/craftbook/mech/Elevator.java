@@ -17,6 +17,7 @@
 package com.sk89q.craftbook.mech;
 
 import com.sk89q.craftbook.*;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.craftbook.util.RegexUtil;
 import com.sk89q.worldedit.BlockWorldVector;
@@ -38,14 +39,11 @@ import org.bukkit.material.Button;
  */
 public class Elevator extends AbstractMechanic {
 
+    private CraftBookPlugin plugin = CraftBookPlugin.inst();
+
     public static class Factory extends AbstractMechanicFactory<Elevator> {
 
-        public Factory(MechanismsPlugin plugin) {
-
-            this.plugin = plugin;
-        }
-
-        private final MechanismsPlugin plugin;
+        public Factory() {}
 
         /**
          * Explore around the trigger to find a functional elevator; throw if things look funny.
@@ -65,7 +63,7 @@ public class Elevator extends AbstractMechanic {
             switch (dir) {
                 case UP:
                 case DOWN:
-                    return new Elevator(block, dir, plugin);
+                    return new Elevator(block, dir);
                 case RECV:
                     throw new NoDepartureException();
                 default:
@@ -118,11 +116,10 @@ public class Elevator extends AbstractMechanic {
      *
      * @throws InvalidMechanismException
      */
-    private Elevator(Block trigger, Direction dir, MechanismsPlugin plugin) throws InvalidMechanismException {
+    private Elevator(Block trigger, Direction dir) throws InvalidMechanismException {
 
         super();
         this.trigger = trigger;
-        this.plugin = plugin;
 
         // find destination sign
         shift = dir == Direction.UP ? BlockFace.UP : BlockFace.DOWN;
@@ -139,7 +136,7 @@ public class Elevator extends AbstractMechanic {
                 break; // found it!
             }
             if (destination.getY() == trigger.getY()) throw new InvalidConstructionException();
-            if (plugin.getLocalConfiguration().elevatorSettings.loop && !loopd) {
+            if (plugin.getConfiguration().elevatorSettings.loop && !loopd) {
                 if (destination.getY() == trigger.getWorld().getMaxHeight()) { // hit the top of the world
                     org.bukkit.Location low = destination.getLocation();
                     low.setY(0);
@@ -166,8 +163,6 @@ public class Elevator extends AbstractMechanic {
         // shaft.
     }
 
-    private final MechanismsPlugin plugin;
-
     private final Block trigger;
     private final BlockFace shift;
     private Block destination;
@@ -179,12 +174,12 @@ public class Elevator extends AbstractMechanic {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        if (!plugin.getLocalConfiguration().elevatorSettings.enable) return;
+        if (!plugin.getConfiguration().elevatorSettings.enable) return;
 
         if (!BukkitUtil.toWorldVector(event.getClickedBlock()).equals(BukkitUtil.toWorldVector(trigger)))
             return; // wth? our manager is insane
 
-        LocalPlayer localPlayer = plugin.wrap(event.getPlayer());
+        LocalPlayer localPlayer = plugin.wrapPlayer(event.getPlayer());
 
         if (!localPlayer.hasPermission("craftbook.mech.elevator.use")) {
             event.setCancelled(true);
@@ -284,7 +279,7 @@ public class Elevator extends AbstractMechanic {
 
         BlockState state = block.getState();
         if (!(state instanceof Sign)) {
-            if (MechanismsPlugin.getInst().getLocalConfiguration().elevatorSettings.buttons
+            if (CraftBookPlugin.inst().getConfiguration().elevatorSettings.buttons
                     && (block.getTypeId() == BlockID.STONE_BUTTON || block.getTypeId() == BlockID.WOODEN_BUTTON)) {
                 Button b = (Button) block.getState().getData();
                 Block sign = block.getRelative(b.getAttachedFace()).getRelative(b.getAttachedFace());

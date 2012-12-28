@@ -1,6 +1,7 @@
 package com.sk89q.craftbook.mech;
 
 import com.sk89q.craftbook.*;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.ItemUtil;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.BlockWorldVector;
@@ -23,21 +24,20 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
     /**
      * Plugin.
      */
-    protected final MechanismsPlugin plugin;
+    private final CraftBookPlugin plugin = CraftBookPlugin.inst();
 
     /**
      * Location.
      */
-    protected final BlockWorldVector pt;
+    private final BlockWorldVector pt;
 
     /**
      * Construct a cooking pot for a location.
      */
-    public CookingPot(BlockWorldVector pt, MechanismsPlugin plugin) {
+    public CookingPot(BlockWorldVector pt) {
 
         super();
         this.pt = pt;
-        this.plugin = plugin;
     }
 
     @Override
@@ -48,12 +48,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
 
     public static class Factory extends AbstractMechanicFactory<CookingPot> {
 
-        protected final MechanismsPlugin plugin;
-
-        public Factory(MechanismsPlugin plugin) {
-
-            this.plugin = plugin;
-        }
+        public Factory() {}
 
         @Override
         public CookingPot detect(BlockWorldVector pt) {
@@ -65,7 +60,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
                     Sign sign = (Sign) state;
                     if (sign.getLine(1).equalsIgnoreCase("[Cook]")) {
                         sign.update();
-                        return new CookingPot(pt, plugin);
+                        return new CookingPot(pt);
                     }
                 }
             }
@@ -88,7 +83,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
 
                 sign.setLine(2, "0");
                 sign.setLine(1, "[Cook]");
-                if (plugin.getLocalConfiguration().cookingPotSettings.requiresfuel) {
+                if (CraftBookPlugin.inst().getConfiguration().cookingPotSettings.requiresfuel) {
                     sign.setLine(3, "0");
                 } else {
                     sign.setLine(3, "1");
@@ -125,7 +120,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
             if (cb.getTypeId() == BlockID.CHEST) {
                 if (ItemUtil.containsRawFood(((Chest) cb.getState()).getInventory())
                         || ItemUtil.containsRawMinerals(((Chest) cb.getState()).getInventory())
-                        && plugin.getLocalConfiguration().cookingPotSettings.cooksOres) {
+                        && plugin.getConfiguration().cookingPotSettings.cooksOres) {
                     decreaseMultiplier(sign, 1);
                     lastTick += getMultiplier(sign);
                 }
@@ -182,7 +177,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                     }
                     player.sendMessage("You give the pot fuel!");
-                } else if (plugin.getLocalConfiguration().cookingPotSettings.openClick) {
+                } else if (plugin.getConfiguration().cookingPotSettings.openClick) {
                     player.openInventory(((Chest) cb.getState()).getBlockInventory());
                 }
             }
@@ -215,7 +210,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
 
     public void setMultiplier(Sign sign, int amount) {
 
-        int min = plugin.getLocalConfiguration().cookingPotSettings.requiresfuel ? 0 : 1;
+        int min = plugin.getConfiguration().cookingPotSettings.requiresfuel ? 0 : 1;
         if (amount < min) {
             amount = min;
         }
@@ -240,12 +235,12 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
             multiplier = Integer.parseInt(sign.getLine(3));
         } catch (Exception e) {
             multiplier = 1;
-            if (plugin.getLocalConfiguration().cookingPotSettings.requiresfuel) {
+            if (plugin.getConfiguration().cookingPotSettings.requiresfuel) {
                 multiplier = 0;
             }
             setMultiplier(sign, multiplier);
         }
-        if (multiplier < 0) return plugin.getLocalConfiguration().cookingPotSettings.requiresfuel ? 0 : 1;
+        if (multiplier < 0) return plugin.getConfiguration().cookingPotSettings.requiresfuel ? 0 : 1;
         return multiplier;
     }
 

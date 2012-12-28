@@ -18,6 +18,7 @@ package com.sk89q.craftbook.mech;
 
 import com.sk89q.craftbook.*;
 import com.sk89q.craftbook.bukkit.BukkitPlayer;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.BlockWorldVector;
@@ -41,14 +42,11 @@ import org.bukkit.inventory.ItemStack;
  */
 public class Door extends AbstractMechanic {
 
+    private CraftBookPlugin plugin = CraftBookPlugin.inst();
+
     public static class Factory extends AbstractMechanicFactory<Door> {
 
-        public Factory(MechanismsPlugin plugin) {
-
-            this.plugin = plugin;
-        }
-
-        private final MechanismsPlugin plugin;
+        public Factory() {}
 
         /**
          * Detect the mechanic at a placed sign.
@@ -121,18 +119,17 @@ public class Door extends AbstractMechanic {
 
             // okay, now we can start doing exploration of surrounding blocks
             // and if something goes wrong in here then we throw fits.
-            return new Door(block, plugin);
+            return new Door(block);
         }
     }
 
     /**
      * @param trigger if you didn't already check if this is a signpost with appropriate text,
      *                you're going on Santa's naughty list.
-     * @param plugin
      *
      * @throws InvalidMechanismException
      */
-    private Door(Block trigger, MechanismsPlugin plugin) throws InvalidMechanismException {
+    private Door(Block trigger) throws InvalidMechanismException {
 
         super();
 
@@ -140,8 +137,6 @@ public class Door extends AbstractMechanic {
         if (!SignUtil.isCardinal(trigger)) throw new InvalidDirectionException();
 
         this.trigger = trigger;
-        this.plugin = plugin;
-        settings = plugin.getLocalConfiguration().doorSettings;
 
         if (trigger == null) return;
 
@@ -158,7 +153,7 @@ public class Door extends AbstractMechanic {
 
             block = proximalBaseCenter.getTypeId();
 
-            if (settings.canUseBlock(block)) {
+            if (plugin.getConfiguration().doorBlocks.contains(block)) {
                 if (proximalBaseCenter.getRelative(SignUtil.getLeft(trigger)).getTypeId() == block
                         && proximalBaseCenter.getRelative(SignUtil.getRight(trigger)).getTypeId() == block) {
                     break findBase;
@@ -172,7 +167,7 @@ public class Door extends AbstractMechanic {
         } else if (((Sign) trigger.getState()).getLine(1).equalsIgnoreCase("[Door Down]")) {
             otherSide = trigger.getRelative(BlockFace.DOWN);
         }
-        for (int i = 0; i <= settings.maxLength; i++) {
+        for (int i = 0; i <= plugin.getConfiguration().doorMaxLength; i++) {
             // about the loop index:
             // i = 0 is the first block after the proximal base
             // since we're allowed to have settings.maxLength toggle blocks,
@@ -238,11 +233,11 @@ public class Door extends AbstractMechanic {
         }
 
         // Check width
-        if (left > settings.maxWidth) {
-            left = settings.maxWidth;
+        if (left > plugin.getConfiguration().doorMaxWidth) {
+            left = plugin.getConfiguration().doorMaxWidth;
         }
-        if (right > settings.maxWidth) {
-            right = settings.maxWidth;
+        if (right > plugin.getConfiguration().doorMaxWidth) {
+            right = plugin.getConfiguration().doorMaxWidth;
         }
 
         // Expand Left
@@ -262,7 +257,7 @@ public class Door extends AbstractMechanic {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        if (!settings.enable) return;
+        if (!plugin.getConfiguration().doorEnabled) return;
 
         if (!BukkitUtil.toWorldVector(event.getClickedBlock()).equals(BukkitUtil.toWorldVector(trigger))) return;
 
@@ -321,7 +316,7 @@ public class Door extends AbstractMechanic {
     @Override
     public void onBlockRedstoneChange(SourcedBlockRedstoneEvent event) {
 
-        if (!plugin.getLocalConfiguration().doorSettings.enableRedstone) return;
+        if (!plugin.getConfiguration().doorAllowRedstone) return;
 
         if (!BukkitUtil.toWorldVector(event.getBlock()).equals(BukkitUtil.toWorldVector(trigger))) return;
         if (event.getNewCurrent() == event.getOldCurrent()) return;
@@ -363,7 +358,7 @@ public class Door extends AbstractMechanic {
                 int oldType = b.getTypeId();
                 if (b.getTypeId() == getDoorMaterial() || canPassThrough(b.getTypeId())) {
                     b.setTypeId(BlockID.AIR);
-                    if (plugin.getLocalConfiguration().mechSettings.stopDestruction) {
+                    if (plugin.getConfiguration().safeDestruction) {
                         Sign s = (Sign) trigger.getState();
                         if (oldType != 0) {
                             addBlocks(s, 1);
@@ -388,22 +383,23 @@ public class Door extends AbstractMechanic {
 
             for (BlockVector bv : toggle) {
                 Block b = trigger.getWorld().getBlockAt(bv.getBlockX(), bv.getBlockY(), bv.getBlockZ());
-                if (canPassThrough(b.getTypeId())) if (plugin.getLocalConfiguration().mechSettings.stopDestruction) {
-                    Sign s = (Sign) trigger.getState();
-                    if (hasEnoughBlocks(s)) {
+                if (canPassThrough(b.getTypeId())) {
+                    if (plugin.getConfiguration().safeDestruction) {
+                        Sign s = (Sign) trigger.getState();
+                        if (hasEnoughBlocks(s)) {
+                            b.setTypeId(getDoorMaterial());
+                            b.setData(getDoorData());
+                            removeBlocks(s, 1);
+                        } else {
+                            if (player != null) {
+                                player.printError("Not enough blocks for mechanic to function!");
+                            }
+                            return;
+                        }
+                    } else {
                         b.setTypeId(getDoorMaterial());
                         b.setData(getDoorData());
-                        removeBlocks(s, 1);
-                    } else {
-                        if (player != null) {
-                            player.printError("Not enough blocks for mechanic to function!");
-                        }
-                        return;
                     }
-
-                } else {
-                    b.setTypeId(getDoorMaterial());
-                    b.setData(getDoorData());
                 }
             }
         }
@@ -418,9 +414,6 @@ public class Door extends AbstractMechanic {
 
         return proximalBaseCenter.getData();
     }
-
-    private MechanismsPlugin plugin;
-    private MechanismsConfiguration.DoorSettings settings;
 
     /**
      * The signpost we came from.

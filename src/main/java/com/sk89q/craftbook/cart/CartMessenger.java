@@ -1,20 +1,18 @@
 package com.sk89q.craftbook.cart;
 
 import com.sk89q.craftbook.RedstoneUtil.Power;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-public class CartMessager extends CartMechanism {
+public class CartMessenger extends CartMechanism {
 
-    VehiclesPlugin plugin;
+    CraftBookPlugin plugin = CraftBookPlugin.inst();
 
-    public CartMessager(VehiclesPlugin plugin) {
-
-        this.plugin = plugin;
-    }
+    public CartMessenger() {}
 
     @Override
     public void impact(Minecart cart, CartMechanismBlocks blocks, boolean minor) {
@@ -25,7 +23,7 @@ public class CartMessager extends CartMechanism {
         if (cart.getPassenger() == null) return;
         if (blocks.sign == null || !(blocks.sign.getState() instanceof Sign)) return;
 
-        if (!plugin.getLocalConfiguration().minecartTrackMessages) return;
+        if (!plugin.getConfiguration().messengerEnabled) return;
 
         // enabled?
         if (Power.OFF == isActive(blocks.rail, blocks.base, blocks.sign)) return;

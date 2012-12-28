@@ -15,4 +15,15 @@ public class VehicleCore extends LocalComponent {
     public void disable() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    public String getStation(String playerName) {
+
+        // TODO Get station
+        return "";
+    }
+
+    public void setStation(String playerName, String stationName) {
+
+        // TODO Set station
+    }
 }

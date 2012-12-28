@@ -1,7 +1,10 @@
 package com.sk89q.craftbook.bukkit.commands;
 
+import com.sk89q.craftbook.LocalConfiguration;
 import com.sk89q.craftbook.LocalPlayer;
 import com.sk89q.craftbook.MechanismsConfiguration;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.bukkit.MechanicalCore;
 import com.sk89q.craftbook.mech.area.CopyManager;
 import com.sk89q.craftbook.mech.area.CuboidCopy;
 import com.sk89q.craftbook.mech.area.FlatCuboidCopy;
@@ -32,23 +35,16 @@ import java.util.List;
  */
 public class AreaCommands {
 
-    private final MechanismsPlugin plugin;
-    private CopyManager copyManager;
-
-    public AreaCommands(MechanismsPlugin plugin) {
-
-        this.plugin = plugin;
-        copyManager = plugin.getCopyManager();
-    }
+    private CraftBookPlugin plugin = CraftBookPlugin.inst();
+    private LocalConfiguration config = plugin.getConfiguration();
 
     @Command(aliases = {"save"}, desc = "Saves the selected area", usage = "[-n namespace ] <id>", flags = "n:",
             min = 1)
     public void saveArea(CommandContext context, CommandSender sender) throws CommandException {
 
-        final MechanismsConfiguration.AreaSettings config = plugin.getLocalConfiguration().areaSettings;
 
         if (!(sender instanceof Player)) return;
-        LocalPlayer player = plugin.wrap((Player) sender);
+        LocalPlayer player = plugin.wrapPlayer((Player) sender);
 
         String id;
         String namespace = player.getName();
@@ -72,7 +68,7 @@ public class AreaCommands {
             throw new CommandException("Invalid area name. Needs to be between 1 and 13 letters long.");
 
         try {
-            WorldEditPlugin worldEdit = (WorldEditPlugin) plugin.getServer().getPluginManager().getPlugin("WorldEdit");
+            WorldEditPlugin worldEdit = plugin.getWorldEdit();
 
             World world = ((Player) sender).getWorld();
             Selection sel = worldEdit.getSelection((Player) sender);
@@ -81,24 +77,27 @@ public class AreaCommands {
             Vector size = max.subtract(min).add(1, 1, 1);
 
             // Check maximum size
-            if (config.maxSizePerArea != -1 && size.getBlockX() * size.getBlockY() * size.getBlockZ() > config
-                    .maxSizePerArea)
-                throw new CommandException("Area is larger than allowed " + config.maxSizePerArea + " blocks.");
+            if (config.areaMaxAreaSize != -1 && size.getBlockX() * size.getBlockY() * size.getBlockZ()
+                    > config.areaMaxAreaSize) {
+                throw new CommandException("Area is larger than allowed " + config.areaMaxAreaSize + " blocks.");
+            }
 
             // Check to make sure that a user doesn't have too many toggle
             // areas (to prevent flooding the server with files)
-            if (config.maxAreasPerUser >= 0 && !namespace.equals("global")) {
-                int count = copyManager.meetsQuota(world, namespace, id, config.maxAreasPerUser, plugin);
+            if (config.areaMaxAreaPerUser >= 0 && !namespace.equals("global")) {
+                int count = ((MechanicalCore) MechanicalCore.inst()).getCopyManager().meetsQuota(world, namespace, id,
+                        config.areaMaxAreaPerUser);
 
-                if (count > -1)
-                    throw new CommandException("You are limited to " + config.maxAreasPerUser + " toggle area(s). You" +
-                            " have " + count + " areas.");
+                if (count > -1) {
+                    throw new CommandException("You are limited to " + config.areaMaxAreaPerUser + " toggle area(s). "
+                            + "You have " + count + " areas.");
+                }
             }
 
             // Copy
             CuboidCopy copy;
 
-            if (config.useSchematics) {
+            if (config.areaUseSchematics) {
                 copy = new MCEditCuboidCopy(min, size, world);
             } else {
                 copy = new FlatCuboidCopy(min, size, world);
@@ -111,7 +110,7 @@ public class AreaCommands {
 
             // Save
             try {
-                CopyManager.getInstance().save(world, namespace, id, copy, plugin);
+                CopyManager.getInstance().save(world, namespace, id, copy);
                 player.print("Area saved as '" + id + "' under the '" + namespace + "' namespace.");
             } catch (IOException e) {
                 player.printError("Could not save area: " + e.getMessage());
@@ -128,10 +127,8 @@ public class AreaCommands {
             flags = "an:")
     public void list(CommandContext context, CommandSender sender) throws CommandException {
 
-        final MechanismsConfiguration.AreaSettings config = plugin.getLocalConfiguration().areaSettings;
-
         if (!(sender instanceof Player)) return;
-        LocalPlayer player = plugin.wrap((Player) sender);
+        LocalPlayer player = CraftBookPlugin.inst().wrapPlayer((Player) sender);
 
         String namespace = "~" + player.getName();
 
@@ -150,7 +147,7 @@ public class AreaCommands {
         }
 
         // get the areas for the defined namespace
-        File areas = new File(plugin.getDataFolder(), "areas");
+        File areas = new File(CraftBookPlugin.inst().getDataFolder(), "areas");
 
         if (!areas.exists()) throw new CommandException("There are no saved areas.");
 
@@ -169,7 +166,7 @@ public class AreaCommands {
             @Override
             public boolean accept(File dir, String name) {
 
-                return config.useSchematics ? name.endsWith(".schematic") : name.endsWith(".cbcopy");
+                return config.areaUseSchematics ? name.endsWith(".schematic") : name.endsWith(".cbcopy");
             }
         };
 
@@ -213,10 +210,8 @@ public class AreaCommands {
             flags = "an:")
     public void delete(CommandContext context, CommandSender sender) throws CommandException {
 
-        final MechanismsConfiguration.AreaSettings config = plugin.getLocalConfiguration().areaSettings;
-
         if (!(sender instanceof Player)) return;
-        LocalPlayer player = plugin.wrap((Player) sender);
+        LocalPlayer player = plugin.wrapPlayer((Player) sender);
 
         String namespace = "~" + player.getName();
         String areaId = null;
@@ -234,7 +229,7 @@ public class AreaCommands {
         } else throw new CommandException("You need to define an area or -a to delete all areas.");
 
         // add the area suffix
-        areaId = areaId + (config.useSchematics ? ".schematic" : ".cbcopy");
+        areaId = areaId + (config.areaUseSchematics ? ".schematic" : ".cbcopy");
 
         File areas = null;
         try {
@@ -262,14 +257,12 @@ public class AreaCommands {
     // If a deletion fails, the method stops attempting to delete and returns false.
     private boolean deleteDir(File dir) {
 
-        final MechanismsConfiguration.AreaSettings config = plugin.getLocalConfiguration().areaSettings;
-
         FilenameFilter fnf = new FilenameFilter() {
 
             @Override
             public boolean accept(File dir, String name) {
 
-                return config.useSchematics ? name.endsWith(".schematic") : name.endsWith(".cbcopy");
+                return config.areaUseSchematics ? name.endsWith(".schematic") : name.endsWith(".cbcopy");
             }
         };
 

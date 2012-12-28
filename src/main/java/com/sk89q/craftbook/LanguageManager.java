@@ -33,7 +33,7 @@ public class LanguageManager {
 
     public void checkForLanguages() {
 
-        List<String> languages = plugin.getConfiguration().languages;
+        List<String> languages = plugin.getConfiguration();
         for (String language : languages) {
             language = language.trim();
             HashMap<String, String> languageData = new HashMap<String, String>();
