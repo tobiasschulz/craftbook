@@ -1,12 +1,5 @@
 package com.sk89q.craftbook;
 
-import com.sk89q.craftbook.bukkit.CraftBookPlugin;
-import com.sk89q.craftbook.util.RegexUtil;
-import net.minecraft.server.v1_4_6.LocaleLanguage;
-import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
-import org.bukkit.entity.Player;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -16,6 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+
+import net.minecraft.server.v1_4_6.LocaleLanguage;
+
+import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
+import org.bukkit.entity.Player;
+
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.util.RegexUtil;
 
 /**
  * @author Me4502
@@ -33,7 +35,7 @@ public class LanguageManager {
 
     public void checkForLanguages() {
 
-        List<String> languages = plugin.getConfiguration();
+        List<String> languages = plugin.getConfiguration().languages;
         for (String language : languages) {
             language = language.trim();
             HashMap<String, String> languageData = new HashMap<String, String>();
@@ -52,7 +54,7 @@ public class LanguageManager {
             } catch (IOException e) {
                 plugin.getLogger().log(Level.SEVERE,
                         "[CraftBook] could not find file: " + plugin.getDataFolder().getName() + File.pathSeparator +
-                                language + ".txt");
+                        language + ".txt");
             }
             languageMap.put(language, languageData);
         }

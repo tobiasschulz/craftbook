@@ -9,20 +9,19 @@ package com.sk89q.craftbook.mech;
  * Software Foundation, either version 3 of the License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-  * warranty of MERCHANTABILITY or
+ * warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
 
-import com.sk89q.craftbook.AbstractMechanic;
-import com.sk89q.craftbook.AbstractMechanicFactory;
-import com.sk89q.craftbook.LocalPlayer;
-import com.sk89q.craftbook.util.Tuple2;
-import com.sk89q.worldedit.BlockWorldVector;
-import com.sk89q.worldedit.blocks.BlockID;
-import com.sk89q.worldedit.bukkit.BukkitUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -31,11 +30,14 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import com.sk89q.craftbook.AbstractMechanic;
+import com.sk89q.craftbook.AbstractMechanicFactory;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.util.Tuple2;
+import com.sk89q.worldedit.BlockWorldVector;
+import com.sk89q.worldedit.blocks.BlockID;
+import com.sk89q.worldedit.bukkit.BukkitUtil;
 
 /**
  * Handler for cauldrons.
@@ -48,12 +50,10 @@ public class Cauldron extends AbstractMechanic {
 
     public static class Factory extends AbstractMechanicFactory<Cauldron> {
 
-        protected final MechanismsPlugin plugin;
         protected final CauldronCookbook recipes;
 
-        public Factory(MechanismsPlugin plugin) {
+        public Factory() {
 
-            this.plugin = plugin;
             recipes = new CauldronCookbook();
         }
 
@@ -64,7 +64,7 @@ public class Cauldron extends AbstractMechanic {
             // check if this looks at all like something we're interested in
             // first
             if (block.getTypeId() == BlockID.AIR) return null;
-            return new Cauldron(recipes, pt, plugin);
+            return new Cauldron(recipes, pt);
         }
     }
 
@@ -73,7 +73,6 @@ public class Cauldron extends AbstractMechanic {
      */
     private final CauldronCookbook recipes;
     private final BlockWorldVector pt;
-    private final MechanismsPlugin plugin;
 
     /**
      * Construct the handler.
@@ -82,20 +81,19 @@ public class Cauldron extends AbstractMechanic {
      * @param pt
      * @param plugin
      */
-    public Cauldron(CauldronCookbook recipes, BlockWorldVector pt, MechanismsPlugin plugin) {
+    public Cauldron(CauldronCookbook recipes, BlockWorldVector pt) {
 
         super();
         this.recipes = recipes;
         this.pt = pt;
-        this.plugin = plugin;
     }
 
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        LocalPlayer localPlayer = plugin.wrap(event.getPlayer());
+        LocalPlayer localPlayer = CraftBookPlugin.inst().wrapPlayer(event.getPlayer());
 
-        if (!plugin.getLocalConfiguration().cauldronSettings.enable) return;
+        if (!CraftBookPlugin.inst().getConfiguration().legacyCauldronEnabled) return;
 
         if (!localPlayer.hasPermission("craftbook.mech.cauldron")) return;
 
@@ -225,7 +223,7 @@ public class Cauldron extends AbstractMechanic {
 
                     for (String group : groups) {
 
-                        if (plugin.isInGroup(player.getName(), group)) {
+                        if (CraftBookPlugin.inst().inGroup(player, group)) {
                             found = true;
                             break;
                         }
@@ -246,8 +244,8 @@ public class Cauldron extends AbstractMechanic {
 
                 // Get rid of the blocks in world
                 for (Map.Entry<BlockWorldVector, Tuple2<Integer, Short>> entry : visited.entrySet())
-                // This is not a fast operation, but we should not have
-                // too many ingredients
+                    // This is not a fast operation, but we should not have
+                    // too many ingredients
                 {
                     if (ingredients.contains(entry.getValue())) {
                         // Some blocks need to removed first otherwise they will
@@ -299,7 +297,7 @@ public class Cauldron extends AbstractMechanic {
      */
     public void findCauldronContents(World world, BlockWorldVector pt, int minY, int maxY, Map<BlockWorldVector,
             Tuple2<Integer, Short>> visited)
-            throws NotACauldronException {
+                    throws NotACauldronException {
 
         int blockID = plugin.getLocalConfiguration().cauldronSettings.cauldronBlock;
 

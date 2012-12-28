@@ -1,13 +1,21 @@
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.*;
-import com.sk89q.craftbook.bukkit.CraftBookPlugin;
-import com.sk89q.worldedit.BlockWorldVector;
-import com.sk89q.worldedit.bukkit.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import com.sk89q.craftbook.AbstractMechanic;
+import com.sk89q.craftbook.AbstractMechanicFactory;
+import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.InsufficientPermissionsException;
+import com.sk89q.craftbook.InvalidMechanismException;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.ProcessedMechanismException;
+import com.sk89q.craftbook.SourcedBlockRedstoneEvent;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.worldedit.BlockWorldVector;
+import com.sk89q.worldedit.bukkit.BukkitUtil;
 
 public class Command extends AbstractMechanic {
 
@@ -45,7 +53,7 @@ public class Command extends AbstractMechanic {
          */
         @Override
         public Command detect(BlockWorldVector pt, LocalPlayer player,
-                              ChangedSign sign) throws InvalidMechanismException,
+                ChangedSign sign) throws InvalidMechanismException,
                 ProcessedMechanismException {
 
             if (!sign.getLine(1).equalsIgnoreCase("[Command]")) return null;
@@ -79,7 +87,7 @@ public class Command extends AbstractMechanic {
         if (!BukkitUtil.toWorldVector(event.getClickedBlock()).equals(BukkitUtil.toWorldVector(trigger)))
             return; // wth? our manager is insane
 
-        LocalPlayer localPlayer = plugin.wrap(event.getPlayer());
+        LocalPlayer localPlayer = plugin.wrapPlayer(event.getPlayer());
 
         if (!localPlayer.hasPermission("craftbook.mech.command.use")) {
             localPlayer.printError("mech.use-permission");

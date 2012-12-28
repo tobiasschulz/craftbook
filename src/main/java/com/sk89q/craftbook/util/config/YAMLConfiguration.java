@@ -58,6 +58,11 @@ public class YAMLConfiguration extends LocalConfiguration {
 
         /* Mechanism Configuration */
 
+        // AI Configurtion Listener
+        aiEnabled = config.getBoolean("mechanics.ai.enable", true);
+        aiZombieEnabled = config.getBoolean("mechanics.ai.zombie-enable", true);
+        aiSkeletonEnabled = config.getBoolean("mechanics.ai.skeleton-enable", true);
+
         // Area Configuration Listener
         areaEnabled = config.getBoolean("mechanics.area.enable", true);
         areaAllowRedstone = config.getBoolean("mechanics.area.allow-redstone", true);
@@ -72,6 +77,10 @@ public class YAMLConfiguration extends LocalConfiguration {
         chairSneak = config.getBoolean("mechanics.chair.require-sneak", true);
         chairHealth = config.getBoolean("mechanics.chair.regen-health", true);
         chairBlocks = config.getIntList("mechanics.chair.blocks", Arrays.asList(53, 67, 108, 109, 114, 128, 134, 135, 136));
+
+        // Hidden Switch Listener
+        hiddenSwitchEnabled = config.getBoolean("mechanics.hidden switch.enable", true);
+        hiddenSwitchAnyside = config.getBoolean("mechanics.hidden switch.any-side", true);
 
         // Painting Configuration Listener
         paintingsEnabled = config.getBoolean("mechanics.paintings.enable", true);

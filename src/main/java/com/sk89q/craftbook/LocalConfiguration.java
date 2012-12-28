@@ -34,6 +34,10 @@ public abstract class LocalConfiguration {
 
     // Mechanics
     public boolean safeDestruction = true;
+    // Mechanics - AI
+    public boolean aiEnabled = true;
+    public boolean aiZombieEnabled = true;
+    public boolean aiSkeletonEnabled = true;
     // Mechanics - Ammeter
     public int ammeterItem = ItemID.COAL;
     // Mechanics - Area
@@ -55,20 +59,23 @@ public abstract class LocalConfiguration {
     public boolean cauldronEnabled = true;
     public boolean cauldronUseSpoons = true;
     // Mechanics - Legacy Cauldron
-
+    public boolean legacyCauldronEnabled = true;
     // Mechanics - Chair
     public boolean chairEnabled = true;
     public boolean chairSneak = true;
     public boolean chairHealth = true;
     public List<Integer> chairBlocks = Arrays.asList(53, 67, 108, 109, 114, 128, 134, 135, 136);
+    // Mechanics - Custom Dispensing
+    public boolean customDispensingEnabled = true;
     // Mechanics - Door
     public boolean doorEnabled = true;
     public boolean doorAllowRedstone = true;
     public int doorMaxLength;
     public int doorMaxWidth;
     public List<Integer> doorBlocks = Arrays.asList();
-    // Mechanics - Custom Dispensing
-    public boolean customDispensingEnabled = true;
+    // Mechanics - Hidden Switch
+    public boolean hiddenSwitchEnabled = true;
+    public boolean hiddenSwitchAnyside = true;
     // Mechanics - Paintings
     public boolean paintingsEnabled = true;
 

@@ -1,6 +1,19 @@
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.material.Button;
+
+import com.sk89q.craftbook.AbstractMechanic;
+import com.sk89q.craftbook.AbstractMechanicFactory;
+import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.InsufficientPermissionsException;
+import com.sk89q.craftbook.InvalidMechanismException;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.ProcessedMechanismException;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.RegexUtil;
 import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.Location;
@@ -8,11 +21,6 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.blocks.BlockType;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.material.Button;
 
 /**
  * Teleporter Mechanism. Based off Elevator
@@ -25,12 +33,9 @@ public class Teleporter extends AbstractMechanic {
 
     public static class Factory extends AbstractMechanicFactory<Teleporter> {
 
-        public Factory(MechanismsPlugin plugin) {
+        public Factory() {
 
-            this.plugin = plugin;
         }
-
-        private final MechanismsPlugin plugin;
 
         /**
          * Explore around the trigger to find a functional elevator; throw if things look funny.
@@ -51,7 +56,7 @@ public class Teleporter extends AbstractMechanic {
                 Sign s = (Sign) block.getState();
                 if (!s.getLine(1).equalsIgnoreCase("[Teleporter]")) return null;
                 String[] pos = RegexUtil.COLON_PATTERN.split(s.getLine(2));
-                if (pos.length > 2) return new Teleporter(block, plugin);
+                if (pos.length > 2) return new Teleporter(block);
             } else if (block.getTypeId() == BlockID.STONE_BUTTON || block.getTypeId() == BlockID.WOODEN_BUTTON) {
                 Button b = (Button) block.getState().getData();
                 Block sign = block.getRelative(b.getAttachedFace()).getRelative(b.getAttachedFace());
@@ -59,7 +64,7 @@ public class Teleporter extends AbstractMechanic {
                     Sign s = (Sign) sign.getState();
                     if (!s.getLine(1).equalsIgnoreCase("[Teleporter]")) return null;
                     String[] pos = RegexUtil.COLON_PATTERN.split(s.getLine(2));
-                    if (pos.length > 2) return new Teleporter(s.getBlock(), plugin);
+                    if (pos.length > 2) return new Teleporter(s.getBlock());
                 }
             }
 
@@ -73,7 +78,7 @@ public class Teleporter extends AbstractMechanic {
          */
         @Override
         public Teleporter detect(BlockWorldVector pt, LocalPlayer player,
-                                 ChangedSign sign) throws InvalidMechanismException,
+                ChangedSign sign) throws InvalidMechanismException,
                 ProcessedMechanismException {
 
             if (!sign.getLine(1).equalsIgnoreCase("[Teleporter]")) return null;
@@ -97,14 +102,12 @@ public class Teleporter extends AbstractMechanic {
      *
      * @throws InvalidMechanismException
      */
-    private Teleporter(Block trigger, MechanismsPlugin plugin) throws InvalidMechanismException {
+    private Teleporter(Block trigger) throws InvalidMechanismException {
 
         super();
         this.trigger = trigger;
-        this.plugin = plugin;
     }
 
-    private final MechanismsPlugin plugin;
     private final Block trigger;
 
     @Override
@@ -116,14 +119,14 @@ public class Teleporter extends AbstractMechanic {
                 .getClickedBlock().getState().getData() instanceof Button))
             return; // wth? our manager is insane.
 
-        LocalPlayer localPlayer = plugin.wrap(event.getPlayer());
+        LocalPlayer localPlayer = CraftBookPlugin.inst().wrapPlayer(event.getPlayer());
 
         if (!localPlayer.hasPermission("craftbook.mech.teleporter.use")) {
             localPlayer.printError("mech.use-permission");
             return;
         }
 
-        makeItSo(plugin.wrap(event.getPlayer()));
+        makeItSo(CraftBookPlugin.inst().wrapPlayer(event.getPlayer()));
 
         event.setCancelled(true);
     }

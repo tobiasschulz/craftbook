@@ -1,8 +1,8 @@
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.LocalPlayer;
-import com.sk89q.craftbook.bukkit.BaseBukkitPlugin;
-import com.sk89q.worldedit.blocks.BlockID;
+import java.util.HashMap;
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -16,8 +16,9 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.util.HashMap;
-import java.util.logging.Level;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.worldedit.blocks.BlockID;
 
 /**
  * Snow fall mechanism. Builds up/tramples snow
@@ -26,11 +27,8 @@ import java.util.logging.Level;
  */
 public class Snow implements Listener {
 
-    final MechanismsPlugin plugin;
+    public Snow() {
 
-    public Snow(MechanismsPlugin plugin) {
-
-        this.plugin = plugin;
     }
 
     private HashMap<Location, Integer> tasks = new HashMap<Location, Integer>();
@@ -63,13 +61,13 @@ public class Snow implements Listener {
         if (CraftBookPlugin.inst().getRandom().nextInt(30) == 0) {
             Block b = event.getPlayer().getWorld().getBlockAt(event.getPlayer().getLocation());
             if (b.getTypeId() == 78) {
-                if (!plugin.canBuildInArea(event.getPlayer().getLocation(), event.getPlayer())) return;
+                if (!CraftBookPlugin.inst().canBuild(event.getPlayer(), event.getPlayer().getLocation())) return;
                 lowerData(b);
             }
 
             b = event.getPlayer().getWorld().getBlockAt(event.getPlayer().getLocation().subtract(0, 1, 0));
             if (b.getTypeId() == 78) {
-                if (!plugin.canBuildInArea(event.getPlayer().getLocation(), event.getPlayer())) return;
+                if (!CraftBookPlugin.inst().canBuild(event.getPlayer(), event.getPlayer().getLocation())) return;
                 lowerData(b);
             }
         }
@@ -116,7 +114,7 @@ public class Snow implements Listener {
         int taskID = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new MakeSnow(loc),
                 delay * 20L, delay * 20L);
         if (taskID == -1)
-            plugin.getLogger().log(Level.SEVERE, "[CraftBookMechanisms] Snow Mechanic failed to schedule!");
+            Bukkit.getLogger().log(Level.SEVERE, "[CraftBookMechanisms] Snow Mechanic failed to schedule!");
         else tasks.put(loc, taskID);
     }
 

@@ -1,7 +1,8 @@
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.mech.ai.*;
-import com.sk89q.craftbook.util.GeneralUtil;
+import java.util.ArrayList;
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -9,25 +10,26 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 
-import java.util.ArrayList;
-import java.util.logging.Level;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.mech.ai.BaseAIMechanic;
+import com.sk89q.craftbook.mech.ai.BowShotAIMechanic;
+import com.sk89q.craftbook.mech.ai.SkeletonAIMechanic;
+import com.sk89q.craftbook.mech.ai.TargetAIMechanic;
+import com.sk89q.craftbook.mech.ai.ZombieAIMechanic;
+import com.sk89q.craftbook.util.GeneralUtil;
 
 public class AIMechanic implements Listener {
 
     ArrayList<Class<BaseAIMechanic>> mechanics = new ArrayList<Class<BaseAIMechanic>>();
 
-    MechanismsPlugin plugin;
+    public AIMechanic() {
 
-    public AIMechanic(MechanismsPlugin plugin) {
+        if (!CraftBookPlugin.inst().getConfiguration().aiEnabled) return;
 
-        this.plugin = plugin;
-
-        if (!plugin.getLocalConfiguration().aiSettings.enabled) return;
-
-        if (plugin.getLocalConfiguration().aiSettings.zombieVision) {
+        if (CraftBookPlugin.inst().getConfiguration().aiZombieEnabled) {
             registerAIMechanic(ZombieAIMechanic.class);
         }
-        if (plugin.getLocalConfiguration().aiSettings.skeletonCriticals) {
+        if (CraftBookPlugin.inst().getConfiguration().aiSkeletonEnabled) {
             registerAIMechanic(SkeletonAIMechanic.class);
         }
     }
@@ -41,8 +43,7 @@ public class AIMechanic implements Listener {
                 if (!TargetAIMechanic.class.isAssignableFrom(mechanic)) {
                     continue;
                 }
-                TargetAIMechanic ai = (TargetAIMechanic) mechanic.getConstructors()[0].newInstance(plugin,
-                        event.getEntity());
+                TargetAIMechanic ai = (TargetAIMechanic) mechanic.getConstructors()[0].newInstance(event.getEntity());
                 if (ai == null) return;
                 ai.onEntityTarget(event);
             } catch (Exception e) {
@@ -60,8 +61,7 @@ public class AIMechanic implements Listener {
                 if (!BowShotAIMechanic.class.isAssignableFrom(mechanic)) {
                     continue;
                 }
-                BowShotAIMechanic ai = (BowShotAIMechanic) mechanic.getConstructors()[0].newInstance(plugin,
-                        event.getEntity());
+                BowShotAIMechanic ai = (BowShotAIMechanic) mechanic.getConstructors()[0].newInstance(event.getEntity());
                 if (ai == null) return;
                 ai.onBowShot(event);
             } catch (Exception e) {
