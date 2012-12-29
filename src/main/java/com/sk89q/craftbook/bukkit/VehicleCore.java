@@ -42,11 +42,23 @@ import com.sk89q.worldedit.blocks.ItemID;
  */
 public class VehicleCore extends LocalComponent {
 
+    private static VehicleCore instance;
+
     private CraftBookPlugin plugin = CraftBookPlugin.inst();
 
     private MinecartManager cartman;
 
     private Map<String, String> stationSelection;
+
+    public VehicleCore() {
+
+        instance = this;
+    }
+
+    public static VehicleCore inst() {
+
+        return instance;
+    }
 
     @Override
     public void enable() {

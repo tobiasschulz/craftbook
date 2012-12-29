@@ -46,12 +46,24 @@ import com.sk89q.craftbook.mech.dispenser.Recipe;
 @SuppressWarnings("deprecation")
 public class MechanicalCore extends LocalComponent {
 
+    private static MechanicalCore instance;
+
     private CraftBookPlugin plugin = CraftBookPlugin.inst();
     private final CopyManager copyManager = new CopyManager();
     private MechanicManager manager;
 
     // TODO This probably shouldn't be here
     private DispenserRecipes dRecipes = null;
+
+    public MechanicalCore() {
+
+        instance = this;
+    }
+
+    public static MechanicalCore inst() {
+
+        return instance;
+    }
 
     @Override
     public void enable() {

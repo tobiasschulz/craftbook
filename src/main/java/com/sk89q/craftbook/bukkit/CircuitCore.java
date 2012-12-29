@@ -193,6 +193,7 @@ import com.sk89q.craftbook.circuits.plc.lang.Perlstone;
  */
 public class CircuitCore extends LocalComponent {
 
+    private static CircuitCore instance;
     private CraftBookPlugin plugin = CraftBookPlugin.inst();
     private MechanicManager manager;
     private ICManager ICManager;
@@ -211,6 +212,16 @@ public class CircuitCore extends LocalComponent {
     public static final ICFamily FAMILY_3I3O = new Family3I3O();
     public static final ICFamily FAMILY_VIVO = new FamilyVIVO();
     public static final ICFamily FAMILY_SI5O = new FamilySI5O();
+
+    public CircuitCore() {
+
+        instance = this;
+    }
+
+    public static CircuitCore inst() {
+
+        return instance;
+    }
 
     @Override
     public void enable() {
