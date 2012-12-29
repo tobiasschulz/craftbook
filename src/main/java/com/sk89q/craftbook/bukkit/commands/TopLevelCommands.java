@@ -23,6 +23,10 @@ public class TopLevelCommands {
 
     public class Commands {
 
+        public Commands(CraftBookPlugin plugin) {
+
+        }
+
         @Command(aliases = "reload", desc = "Reloads the CraftBook Common config")
         public void reload(CommandContext context, CommandSender sender) {
 

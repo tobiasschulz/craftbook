@@ -33,6 +33,10 @@ public class CircuitCommands {
 
     public class Commands {
 
+        public Commands(CraftBookPlugin plugin) {
+
+        }
+
         @Command(aliases = {"docs"}, desc = "Documentation on CraftBook IC's", min = 1, max = 1)
         public void docsCmd(CommandContext context, CommandSender sender) {
 

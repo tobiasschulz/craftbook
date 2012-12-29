@@ -35,6 +35,10 @@ import com.sk89q.worldedit.data.DataException;
  */
 public class AreaCommands {
 
+    public AreaCommands(CraftBookPlugin plugin) {
+
+    }
+
     private CraftBookPlugin plugin = CraftBookPlugin.inst();
     private LocalConfiguration config = plugin.getConfiguration();
 
@@ -85,7 +89,7 @@ public class AreaCommands {
             // Check to make sure that a user doesn't have too many toggle
             // areas (to prevent flooding the server with files)
             if (config.areaMaxAreaPerUser >= 0 && !namespace.equals("global")) {
-                int count = ((MechanicalCore) MechanicalCore.inst()).getCopyManager().meetsQuota(world, namespace, id,
+                int count = MechanicalCore.inst().getCopyManager().meetsQuota(world, namespace, id,
                         config.areaMaxAreaPerUser);
 
                 if (count > -1) {
