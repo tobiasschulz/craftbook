@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -80,7 +81,7 @@ public class ProgrammableFireworkShow extends AbstractIC {
         @Override
         public void verify(ChangedSign sign) throws ICVerificationException {
 
-            if(sign.getLine(2).trim().isEmpty() && new File(((CircuitCore) CircuitCore.inst()).getFireworkFolder(), sign.getLine(2).trim() + ".txt").exists())
+            if(sign.getLine(2).trim().isEmpty() && new File(CircuitCore.inst().getFireworkFolder(), sign.getLine(2).trim() + ".txt").exists())
                 throw new ICVerificationException("A valid firework show is required on line 3!");
         }
 
@@ -106,7 +107,7 @@ public class ProgrammableFireworkShow extends AbstractIC {
 
         int position;
 
-        List<String> lines;
+        List<String> lines = new ArrayList<String>();
 
         BukkitTask task;
 
@@ -123,7 +124,8 @@ public class ProgrammableFireworkShow extends AbstractIC {
 
         public void readShow() throws IOException {
 
-            File firework = new File(((CircuitCore) CircuitCore.inst()).getFireworkFolder(), show + ".txt");
+            lines.clear();
+            File firework = new File(CircuitCore.inst().getFireworkFolder(), show + ".txt");
             BufferedReader br = new BufferedReader(new FileReader(firework));
             String line = "";
             while((line = br.readLine()) != null) {

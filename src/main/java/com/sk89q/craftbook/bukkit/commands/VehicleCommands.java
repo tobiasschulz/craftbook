@@ -3,15 +3,17 @@ package com.sk89q.craftbook.bukkit.commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.bukkit.VehicleCore;
 import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
 
 public class VehicleCommands {
 
-    VehicleCore vc = (VehicleCore) VehicleCore.inst();
+    VehicleCore vc = VehicleCore.inst();
 
-    public VehicleCommands() {}
+    public VehicleCommands(CraftBookPlugin plugin) {
+    }
 
     @Command(aliases = {"station", "st"}, desc = "Commands to manage Craftbook station selection")
     public void st(CommandContext context, CommandSender sender) {

@@ -4,9 +4,9 @@ package com.sk89q.craftbook;
 /**
  * Author: Turtle9598
  */
-public abstract class LocalComponent {
+public interface LocalComponent {
 
-    public abstract void enable();
+    public void enable();
 
-    public abstract void disable();
+    public void disable();
 }

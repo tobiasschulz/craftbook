@@ -40,7 +40,7 @@ import com.sk89q.worldedit.blocks.ItemID;
 /**
  * Author: Turtle9598
  */
-public class VehicleCore extends LocalComponent {
+public class VehicleCore implements LocalComponent {
 
     private static VehicleCore instance;
 

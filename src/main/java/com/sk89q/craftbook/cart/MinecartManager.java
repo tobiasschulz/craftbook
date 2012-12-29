@@ -19,6 +19,7 @@ public class MinecartManager {
 
     public MinecartManager() {
 
+        reloadConfiguration();
     }
 
     private Map<ItemInfo, CartMechanism> mechanisms;

@@ -44,7 +44,7 @@ import com.sk89q.craftbook.mech.dispenser.Recipe;
  * Author: Turtle9598
  */
 @SuppressWarnings("deprecation")
-public class MechanicalCore extends LocalComponent {
+public class MechanicalCore implements LocalComponent {
 
     private static MechanicalCore instance;
 

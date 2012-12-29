@@ -191,7 +191,7 @@ import com.sk89q.craftbook.circuits.plc.lang.Perlstone;
 /**
  * Author: Turtle9598
  */
-public class CircuitCore extends LocalComponent {
+public class CircuitCore implements LocalComponent {
 
     private static CircuitCore instance;
     private CraftBookPlugin plugin = CraftBookPlugin.inst();
