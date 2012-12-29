@@ -79,12 +79,12 @@ public class CraftBookPlugin extends JavaPlugin {
      * permissions checking, and a number of other fancy command things.
      * We just set it up and register commands against it.
      */
-    private final CommandsManager<CommandSender> commands;
+    private CommandsManager<CommandSender> commands;
 
     /**
      * Handles all configuration.
      */
-    private final BukkitConfiguration config;
+    private BukkitConfiguration config;
 
     /**
      * Used for backwards compatability of block faces.
@@ -99,18 +99,6 @@ public class CraftBookPlugin extends JavaPlugin {
 
         // Set the instance
         instance = this;
-
-        // Setup Config and the Commands Manager
-        final CraftBookPlugin plugin = this;
-        config = new BukkitConfiguration(new YAMLProcessor(new File(getDataFolder(), "config.yml"), true), this);
-        commands = new CommandsManager<CommandSender>() {
-
-            @Override
-            public boolean hasPermission(CommandSender player, String perm) {
-
-                return plugin.hasPermission(player, perm);
-            }
-        };
     }
 
     /**
@@ -136,6 +124,19 @@ public class CraftBookPlugin extends JavaPlugin {
                 return;
             }
         }
+
+        // Setup Config and the Commands Manager
+        final CraftBookPlugin plugin = this;
+        config = new BukkitConfiguration(new YAMLProcessor(new File(getDataFolder(), "config.yml"), true), this);
+        commands = new CommandsManager<CommandSender>() {
+
+            @Override
+            public boolean hasPermission(CommandSender player, String perm) {
+
+                return plugin.hasPermission(player, perm);
+            }
+        };
+
         //
         languageManager = new LanguageManager();
 
