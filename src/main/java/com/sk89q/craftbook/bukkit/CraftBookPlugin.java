@@ -1,16 +1,19 @@
 package com.sk89q.craftbook.bukkit;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Random;
-import java.util.jar.JarFile;
-import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-
+import com.comphenix.protocol.ProtocolLibrary;
+import com.sk89q.bukkit.util.CommandsManagerRegistration;
+import com.sk89q.craftbook.LanguageManager;
+import com.sk89q.craftbook.LocalComponent;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.bukkit.commands.TopLevelCommands;
+import com.sk89q.minecraft.util.commands.*;
+import com.sk89q.util.yaml.YAMLProcessor;
+import com.sk89q.wepif.PermissionsResolverManager;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.GlobalRegionManager;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.util.FatalConfigurationLoadingException;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -25,25 +28,13 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.sk89q.bukkit.util.CommandsManagerRegistration;
-import com.sk89q.craftbook.LanguageManager;
-import com.sk89q.craftbook.LocalPlayer;
-import com.sk89q.craftbook.bukkit.commands.TopLevelCommands;
-import com.sk89q.minecraft.util.commands.CommandException;
-import com.sk89q.minecraft.util.commands.CommandPermissionsException;
-import com.sk89q.minecraft.util.commands.CommandUsageException;
-import com.sk89q.minecraft.util.commands.CommandsManager;
-import com.sk89q.minecraft.util.commands.MissingNestedCommandException;
-import com.sk89q.minecraft.util.commands.SimpleInjector;
-import com.sk89q.minecraft.util.commands.WrappedCommandException;
-import com.sk89q.util.yaml.YAMLProcessor;
-import com.sk89q.wepif.PermissionsResolverManager;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.GlobalRegionManager;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.util.FatalConfigurationLoadingException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.jar.JarFile;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
 
 public class CraftBookPlugin extends JavaPlugin {
 
@@ -92,6 +83,11 @@ public class CraftBookPlugin extends JavaPlugin {
     private Boolean useOldBlockFace;
 
     /**
+     * The currently enabled LocalComponents
+     */
+    private List<LocalComponent> components = new ArrayList<LocalComponent>();
+
+    /**
      * Construct objects. Actual loading occurs when the plugin is enabled, so
      * this merely instantiates the objects.
      */
@@ -116,8 +112,8 @@ public class CraftBookPlugin extends JavaPlugin {
             worldEditPlugin = (WorldEditPlugin) checkPlugin;
         } else {
             try {
+                //noinspection UnusedDeclaration
                 String s = WorldEditPlugin.CUI_PLUGIN_CHANNEL;
-                s.trim(); //Stop the stupid unused warnings.
             } catch (Throwable t) {
                 logger().warning("WorldEdit detection has failed!");
                 logger().warning("WorldEdit is a required dependency, Craftbook disabled!");
@@ -182,6 +178,17 @@ public class CraftBookPlugin extends JavaPlugin {
         if (checkPlugin != null && checkPlugin instanceof WorldEditPlugin) {
             worldGuardPlugin = (WorldGuardPlugin) checkPlugin;
         } else worldGuardPlugin = null;
+
+        // Let's start the show
+        // Circuits
+        CircuitCore circuitCore = new CircuitCore();
+        circuitCore.enable();
+        components.add(circuitCore);
+        // Mechanics
+        MechanicalCore mechanicalCore = new MechanicalCore();
+        mechanicalCore.enable();
+        components.add(mechanicalCore);
+        // TODO - Vehicles
     }
 
     /**
@@ -190,6 +197,9 @@ public class CraftBookPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
 
+        for (LocalComponent component : components) {
+            component.disable();
+        }
         config.unload();
     }
 
@@ -198,7 +208,7 @@ public class CraftBookPlugin extends JavaPlugin {
      */
     @Override
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label,
-            String[] args) {
+                             String[] args) {
 
         try {
             commands.execute(cmd.getName(), args, sender, sender);
@@ -549,17 +559,6 @@ public class CraftBookPlugin extends JavaPlugin {
     }
 
     /**
-     * This method is used to determine whether ProtocolLib is
-     * enabled on the server.
-     *
-     * @return True if ProtocolLib was found
-     */
-    public ProtocolLibrary getProtocolLib() {
-
-        return protocolLib;
-    }
-
-    /**
      * Gets a copy of the {@link WorldEditPlugin}.
      *
      * This method cannot return null.
@@ -634,7 +633,7 @@ public class CraftBookPlugin extends JavaPlugin {
 
     /**
      * Check to see if it should use the old block face methods.
-     * 
+     *
      * @return whether it shoudl use the old blockface methods.
      */
     public boolean useOldBlockFace() {
