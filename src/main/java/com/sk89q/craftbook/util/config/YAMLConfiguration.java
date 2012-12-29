@@ -4,18 +4,18 @@ package com.sk89q.craftbook.util.config;
  * Author: Turtle9598
  */
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-
 import com.sk89q.craftbook.LocalConfiguration;
 import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.mech.CustomDropManager;
 import com.sk89q.util.yaml.YAMLProcessor;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.blocks.ItemID;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 /**
  * A implementation of YAML based off of {@link com.sk89q.worldedit.util.YAMLConfiguration} for CraftBook.
@@ -98,23 +98,30 @@ public class YAMLConfiguration extends LocalConfiguration {
         chairEnabled = config.getBoolean("mechanics.chair.enable", true);
         chairSneak = config.getBoolean("mechanics.chair.require-sneak", true);
         chairHealth = config.getBoolean("mechanics.chair.regen-health", true);
-        chairBlocks = config.getIntList("mechanics.chair.blocks", Arrays.asList(53, 67, 108, 109, 114, 128, 134, 135, 136));
+        chairBlocks = config.getIntList("mechanics.chair.blocks", Arrays.asList(53, 67, 108, 109, 114, 128, 134, 135,
+                136));
+
+        // Chunk Anchor Configuration Listener
+        chunkAnchorEnabled = config.getBoolean("mechanics.chunk-anchor.enable", true);
 
         // Command Sign Configuration Listener
-        commandSignEnabled = config.getBoolean("mechanics.command sign.enable", true);
+        commandSignEnabled = config.getBoolean("mechanics.command-sign.enable", true);
 
         // Cooking Pot Configuration Listener
-        cookingPotEnabled = config.getBoolean("mechanics.cooking pot.enable", true);
-        cookingPotFuel = config.getBoolean("mechanics.cooking pot.require-fuel", true);
-        cookingPotOres = config.getBoolean("mechanics.cooking pot.cook-ores", false);
-        cookingPotSignOpen = config.getBoolean("mechanics.cooking pot.sign-click-open", true);
+        cookingPotEnabled = config.getBoolean("mechanics.cooking-pot.enable", true);
+        cookingPotFuel = config.getBoolean("mechanics.cooking-pot.require-fuel", true);
+        cookingPotOres = config.getBoolean("mechanics.cooking-pot.cook-ores", false);
+        cookingPotSignOpen = config.getBoolean("mechanics.cooking-pot.sign-click-open", true);
+
+        // Custom Crafting Configuration Listener
+        customCraftingEnabled = config.getBoolean("mechanics.custom-crafting.enable", true);
 
         // Custom Dispensing Configuration Listener
-        customDispensingEnabled = config.getBoolean("mechanics.dispenser recipes.enable", true);
+        customDispensingEnabled = config.getBoolean("mechanics.dispenser-recipes.enable", true);
 
         // Custom Drops Configuration Listener
-        customDropEnabled = config.getBoolean("mechanics.custom drops.enable", true);
-        customDropPermissions = config.getBoolean("mechanics.custom drops.require-permissions", false);
+        customDropEnabled = config.getBoolean("mechanics.custom-drops.enable", true);
+        customDropPermissions = config.getBoolean("mechanics.custom-drops.require-permissions", false);
         customDrops = new CustomDropManager(CraftBookPlugin.inst().getDataFolder());
 
         // Door Configuration Listener
@@ -137,21 +144,24 @@ public class YAMLConfiguration extends LocalConfiguration {
         gateBlocks = config.getIntList("mechanics.gate.blocks", Arrays.asList(85, 101, 102, 113));
 
         // Hidden Switch Configuration Listener
-        hiddenSwitchEnabled = config.getBoolean("mechanics.hidden switch.enable", true);
-        hiddenSwitchAnyside = config.getBoolean("mechanics.hidden switch.any-side", true);
+        hiddenSwitchEnabled = config.getBoolean("mechanics.hidden-switch.enable", true);
+        hiddenSwitchAnyside = config.getBoolean("mechanics.hidden-switch.any-side", true);
 
         // Legacy Cauldron Configuration Listener
-        legacyCauldronEnabled = config.getBoolean("mechanics.legacy cauldron.enable", true);
-        legacyCauldronBlock = config.getInt("mechanics.legacy cauldron.block", BlockID.STONE);
+        legacyCauldronEnabled = config.getBoolean("mechanics.legacy-cauldron.enable", true);
+        legacyCauldronBlock = config.getInt("mechanics.legacy-cauldron.block", BlockID.STONE);
 
         // Lightstone Configuration Listener
         lightstoneEnabled = config.getBoolean("mechanics.lightstone.enable", true);
         lightstoneItem = config.getInt("mechanics.lightstone.item", ItemID.LIGHTSTONE_DUST);
 
         // Light Switch Configuration Listener
-        lightSwitchEnabled = config.getBoolean("mechanics.light switch.enable", true);
-        lightSwitchMaxRange = config.getInt("mechanics.light switch.max-range", 10);
-        lightSwitchMaxLights = config.getInt("mechanics.light switch.max-lights", 20);
+        lightSwitchEnabled = config.getBoolean("mechanics.light-switch.enable", true);
+        lightSwitchMaxRange = config.getInt("mechanics.light-switch.max-range", 10);
+        lightSwitchMaxLights = config.getInt("mechanics.light-switch.max-lights", 20);
+
+        // Map Changer Configuration Listener
+        mapChangerEnabled = config.getBoolean("mechanics.map-changer.enable", true);
 
         // Painting Switcher Configuration Listener
         paintingsEnabled = config.getBoolean("mechanics.paintings.enable", true);
