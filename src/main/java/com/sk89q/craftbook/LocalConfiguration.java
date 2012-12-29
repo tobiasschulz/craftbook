@@ -39,21 +39,22 @@ public abstract class LocalConfiguration {
     public boolean aiZombieEnabled = true;
     public boolean aiSkeletonEnabled = true;
     // Mechanics - Ammeter
+    public boolean ammeterEnabled = true;
     public int ammeterItem = ItemID.COAL;
     // Mechanics - Area
     public boolean areaEnabled = true;
     public boolean areaAllowRedstone = true;
     public boolean areaUseSchematics = true;
-    public int areaMaxAreaSize;
-    public int areaMaxAreaPerUser;
+    public int areaMaxAreaSize = 5000;
+    public int areaMaxAreaPerUser = 30;
     // Mechanics - Bookcase
     public boolean bookcaseEnabled = true;
     public String bookcaseReadLine = "You pick up a book...";
     // Mechanics - Bridge
     public boolean bridgeEnabled = true;
     public boolean bridgeAllowRedstone = true;
-    public int bridgeMaxLength;
-    public int bridgeMaxWidth;
+    public int bridgeMaxLength = 30;
+    public int bridgeMaxWidth = 5;
     public List<Integer> bridgeBlocks = Arrays.asList(4, 5, 20, 43);
     // Mechanics - Cauldron
     public boolean cauldronEnabled = true;
@@ -79,8 +80,8 @@ public abstract class LocalConfiguration {
     // Mechanics - Door
     public boolean doorEnabled = true;
     public boolean doorAllowRedstone = true;
-    public int doorMaxLength;
-    public int doorMaxWidth;
+    public int doorMaxLength = 30;
+    public int doorMaxWidth = 5;
     public List<Integer> doorBlocks = Arrays.asList(4, 5, 20, 43);
     // Mechanics - Elevator
     public boolean elevatorEnabled = true;
@@ -88,7 +89,7 @@ public abstract class LocalConfiguration {
     public boolean elevatorLoop = false;
     // Mechanics - Gate
     public boolean gateEnabled = true;
-    public boolean gateRedstoneEnabled = true;
+    public boolean gateAllowRedstone = true;
     public boolean gateLimitColumns = true;
     public int gateColumnLimit = 14;
     public List<Integer> gateBlocks = Arrays.asList(85, 101, 102, 113);
@@ -100,7 +101,7 @@ public abstract class LocalConfiguration {
     public int legacyCauldronBlock = BlockID.STONE;
     // Mechanics - Lightstone
     public boolean lightstoneEnabled = true;
-    public int lightstoneID = ItemID.LIGHTSTONE_DUST;
+    public int lightstoneItem = ItemID.LIGHTSTONE_DUST;
     // Mechanics - Light Switch
     public boolean lightSwitchEnabled = true;
     public int lightSwitchMaxRange = 10;

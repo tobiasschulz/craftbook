@@ -395,7 +395,7 @@ public class Gate extends AbstractMechanic {
     @Override
     public void onBlockRedstoneChange(final SourcedBlockRedstoneEvent event) {
 
-        if (!plugin.getConfiguration().gateRedstoneEnabled) return;
+        if (!plugin.getConfiguration().gateAllowRedstone) return;
 
         if (event.getNewCurrent() == event.getOldCurrent()) return;
 
