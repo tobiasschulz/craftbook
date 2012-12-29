@@ -113,7 +113,7 @@ public class Teleporter extends AbstractMechanic {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        if (!plugin.getLocalConfiguration().teleporterSettings.enable) return;
+        if (!CraftBookPlugin.inst().getConfiguration().teleporterEnabled) return;
 
         if (!BukkitUtil.toWorldVector(event.getClickedBlock()).equals(BukkitUtil.toWorldVector(trigger)) && !(event
                 .getClickedBlock().getState().getData() instanceof Button))
@@ -154,7 +154,7 @@ public class Teleporter extends AbstractMechanic {
             } else return;
         }
 
-        if (plugin.getLocalConfiguration().teleporterSettings.requiresign) {
+        if (CraftBookPlugin.inst().getConfiguration().teleporterRequireSign) {
             Block location = trigger.getWorld().getBlockAt((int) toX, (int) toY, (int) toZ);
             if (location.getTypeId() != BlockID.WALL_SIGN && location.getTypeId() != BlockID.SIGN_POST) {
                 if (location.getTypeId() == BlockID.STONE_BUTTON || location.getTypeId() == BlockID.WOODEN_BUTTON) {
@@ -209,13 +209,12 @@ public class Teleporter extends AbstractMechanic {
                     floor.getZ() + 0.5));
             player.getVehicle().teleport(subspaceRift);
         }
-        if (plugin.getLocalConfiguration().teleporterSettings.maxrange > 0
-                && subspaceRift.getPosition().distanceSq(player.getPosition().getPosition()) > plugin
-                .getLocalConfiguration().teleporterSettings.maxrange
-                * plugin.getLocalConfiguration().teleporterSettings.maxrange) {
-            player.print("mech.teleport.range");
-            return;
-        }
+        if (CraftBookPlugin.inst().getConfiguration().teleporterMaxRange > 0)
+            if(subspaceRift.getPosition().distanceSq(player.getPosition().getPosition()) >
+            CraftBookPlugin.inst().getConfiguration().teleporterMaxRange * CraftBookPlugin.inst().getConfiguration().teleporterMaxRange) {
+                player.print("mech.teleport.range");
+                return;
+            }
 
         player.teleport(subspaceRift);
 

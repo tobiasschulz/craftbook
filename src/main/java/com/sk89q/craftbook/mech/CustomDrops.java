@@ -1,7 +1,5 @@
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.bukkit.CraftBookPlugin;
-import com.sk89q.craftbook.util.ItemUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
@@ -10,6 +8,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.util.ItemUtil;
 
 public class CustomDrops implements Listener {
 
@@ -20,7 +21,7 @@ public class CustomDrops implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void handleCustomBlockDrops(BlockBreakEvent event) {
 
-        if (plugin.getConfiguration().customDropSettings.requirePermissions
+        if (plugin.getConfiguration().customDropPermissions
                 && !plugin.wrapPlayer(event.getPlayer()).hasPermission("craftbook.mech.drops")) return;
 
         int id = event.getBlock().getTypeId();

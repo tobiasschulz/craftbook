@@ -1,10 +1,5 @@
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.*;
-import com.sk89q.craftbook.util.SignUtil;
-import com.sk89q.worldedit.BlockWorldVector;
-import com.sk89q.worldedit.blocks.BlockID;
-import com.sk89q.worldedit.bukkit.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -14,6 +9,19 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.material.Lever;
 
+import com.sk89q.craftbook.AbstractMechanic;
+import com.sk89q.craftbook.AbstractMechanicFactory;
+import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.InsufficientPermissionsException;
+import com.sk89q.craftbook.InvalidMechanismException;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.ProcessedMechanismException;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.util.SignUtil;
+import com.sk89q.worldedit.BlockWorldVector;
+import com.sk89q.worldedit.blocks.BlockID;
+import com.sk89q.worldedit.bukkit.BukkitUtil;
+
 /**
  * Payment Mech, takes payment. (Requires Vault.)
  *
@@ -21,14 +29,11 @@ import org.bukkit.material.Lever;
  */
 public class Payment extends AbstractMechanic {
 
-    final MechanismsPlugin plugin;
-
     protected final BlockWorldVector pt;
 
-    public Payment(BlockWorldVector pt, MechanismsPlugin plugin) {
+    public Payment(BlockWorldVector pt) {
 
         this.pt = pt;
-        this.plugin = plugin;
     }
 
     /**
@@ -39,7 +44,7 @@ public class Payment extends AbstractMechanic {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        LocalPlayer player = CraftBookPlugin.inst().wrapPlayer(event.getPlayer());
 
         if (!player.hasPermission("craftbook.mech.pay.use")) {
             player.printError("mech.use-permission");
@@ -62,16 +67,16 @@ public class Payment extends AbstractMechanic {
         double money = Double.parseDouble(sign.getLine(2));
         String reciever = sign.getLine(3);
 
-        if (MechanismsPlugin.economy.withdrawPlayer(event.getPlayer().getName(), money).transactionSuccess())
-            if (MechanismsPlugin.economy.depositPlayer(reciever, money).transactionSuccess()) {
+        if (CraftBookPlugin.inst().getEconomy().withdrawPlayer(event.getPlayer().getName(), money).transactionSuccess())
+            if (CraftBookPlugin.inst().getEconomy().depositPlayer(reciever, money).transactionSuccess()) {
                 Block back = SignUtil.getBackBlock(sign.getBlock());
                 BlockFace bface = sign.getBlock().getFace(back);
                 Block redstoneItem = back.getRelative(bface);
                 if (setState(sign.getBlock(), true)) {
-                    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new TurnOff(redstoneItem), 20L);
+                    CraftBookPlugin.inst().getServer().getScheduler().scheduleSyncDelayedTask(CraftBookPlugin.inst(), new TurnOff(redstoneItem), 20L);
                 }
             } else {
-                MechanismsPlugin.economy.depositPlayer(event.getPlayer().getName(), money);
+                CraftBookPlugin.inst().getEconomy().depositPlayer(event.getPlayer().getName(), money);
             }
 
         event.setCancelled(true);
@@ -121,11 +126,7 @@ public class Payment extends AbstractMechanic {
 
     public static class Factory extends AbstractMechanicFactory<Payment> {
 
-        protected final MechanismsPlugin plugin;
-
-        public Factory(MechanismsPlugin plugin) {
-
-            this.plugin = plugin;
+        public Factory() {
         }
 
         @Override
@@ -136,7 +137,7 @@ public class Payment extends AbstractMechanic {
                 BlockState state = block.getState();
                 if (state instanceof Sign) {
                     Sign sign = (Sign) state;
-                    if (sign.getLine(1).equalsIgnoreCase("[Pay]")) return new Payment(pt, plugin);
+                    if (sign.getLine(1).equalsIgnoreCase("[Pay]")) return new Payment(pt);
                 }
             }
 
@@ -150,7 +151,7 @@ public class Payment extends AbstractMechanic {
          */
         @Override
         public Payment detect(BlockWorldVector pt, LocalPlayer player,
-                              ChangedSign sign) throws InvalidMechanismException,
+                ChangedSign sign) throws InvalidMechanismException,
                 ProcessedMechanismException {
 
             if (sign.getLine(1).equalsIgnoreCase("[Pay]")) {

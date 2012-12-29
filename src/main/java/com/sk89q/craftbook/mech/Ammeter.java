@@ -7,7 +7,7 @@
  * Software Foundation, either version 3 of the License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-  * warranty of MERCHANTABILITY or
+ * warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not,
@@ -15,6 +15,10 @@
  */
 
 package com.sk89q.craftbook.mech;
+
+import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import com.sk89q.craftbook.AbstractMechanic;
 import com.sk89q.craftbook.AbstractMechanicFactory;
@@ -24,9 +28,6 @@ import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.blocks.BlockType;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
-import org.bukkit.ChatColor;
-import org.bukkit.block.Block;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
  * This allows users to Right-click to check the power level of redstone.
@@ -50,7 +51,7 @@ public class Ammeter extends AbstractMechanic {
         Block block = event.getClickedBlock();
         if (event.getPlayer().getItemInHand().getTypeId() == plugin.getConfiguration().ammeterItem
                 && (BlockType.canTransferRedstone(block.getTypeId()) || BlockType.isRedstoneSource(block.getTypeId())
-        )) {
+                        )) {
             int data = getSpecialData(block);
             String line = getCurrentLine(data);
             player.print("Ammeter: " + line + ChatColor.WHITE + " " + data + " A");

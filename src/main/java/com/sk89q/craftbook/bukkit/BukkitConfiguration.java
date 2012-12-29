@@ -15,6 +15,7 @@ public class BukkitConfiguration extends YAMLConfiguration {
     public boolean indirectRedstone = false;
     public boolean experimentalRepeaters = false;
     public boolean useBlockDistance = false;
+    public boolean safeDestruction = true;
 
     public String language = "en_US";
     public List<String> languages = Arrays.asList("en_US");
@@ -31,6 +32,7 @@ public class BukkitConfiguration extends YAMLConfiguration {
     public void load() {
 
         super.load();
+        safeDestruction = config.getBoolean("safe-destruction", true);
         noOpPermissions = config.getBoolean("no-op-permissions", false);
         indirectRedstone = config.getBoolean("indirect-redstone", false);
         experimentalRepeaters = config.getBoolean("experimental-repeaters", false);

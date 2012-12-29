@@ -7,7 +7,7 @@
  * Software Foundation, either version 3 of the License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-  * warranty of MERCHANTABILITY or
+ * warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not,
@@ -16,39 +16,38 @@
 
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.AbstractMechanic;
-import com.sk89q.craftbook.AbstractMechanicFactory;
-import com.sk89q.craftbook.LocalPlayer;
-import com.sk89q.worldedit.BlockWorldVector;
-import com.sk89q.worldedit.bukkit.BukkitUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import com.sk89q.craftbook.AbstractMechanic;
+import com.sk89q.craftbook.AbstractMechanicFactory;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.worldedit.BlockWorldVector;
+import com.sk89q.worldedit.bukkit.BukkitUtil;
 
 /**
  * This allows users to Right-click to check the light level.
  */
 public class LightStone extends AbstractMechanic {
 
-    protected final MechanismsPlugin plugin;
-
-    public LightStone(MechanismsPlugin plugin) {
+    public LightStone() {
 
         super();
-        this.plugin = plugin;
     }
 
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        LocalPlayer player = CraftBookPlugin.inst().wrapPlayer(event.getPlayer());
 
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
         if (!player.hasPermission("craftbook.mech.lightstone.use")) return;
 
         Block block = event.getClickedBlock().getRelative(event.getBlockFace());
-        if (event.getPlayer().getItemInHand().getTypeId() == plugin.getLocalConfiguration().lightStoneSettings.id) {
+        if (event.getPlayer().getItemInHand().getTypeId() == CraftBookPlugin.inst().getConfiguration().lightstoneID) {
             String lightLevelLine = getLightLine(block.getLightLevel());
             player.print(ChatColor.YELLOW + "LightStone: [" + lightLevelLine + ChatColor.YELLOW + "] " + block
                     .getLightLevel() + " L");
@@ -75,18 +74,14 @@ public class LightStone extends AbstractMechanic {
 
     public static class Factory extends AbstractMechanicFactory<LightStone> {
 
-        protected final MechanismsPlugin plugin;
-
-        public Factory(MechanismsPlugin plugin) {
-
-            this.plugin = plugin;
+        public Factory() {
         }
 
         @Override
         public LightStone detect(BlockWorldVector pt) {
 
             Block block = BukkitUtil.toWorld(pt).getBlockAt(BukkitUtil.toLocation(pt));
-            if (block != null) return new LightStone(plugin);
+            if (block != null) return new LightStone();
 
             return null;
         }

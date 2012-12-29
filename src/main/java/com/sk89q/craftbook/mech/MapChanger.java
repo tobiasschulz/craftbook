@@ -1,23 +1,26 @@
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.*;
-import com.sk89q.worldedit.BlockWorldVector;
-import com.sk89q.worldedit.blocks.ItemID;
-import com.sk89q.worldedit.bukkit.BukkitUtil;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import com.sk89q.craftbook.AbstractMechanic;
+import com.sk89q.craftbook.AbstractMechanicFactory;
+import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.InsufficientPermissionsException;
+import com.sk89q.craftbook.InvalidMechanismException;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.ProcessedMechanismException;
+import com.sk89q.worldedit.BlockWorldVector;
+import com.sk89q.worldedit.blocks.ItemID;
+import com.sk89q.worldedit.bukkit.BukkitUtil;
 
 public class MapChanger extends AbstractMechanic {
 
     public static class Factory extends AbstractMechanicFactory<MapChanger> {
 
-        public Factory(MechanismsPlugin plugin) {
-
-            this.plugin = plugin;
+        public Factory() {
         }
-
-        private final MechanismsPlugin plugin;
 
         /**
          * Explore around the trigger to find a functional chunk anchor sign; throw if things look funny.
@@ -35,7 +38,7 @@ public class MapChanger extends AbstractMechanic {
 
             if (block.getState() instanceof Sign) {
                 Sign s = (Sign) block.getState();
-                if (s.getLine(1).equalsIgnoreCase("[Map]")) return new MapChanger(block, plugin);
+                if (s.getLine(1).equalsIgnoreCase("[Map]")) return new MapChanger(block);
             }
             return null;
         }
@@ -47,7 +50,7 @@ public class MapChanger extends AbstractMechanic {
          */
         @Override
         public MapChanger detect(BlockWorldVector pt, LocalPlayer player,
-                                 ChangedSign sign) throws InvalidMechanismException,
+                ChangedSign sign) throws InvalidMechanismException,
                 ProcessedMechanismException {
 
             if (!sign.getLine(1).equalsIgnoreCase("[Map]")) return null;
@@ -67,7 +70,7 @@ public class MapChanger extends AbstractMechanic {
      *
      * @throws InvalidMechanismException
      */
-    private MapChanger(Block trigger, MechanismsPlugin plugin) throws InvalidMechanismException {
+    private MapChanger(Block trigger) throws InvalidMechanismException {
 
         super();
     }

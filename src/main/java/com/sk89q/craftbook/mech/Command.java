@@ -83,7 +83,7 @@ public class Command extends AbstractMechanic {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        if (!plugin.getConfiguration().commandSettings.enable) return;
+        if (!plugin.getConfiguration().commandSignEnabled) return;
         if (!BukkitUtil.toWorldVector(event.getClickedBlock()).equals(BukkitUtil.toWorldVector(trigger)))
             return; // wth? our manager is insane
 
@@ -107,7 +107,7 @@ public class Command extends AbstractMechanic {
     @Override
     public void onBlockRedstoneChange(SourcedBlockRedstoneEvent event) {
 
-        if (!plugin.getConfiguration().commandSettings.enable) return;
+        if (!plugin.getConfiguration().commandSignEnabled) return;
         if (!BukkitUtil.toWorldVector(event.getBlock()).equals(BukkitUtil.toWorldVector(trigger)))
             return; // wth? our manager is insane
 

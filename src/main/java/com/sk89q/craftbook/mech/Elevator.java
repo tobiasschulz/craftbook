@@ -16,7 +16,19 @@
 
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.material.Button;
+
+import com.sk89q.craftbook.AbstractMechanic;
+import com.sk89q.craftbook.AbstractMechanicFactory;
+import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.InvalidMechanismException;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.ProcessedMechanismException;
 import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.bukkit.util.BukkitUtil;
 import com.sk89q.craftbook.util.RegexUtil;
@@ -24,12 +36,6 @@ import com.sk89q.worldedit.BlockWorldVector;
 import com.sk89q.worldedit.Location;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.blocks.BlockType;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.material.Button;
 
 /**
  * The default elevator mechanism -- wall signs in a vertical column that teleport the player vertically when triggered.
@@ -79,7 +85,7 @@ public class Elevator extends AbstractMechanic {
          */
         @Override
         public Elevator detect(BlockWorldVector pt, LocalPlayer player,
-                               ChangedSign sign) throws InvalidMechanismException,
+                ChangedSign sign) throws InvalidMechanismException,
                 ProcessedMechanismException {
 
             Direction dir = isLift(sign);
@@ -136,7 +142,7 @@ public class Elevator extends AbstractMechanic {
                 break; // found it!
             }
             if (destination.getY() == trigger.getY()) throw new InvalidConstructionException();
-            if (plugin.getConfiguration().elevatorSettings.loop && !loopd) {
+            if (plugin.getConfiguration().elevatorLoop && !loopd) {
                 if (destination.getY() == trigger.getWorld().getMaxHeight()) { // hit the top of the world
                     org.bukkit.Location low = destination.getLocation();
                     low.setY(0);
@@ -174,7 +180,7 @@ public class Elevator extends AbstractMechanic {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        if (!plugin.getConfiguration().elevatorSettings.enable) return;
+        if (!plugin.getConfiguration().elevatorEnabled) return;
 
         if (!BukkitUtil.toWorldVector(event.getClickedBlock()).equals(BukkitUtil.toWorldVector(trigger)))
             return; // wth? our manager is insane
@@ -279,7 +285,7 @@ public class Elevator extends AbstractMechanic {
 
         BlockState state = block.getState();
         if (!(state instanceof Sign)) {
-            if (CraftBookPlugin.inst().getConfiguration().elevatorSettings.buttons
+            if (CraftBookPlugin.inst().getConfiguration().elevatorButtonEnabled
                     && (block.getTypeId() == BlockID.STONE_BUTTON || block.getTypeId() == BlockID.WOODEN_BUTTON)) {
                 Button b = (Button) block.getState().getData();
                 Block sign = block.getRelative(b.getAttachedFace()).getRelative(b.getAttachedFace());

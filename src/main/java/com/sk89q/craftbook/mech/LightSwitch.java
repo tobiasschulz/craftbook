@@ -7,7 +7,7 @@
  * Software Foundation, either version 3 of the License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-  * warranty of MERCHANTABILITY or
+ * warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not,
@@ -16,15 +16,23 @@
 
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.*;
-import com.sk89q.craftbook.util.HistoryHashMap;
-import com.sk89q.worldedit.BlockWorldVector;
-import com.sk89q.worldedit.blocks.BlockID;
-import com.sk89q.worldedit.bukkit.BukkitUtil;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import com.sk89q.craftbook.AbstractMechanic;
+import com.sk89q.craftbook.AbstractMechanicFactory;
+import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.InsufficientPermissionsException;
+import com.sk89q.craftbook.InvalidMechanismException;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.ProcessedMechanismException;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.util.HistoryHashMap;
+import com.sk89q.worldedit.BlockWorldVector;
+import com.sk89q.worldedit.blocks.BlockID;
+import com.sk89q.worldedit.bukkit.BukkitUtil;
 
 /**
  * Handler for Light switches. Toggles all torches in the area from being redstone to normal torches. This is done
@@ -37,11 +45,8 @@ public class LightSwitch extends AbstractMechanic {
 
     public static class Factory extends AbstractMechanicFactory<LightSwitch> {
 
-        protected final MechanismsPlugin plugin;
+        public Factory() {
 
-        public Factory(MechanismsPlugin plugin) {
-
-            this.plugin = plugin;
         }
 
         @Override
@@ -55,7 +60,7 @@ public class LightSwitch extends AbstractMechanic {
 
             // okay, now we can start doing exploration of surrounding blocks
             // and if something goes wrong in here then we throw fits.
-            return new LightSwitch(pt, plugin);
+            return new LightSwitch(pt);
         }
 
         /**
@@ -65,7 +70,7 @@ public class LightSwitch extends AbstractMechanic {
          */
         @Override
         public LightSwitch detect(BlockWorldVector pt, LocalPlayer player,
-                                  ChangedSign sign) throws InvalidMechanismException,
+                ChangedSign sign) throws InvalidMechanismException,
                 ProcessedMechanismException {
 
             String line = sign.getLine(1);
@@ -90,8 +95,6 @@ public class LightSwitch extends AbstractMechanic {
     /**
      * Configuration.
      */
-    protected final MechanismsPlugin plugin;
-
     private final BlockWorldVector pt;
 
     /**
@@ -100,17 +103,16 @@ public class LightSwitch extends AbstractMechanic {
      * @param pt
      * @param plugin
      */
-    private LightSwitch(BlockWorldVector pt, MechanismsPlugin plugin) {
+    private LightSwitch(BlockWorldVector pt) {
 
         super();
         this.pt = pt;
-        this.plugin = plugin;
     }
 
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        if (!plugin.getLocalConfiguration().lightSwitchSettings.enable) return;
+        if (!CraftBookPlugin.inst().getConfiguration().lightSwitchEnabled) return;
         if (!BukkitUtil.toWorldVector(event.getClickedBlock()).equals(pt)) return; // wth? our manager is insane
         toggleLights(pt);
         event.setCancelled(true);
@@ -141,11 +143,11 @@ public class LightSwitch extends AbstractMechanic {
             maximum = Integer.parseInt(((Sign) block.getState()).getLine(3));
         } catch (Exception ignored) {
         }
-        if (radius > plugin.getLocalConfiguration().lightSwitchSettings.maxRange) {
-            radius = plugin.getLocalConfiguration().lightSwitchSettings.maxRange;
+        if (radius > CraftBookPlugin.inst().getConfiguration().lightSwitchMaxRange) {
+            radius = CraftBookPlugin.inst().getConfiguration().lightSwitchMaxRange;
         }
-        if (maximum > plugin.getLocalConfiguration().lightSwitchSettings.maxMaximum) {
-            maximum = plugin.getLocalConfiguration().lightSwitchSettings.maxMaximum;
+        if (maximum > CraftBookPlugin.inst().getConfiguration().lightSwitchMaxLights) {
+            maximum = CraftBookPlugin.inst().getConfiguration().lightSwitchMaxLights;
         }
 
         int wx = pt.getBlockX();

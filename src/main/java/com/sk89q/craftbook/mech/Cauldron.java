@@ -150,7 +150,7 @@ public class Cauldron extends AbstractMechanic {
         int s2 = world.getBlockTypeIdAt(ix, iy, iz + 1);
         int s4 = world.getBlockTypeIdAt(ix, iy, iz - 1);
 
-        int blockID = plugin.getLocalConfiguration().cauldronSettings.cauldronBlock;
+        int blockID = CraftBookPlugin.inst().getConfiguration().legacyCauldronBlock;
 
         // stop strange lava ids
         if (below == 11) {
@@ -183,7 +183,7 @@ public class Cauldron extends AbstractMechanic {
         // Gotta start at a root Y then find our orientation
         int rootY = pt.getBlockY();
 
-        int blockID = plugin.getLocalConfiguration().cauldronSettings.cauldronBlock;
+        int blockID = CraftBookPlugin.inst().getConfiguration().legacyCauldronBlock;
 
         // Used to store cauldron blocks -- walls are counted
         Map<BlockWorldVector, Tuple2<Integer, Short>> visited = new HashMap<BlockWorldVector, Tuple2<Integer, Short>>();
@@ -299,7 +299,7 @@ public class Cauldron extends AbstractMechanic {
             Tuple2<Integer, Short>> visited)
                     throws NotACauldronException {
 
-        int blockID = plugin.getLocalConfiguration().cauldronSettings.cauldronBlock;
+        int blockID = CraftBookPlugin.inst().getConfiguration().legacyCauldronBlock;
 
         // Don't want to go too low or high
         if (pt.getBlockY() < minY) return;

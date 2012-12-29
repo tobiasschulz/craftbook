@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.sk89q.craftbook.mech.CustomDropManager;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.blocks.ItemID;
 
@@ -33,7 +34,6 @@ public abstract class LocalConfiguration {
     public int pipeInsulator = BlockID.CLOTH;
 
     // Mechanics
-    public boolean safeDestruction = true;
     // Mechanics - AI
     public boolean aiEnabled = true;
     public boolean aiZombieEnabled = true;
@@ -54,30 +54,75 @@ public abstract class LocalConfiguration {
     public boolean bridgeAllowRedstone = true;
     public int bridgeMaxLength;
     public int bridgeMaxWidth;
-    public List<Integer> bridgeBlocks = Arrays.asList();
+    public List<Integer> bridgeBlocks = Arrays.asList(4, 5, 20, 43);
     // Mechanics - Cauldron
     public boolean cauldronEnabled = true;
     public boolean cauldronUseSpoons = true;
-    // Mechanics - Legacy Cauldron
-    public boolean legacyCauldronEnabled = true;
     // Mechanics - Chair
     public boolean chairEnabled = true;
     public boolean chairSneak = true;
     public boolean chairHealth = true;
     public List<Integer> chairBlocks = Arrays.asList(53, 67, 108, 109, 114, 128, 134, 135, 136);
+    // Mechanics - Command Signs
+    public boolean commandSignEnabled = true;
+    // Mechanics - Cooking Pot
+    public boolean cookingPotEnabled = true;
+    public boolean cookingPotFuel = true;
+    public boolean cookingPotOres = false;
+    public boolean cookingPotSignOpen = true;
     // Mechanics - Custom Dispensing
     public boolean customDispensingEnabled = true;
+    // Mechanics - Custom Drops
+    public boolean customDropEnabled = true;
+    public boolean customDropPermissions = false;
+    public CustomDropManager customDrops;
     // Mechanics - Door
     public boolean doorEnabled = true;
     public boolean doorAllowRedstone = true;
     public int doorMaxLength;
     public int doorMaxWidth;
-    public List<Integer> doorBlocks = Arrays.asList();
+    public List<Integer> doorBlocks = Arrays.asList(4, 5, 20, 43);
+    // Mechanics - Elevator
+    public boolean elevatorEnabled = true;
+    public boolean elevatorButtonEnabled = true;
+    public boolean elevatorLoop = false;
+    // Mechanics - Gate
+    public boolean gateEnabled = true;
+    public boolean gateRedstoneEnabled = true;
+    public boolean gateLimitColumns = true;
+    public int gateColumnLimit = 14;
+    public List<Integer> gateBlocks = Arrays.asList(85, 101, 102, 113);
     // Mechanics - Hidden Switch
     public boolean hiddenSwitchEnabled = true;
     public boolean hiddenSwitchAnyside = true;
+    // Mechanics - Legacy Cauldron
+    public boolean legacyCauldronEnabled = true;
+    public int legacyCauldronBlock = BlockID.STONE;
+    // Mechanics - Lightstone
+    public boolean lightstoneEnabled = true;
+    public int lightstoneID = ItemID.LIGHTSTONE_DUST;
+    // Mechanics - Light Switch
+    public boolean lightSwitchEnabled = true;
+    public int lightSwitchMaxRange = 10;
+    public int lightSwitchMaxLights = 20;
     // Mechanics - Paintings
     public boolean paintingsEnabled = true;
+    // Mechanics - Payment
+    public boolean paymentEnabled = true;
+    // Mechanics - Snow
+    public boolean snowEnabled = true;
+    public boolean snowTrample = true;
+    public boolean snowPlace = true;
+    public boolean snowRealistic = false;
+    public boolean snowHighPiles = false;
+    public boolean snowJumpTrample = false;
+    // Mechanics - Teleporter
+    public boolean teleporterEnabled = true;
+    public boolean teleporterRequireSign = false;
+    public int teleporterMaxRange = 0;
+    // Mechanics - XPStorer
+    public boolean xpStorerEnabled = true;
+    public int xpStorerBlock = BlockID.MOB_SPAWNER;
 
     // Vehicles
     // Vehicles - Messenger

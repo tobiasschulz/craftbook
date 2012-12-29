@@ -36,10 +36,10 @@ public class Snow implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSnowballHit(ProjectileHitEvent event) {
 
-        if (!plugin.getLocalConfiguration().snowSettings.placeSnow) return;
+        if (!CraftBookPlugin.inst().getConfiguration().snowPlace) return;
         if (event.getEntity() instanceof Snowball) {
             if (event.getEntity().getShooter() != null && event.getEntity().getShooter() instanceof Player) {
-                LocalPlayer player = plugin.wrap((Player) event.getEntity().getShooter());
+                LocalPlayer player = CraftBookPlugin.inst().wrapPlayer((Player) event.getEntity().getShooter());
                 if (!player.hasPermission("craftbook.mech.snow.place")) return;
             }
             Block block = event.getEntity().getLocation().getBlock();
@@ -50,13 +50,13 @@ public class Snow implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
 
-        if (!plugin.getLocalConfiguration().snowSettings.trample) return;
+        if (!CraftBookPlugin.inst().getConfiguration().snowTrample) return;
 
         if (!event.getFrom().getWorld().getName().equalsIgnoreCase(event.getTo().getWorld().getName())) return;
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        LocalPlayer player = CraftBookPlugin.inst().wrapPlayer(event.getPlayer());
         if (!player.hasPermission("craftbook.mech.snow.trample")) return;
 
-        if (plugin.getLocalConfiguration().snowSettings.jumpTrample && event.getPlayer().getVelocity().getY() >= 0D)
+        if (CraftBookPlugin.inst().getConfiguration().snowJumpTrample && event.getPlayer().getVelocity().getY() >= 0D)
             return;
         if (CraftBookPlugin.inst().getRandom().nextInt(30) == 0) {
             Block b = event.getPlayer().getWorld().getBlockAt(event.getPlayer().getLocation());
@@ -76,7 +76,7 @@ public class Snow implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockForm(final BlockFormEvent event) {
 
-        if (!plugin.getLocalConfiguration().snowSettings.enable) return;
+        if (!CraftBookPlugin.inst().getConfiguration().snowEnabled) return;
         if (event.getNewState().getTypeId() == BlockID.SNOW) {
             Block block = event.getBlock();
             pile(block);
@@ -87,8 +87,8 @@ public class Snow implements Listener {
 
         if (block.getTypeId() != BlockID.SNOW_BLOCK && block.getTypeId() != BlockID.SNOW) {
             Location blockLoc = block.getLocation().subtract(0, 1, 0);
-            if (block.getWorld().getBlockAt(blockLoc).getTypeId() == BlockID.SNOW_BLOCK && !plugin
-                    .getLocalConfiguration().snowSettings.piling
+            if (block.getWorld().getBlockAt(blockLoc).getTypeId() == BlockID.SNOW_BLOCK && !CraftBookPlugin.inst()
+                    .getConfiguration().snowHighPiles
                     || block.getWorld().getBlockAt(blockLoc).getTypeId() == BlockID.SNOW) return;
             schedule(block.getLocation());
         }
@@ -97,11 +97,11 @@ public class Snow implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPhysics(final BlockPhysicsEvent event) {
 
-        if (!plugin.getLocalConfiguration().snowSettings.enable) return;
+        if (!CraftBookPlugin.inst().getConfiguration().snowEnabled) return;
         if (event.getBlock().getTypeId() == BlockID.SNOW) {
             Block block = event.getBlock();
 
-            if (plugin.getLocalConfiguration().snowSettings.realistic) disperse(event.getBlock(), true);
+            if (CraftBookPlugin.inst().getConfiguration().snowRealistic) disperse(event.getBlock(), true);
 
             if (event.getBlock().getWorld().hasStorm()) pile(block);
         }
@@ -111,7 +111,7 @@ public class Snow implements Listener {
 
         if (tasks.containsKey(loc)) return;
         long delay = CraftBookPlugin.inst().getRandom().nextInt(60) + 40; // 100 is max possible
-        int taskID = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new MakeSnow(loc),
+        int taskID = CraftBookPlugin.inst().getServer().getScheduler().scheduleSyncRepeatingTask(CraftBookPlugin.inst(), new MakeSnow(loc),
                 delay * 20L, delay * 20L);
         if (taskID == -1)
             Bukkit.getLogger().log(Level.SEVERE, "[CraftBookMechanisms] Snow Mechanic failed to schedule!");
@@ -252,7 +252,7 @@ public class Snow implements Listener {
             return;
         }
 
-        if (plugin.getLocalConfiguration().snowSettings.realistic) {
+        if (CraftBookPlugin.inst().getConfiguration().snowRealistic) {
             if (block.getTypeId() == BlockID.SNOW && disperse(block, false)) return;
         }
 
@@ -260,7 +260,7 @@ public class Snow implements Listener {
         if (block.getTypeId() != BlockID.SNOW && canPassThrough(block.getTypeId()))
             block.setTypeId(BlockID.SNOW, false);
         else newData = (byte) (block.getData() + 1);
-        if (newData > (byte) 7 && plugin.getLocalConfiguration().snowSettings.piling) {
+        if (newData > (byte) 7 && CraftBookPlugin.inst().getConfiguration().snowHighPiles) {
             block.setTypeId(BlockID.SNOW_BLOCK, false);
             newData = (byte) 0;
         } else if (newData > 7) {
@@ -273,8 +273,8 @@ public class Snow implements Listener {
 
         block.setTypeIdAndData(block.getTypeId(), data, false);
         for (Player p : block.getWorld().getPlayers()) {
-            if (p.getLocation().distanceSquared(block.getLocation()) < plugin.getServer().getViewDistance() * 16
-                    * plugin.getServer().getViewDistance() * 16) {
+            if (p.getLocation().distanceSquared(block.getLocation()) < CraftBookPlugin.inst().getServer().getViewDistance() * 16
+                    * CraftBookPlugin.inst().getServer().getViewDistance() * 16) {
                 p.sendBlockChange(block.getLocation(), block.getTypeId(), data);
             }
         }

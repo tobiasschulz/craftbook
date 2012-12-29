@@ -7,7 +7,7 @@
  * Software Foundation, either version 3 of the License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-  * warranty of MERCHANTABILITY or
+ * warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not,
@@ -16,7 +16,26 @@
 
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.bukkit.GameMode;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+
+import com.sk89q.craftbook.AbstractMechanic;
+import com.sk89q.craftbook.AbstractMechanicFactory;
+import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.InsufficientPermissionsException;
+import com.sk89q.craftbook.InvalidMechanismException;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.ProcessedMechanismException;
+import com.sk89q.craftbook.SourcedBlockRedstoneEvent;
 import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.BlockVector;
@@ -27,17 +46,6 @@ import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.bukkit.GameMode;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Handler for gates. Gates are merely fence blocks. When they are closed or open, a nearby fence will be found,
@@ -193,8 +201,7 @@ public class Gate extends AbstractMechanic {
     private boolean recurseColumn(LocalPlayer player, WorldVector pt, Set<BlockVector> visitedColumns, Boolean close) {
 
         World world = ((BukkitWorld) pt.getWorld()).getWorld();
-        if (plugin.getConfiguration().gateSettings.limitColumns
-                && visitedColumns.size() > plugin.getConfiguration().gateSettings.maxColumns) return false;
+        if (plugin.getConfiguration().gateLimitColumns && visitedColumns.size() > plugin.getConfiguration().gateColumnLimit) return false;
         if (visitedColumns.contains(pt.setY(0).toBlockVector())) return false;
         if (!isValidGateBlock(world.getBlockAt(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ()))) return false;
 
@@ -234,7 +241,7 @@ public class Gate extends AbstractMechanic {
      * @param visitedColumns
      */
     private boolean toggleColumn(LocalPlayer player, WorldVector topPoint, boolean close,
-                                 Set<BlockVector> visitedColumns) {
+            Set<BlockVector> visitedColumns) {
 
         World world = ((BukkitWorld) topPoint.getWorld()).getWorld();
         int x = topPoint.getBlockX();
@@ -326,7 +333,7 @@ public class Gate extends AbstractMechanic {
     @Override
     public void onRightClick(PlayerInteractEvent event) {
 
-        if (!plugin.getConfiguration().gateSettings.enable) return;
+        if (!plugin.getConfiguration().gateEnabled) return;
 
         LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
 
@@ -388,7 +395,7 @@ public class Gate extends AbstractMechanic {
     @Override
     public void onBlockRedstoneChange(final SourcedBlockRedstoneEvent event) {
 
-        if (!plugin.getConfiguration().gateSettings.enableRedstone) return;
+        if (!plugin.getConfiguration().gateRedstoneEnabled) return;
 
         if (event.getNewCurrent() == event.getOldCurrent()) return;
 
@@ -432,7 +439,7 @@ public class Gate extends AbstractMechanic {
          */
         @Override
         public Gate detect(BlockWorldVector pt, LocalPlayer player,
-                           ChangedSign sign) throws InvalidMechanismException, ProcessedMechanismException {
+                ChangedSign sign) throws InvalidMechanismException, ProcessedMechanismException {
 
             if (sign.getLine(1).equalsIgnoreCase("[Gate]")) {
                 player.checkPermission("craftbook.mech.gate");
@@ -489,7 +496,7 @@ public class Gate extends AbstractMechanic {
 
         public boolean isValidGateBlock(int block) {
 
-            return CraftBookPlugin.inst().getConfiguration().gateSettings.canUseBlock(block);
+            return CraftBookPlugin.inst().getConfiguration().gateBlocks.contains(block);
         }
     }
 
@@ -515,9 +522,9 @@ public class Gate extends AbstractMechanic {
                 int id = Integer.parseInt(sign.getLine(0));
                 return block == id;
             } catch (Exception e) {
-                return plugin.getConfiguration().gateSettings.canUseBlock(block);
+                return plugin.getConfiguration().gateBlocks.contains(block);
             }
-        } else return plugin.getConfiguration().gateSettings.canUseBlock(block);
+        } else return plugin.getConfiguration().gateBlocks.contains(block);
     }
 
     public boolean isValidGateItem(ItemStack block) {
@@ -542,9 +549,9 @@ public class Gate extends AbstractMechanic {
                 int id = Integer.parseInt(sign.getLine(0));
                 return block == id;
             } catch (Exception e) {
-                return plugin.getConfiguration().gateSettings.canUseBlock(block);
+                return plugin.getConfiguration().gateBlocks.contains(block);
             }
-        } else return plugin.getConfiguration().gateSettings.canUseBlock(block);
+        } else return plugin.getConfiguration().gateBlocks.contains(block);
     }
 
     @Override

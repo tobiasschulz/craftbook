@@ -23,7 +23,7 @@ public class XPStorer extends AbstractMechanic {
 
             int type = BukkitUtil.toWorld(pt).getBlockTypeIdAt(BukkitUtil.toLocation(pt));
 
-            if (type == plugin.getLocalConfiguration().xpStorerSettings.material) return new XPStorer(pt);
+            if (type == CraftBookPlugin.inst().getConfiguration().xpStorerBlock) return new XPStorer(pt);
 
             return null;
         }

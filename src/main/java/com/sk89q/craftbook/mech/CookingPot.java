@@ -1,13 +1,8 @@
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.*;
-import com.sk89q.craftbook.bukkit.CraftBookPlugin;
-import com.sk89q.craftbook.util.ItemUtil;
-import com.sk89q.craftbook.util.SignUtil;
-import com.sk89q.worldedit.BlockWorldVector;
-import com.sk89q.worldedit.blocks.BlockID;
-import com.sk89q.worldedit.blocks.ItemID;
-import com.sk89q.worldedit.bukkit.BukkitUtil;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
@@ -16,8 +11,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.sk89q.craftbook.AbstractMechanicFactory;
+import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.InsufficientPermissionsException;
+import com.sk89q.craftbook.InvalidMechanismException;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.PersistentMechanic;
+import com.sk89q.craftbook.ProcessedMechanismException;
+import com.sk89q.craftbook.SelfTriggeringMechanic;
+import com.sk89q.craftbook.SourcedBlockRedstoneEvent;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.util.ItemUtil;
+import com.sk89q.craftbook.util.SignUtil;
+import com.sk89q.worldedit.BlockWorldVector;
+import com.sk89q.worldedit.blocks.BlockID;
+import com.sk89q.worldedit.blocks.ItemID;
+import com.sk89q.worldedit.bukkit.BukkitUtil;
 
 public class CookingPot extends PersistentMechanic implements SelfTriggeringMechanic {
 
@@ -75,7 +84,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
          */
         @Override
         public CookingPot detect(BlockWorldVector pt, LocalPlayer player,
-                                 ChangedSign sign) throws InvalidMechanismException,
+                ChangedSign sign) throws InvalidMechanismException,
                 ProcessedMechanismException {
 
             if (sign.getLine(1).equalsIgnoreCase("[Cook]")) {
@@ -83,7 +92,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
 
                 sign.setLine(2, "0");
                 sign.setLine(1, "[Cook]");
-                if (CraftBookPlugin.inst().getConfiguration().cookingPotSettings.requiresfuel) {
+                if (CraftBookPlugin.inst().getConfiguration().cookingPotFuel) {
                     sign.setLine(3, "0");
                 } else {
                     sign.setLine(3, "1");
@@ -120,7 +129,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
             if (cb.getTypeId() == BlockID.CHEST) {
                 if (ItemUtil.containsRawFood(((Chest) cb.getState()).getInventory())
                         || ItemUtil.containsRawMinerals(((Chest) cb.getState()).getInventory())
-                        && plugin.getConfiguration().cookingPotSettings.cooksOres) {
+                        && plugin.getConfiguration().cookingPotOres) {
                     decreaseMultiplier(sign, 1);
                     lastTick += getMultiplier(sign);
                 }
@@ -134,7 +143,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
                             }
                             ItemStack cooked = ItemUtil.getCookedResult(i);
                             if (cooked == null) {
-                                if (plugin.getLocalConfiguration().cookingPotSettings.cooksOres)
+                                if (plugin.getConfiguration().cookingPotOres)
                                     cooked = ItemUtil.getSmeletedResult(i);
                                 if (cooked == null) continue;
                             }
@@ -177,7 +186,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                     }
                     player.sendMessage("You give the pot fuel!");
-                } else if (plugin.getConfiguration().cookingPotSettings.openClick) {
+                } else if (plugin.getConfiguration().cookingPotSignOpen) {
                     player.openInventory(((Chest) cb.getState()).getBlockInventory());
                 }
             }
@@ -188,7 +197,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
     public void onLeftClick(PlayerInteractEvent event) {
 
         event.getPlayer().setFireTicks(20);
-        LocalPlayer player = plugin.wrap(event.getPlayer());
+        LocalPlayer player = plugin.wrapPlayer(event.getPlayer());
         player.printError("mech.cook.ouch");
     }
 
@@ -210,7 +219,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
 
     public void setMultiplier(Sign sign, int amount) {
 
-        int min = plugin.getConfiguration().cookingPotSettings.requiresfuel ? 0 : 1;
+        int min = plugin.getConfiguration().cookingPotFuel ? 0 : 1;
         if (amount < min) {
             amount = min;
         }
@@ -235,12 +244,12 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
             multiplier = Integer.parseInt(sign.getLine(3));
         } catch (Exception e) {
             multiplier = 1;
-            if (plugin.getConfiguration().cookingPotSettings.requiresfuel) {
+            if (plugin.getConfiguration().cookingPotFuel) {
                 multiplier = 0;
             }
             setMultiplier(sign, multiplier);
         }
-        if (multiplier < 0) return plugin.getConfiguration().cookingPotSettings.requiresfuel ? 0 : 1;
+        if (multiplier < 0) return plugin.getConfiguration().cookingPotFuel ? 0 : 1;
         return multiplier;
     }
 
@@ -255,7 +264,7 @@ public class CookingPot extends PersistentMechanic implements SelfTriggeringMech
     private enum Ingredients {
         COAL(ItemID.COAL, 10), LAVA(ItemID.LAVA_BUCKET, 500), BLAZE(ItemID.BLAZE_ROD, 200), SNOWBALL(ItemID.SNOWBALL,
                 -20), SNOW(BlockID.SNOW_BLOCK,
-                -100);
+                        -100);
 
         private int id;
         private int mult;
