@@ -42,7 +42,6 @@ public class Chair implements Listener {
             // (CraftPlayer)player).getHandle(), 0,
             // block.getLocation().getBlockX(), block.getLocation().getBlockY(), block.getLocation().getBlockZ());
 
-            plugin.getProtocolLib();
             PacketContainer entitymeta = ProtocolLibrary.getProtocolManager().createPacket(40);
             entitymeta.getSpecificModifier(int.class).write(0, player.getEntityId());
             WrappedDataWatcher watcher = new WrappedDataWatcher();

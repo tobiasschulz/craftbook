@@ -1,13 +1,14 @@
 package com.sk89q.craftbook;
-import com.sk89q.craftbook.mech.CustomDropManager;
-import com.sk89q.worldedit.blocks.BlockID;
-import com.sk89q.worldedit.blocks.ItemID;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.sk89q.craftbook.mech.CustomDropManager;
+import com.sk89q.craftbook.util.ItemInfo;
+import com.sk89q.worldedit.blocks.BlockID;
+import com.sk89q.worldedit.blocks.ItemID;
 
 /**
  * A implementation of Configuration based off of {@link com.sk89q.worldedit.LocalConfiguration} for CraftBook.
@@ -132,8 +133,39 @@ public abstract class LocalConfiguration {
     public int xpStorerBlock = BlockID.MOB_SPAWNER;
 
     // Vehicles
-    // Vehicles - Messenger
-    public boolean messengerEnabled = true;
+    // Vehicles - Materials
+    public ItemInfo matBoostMax = new ItemInfo(41, 0);
+    public ItemInfo matBoost25x = new ItemInfo(14, 0);
+    public ItemInfo matSlow50x = new ItemInfo(88, 0);
+    public ItemInfo matSlow20x = new ItemInfo(13, 0);
+    public ItemInfo matReverse = new ItemInfo(35, 0);
+    public ItemInfo matStation = new ItemInfo(49, 0);
+    public ItemInfo matSorter = new ItemInfo(87, 0);
+    public ItemInfo matEjector = new ItemInfo(42, 0);
+    public ItemInfo matDeposit = new ItemInfo(15, 0);
+    public ItemInfo matTeleport = new ItemInfo(133, 0);
+    public ItemInfo matLift = new ItemInfo(112, 0);
+    public ItemInfo matDispenser = new ItemInfo(129, 0);
+    public ItemInfo matMessager = new ItemInfo(121, 0);
+    // Vehicles - Minecart Options
+    public boolean minecartSlowWhenEmpty;
+    public boolean minecartRemoveOnExit;
+    public boolean minecartRemoveEntities;
+    public boolean minecartRemoveEntitiesOtherCarts;
+    public double minecartMaxSpeedModifier;
+    public double minecartOffRailSpeedModifier;
+    public boolean minecartDecayWhenEmpty;
+    public boolean minecartEnterOnImpact;
+    public boolean minecartMessengerEnabled = true;
+    public int minecartDecayTime;
+    public double minecartConstantSpeed;
+    // Vehicles - Boat Options
+    public boolean boatNoCrash;
+    public boolean boatRemoveEntities;
+    public boolean boatRemoveEntitiesOtherBoats;
+    public boolean boatBreakReturn;
+
+
 
     /**
      * Loads the configuration.

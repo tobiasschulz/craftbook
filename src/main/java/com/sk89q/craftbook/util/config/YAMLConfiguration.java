@@ -4,18 +4,19 @@ package com.sk89q.craftbook.util.config;
  * Author: Turtle9598
  */
 
-import com.sk89q.craftbook.LocalConfiguration;
-import com.sk89q.craftbook.bukkit.CraftBookPlugin;
-import com.sk89q.craftbook.mech.CustomDropManager;
-import com.sk89q.util.yaml.YAMLProcessor;
-import com.sk89q.worldedit.blocks.BlockID;
-import com.sk89q.worldedit.blocks.ItemID;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+
+import com.sk89q.craftbook.LocalConfiguration;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.mech.CustomDropManager;
+import com.sk89q.craftbook.util.ItemInfo;
+import com.sk89q.util.yaml.YAMLProcessor;
+import com.sk89q.worldedit.blocks.BlockID;
+import com.sk89q.worldedit.blocks.ItemID;
 
 /**
  * A implementation of YAML based off of {@link com.sk89q.worldedit.util.YAMLConfiguration} for CraftBook.
@@ -185,6 +186,42 @@ public class YAMLConfiguration extends LocalConfiguration {
         // XPStorer Configuration Listener
         xpStorerEnabled = config.getBoolean("mechanics.xp storer.enable", true);
         xpStorerBlock = config.getInt("mechanics.xp storer.block", BlockID.MOB_SPAWNER);
+
+        /* Vehicle Configuration */
+
+        // Vehicle Material Configuration Listener
+        matBoostMax = ItemInfo.parseFromString(config.getString("vehicles.minecart.max-boost-block", "41:0"));
+        matBoost25x = ItemInfo.parseFromString(config.getString("vehicles.minecart.25x-boost-block", "14:0"));
+        matSlow50x = ItemInfo.parseFromString(config.getString("vehicles.minecart.50x-slow-block", "88:0"));
+        matSlow20x = ItemInfo.parseFromString(config.getString("vehicles.minecart.20x-slow-block", "13:0"));
+        matReverse = ItemInfo.parseFromString(config.getString("vehicles.minecart.reverse-block", "35:0"));
+        matStation = ItemInfo.parseFromString(config.getString("vehicles.minecart.station-block", "49:0"));
+        matSorter = ItemInfo.parseFromString(config.getString("vehicles.minecart.sort-block", "87:0"));
+        matEjector = ItemInfo.parseFromString(config.getString("vehicles.minecart.eject-block", "42:0"));
+        matDeposit = ItemInfo.parseFromString(config.getString("vehicles.minecart.deposit-block", "15:0"));
+        matTeleport = ItemInfo.parseFromString(config.getString("vehicles.minecart.teleport-block", "133:0"));
+        matLift = ItemInfo.parseFromString(config.getString("vehicles.minecart.lift-block", "112:0"));
+        matDispenser = ItemInfo.parseFromString(config.getString("vehicles.minecart.dispenser-block", "129:0"));
+        matMessager = ItemInfo.parseFromString(config.getString("vehicles.minecart.messager-block", "121:0"));
+
+        // Vehicles Minecart Configuration Listener
+        minecartEnterOnImpact = config.getBoolean("vehicles.minecart.enter-on-impact", true);
+        minecartSlowWhenEmpty = config.getBoolean("vehicles.minecart.slow-when-empty", true);
+        minecartDecayWhenEmpty = config.getBoolean("vehicles.minecart.decay-when-empty", false);
+        minecartRemoveOnExit = config.getBoolean("vehicles.minecart.remove-on-exit", false);
+        minecartRemoveEntities = config.getBoolean("vehicles.minecart.remove-entities", false);
+        minecartRemoveEntitiesOtherCarts = config.getBoolean("vehicles.minecart.remove-entities-othercarts", false);
+        minecartMaxSpeedModifier = config.getDouble("vehicles.minecart.max-speed-modifier", 1);
+        minecartOffRailSpeedModifier = config.getDouble("vehicles.minecart.off-rail-speed-modifier", 0);
+        minecartMessengerEnabled = config.getBoolean("vehicles.minecart.track-messages", true);
+        minecartDecayTime = config.getInt("vehicles.minecart.decay-time", 20);
+        minecartConstantSpeed = config.getDouble("vehicles.minecart.constant-speed", 0);
+
+        // Vehicles - Boat Options
+        boatRemoveEntities = config.getBoolean("vehicles.boat.remove-entities", false);
+        boatNoCrash = config.getBoolean("vehicles.boat.no-crash", false);
+        boatRemoveEntitiesOtherBoats = config.getBoolean("vehicles.boat.remove-entities-otherboats", false);
+        boatBreakReturn = config.getBoolean("vehicles.boat.break-return-boat", false);
 
         config.save(); //Save all the added values.
 

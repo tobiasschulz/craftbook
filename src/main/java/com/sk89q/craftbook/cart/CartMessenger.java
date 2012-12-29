@@ -1,12 +1,13 @@
 package com.sk89q.craftbook.cart;
 
-import com.sk89q.craftbook.bukkit.CraftBookPlugin;
-import com.sk89q.craftbook.util.RedstoneUtil.Power;
+import java.util.ArrayList;
+
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.util.RedstoneUtil.Power;
 
 public class CartMessenger extends CartMechanism {
 
@@ -25,7 +26,7 @@ public class CartMessenger extends CartMechanism {
         if (cart.getPassenger() == null) return;
         if (blocks.sign == null || !(blocks.sign.getState() instanceof Sign)) return;
 
-        if (!plugin.getConfiguration().messengerEnabled) return;
+        if (!plugin.getConfiguration().minecartMessengerEnabled) return;
 
         // enabled?
         if (Power.OFF == isActive(blocks.rail, blocks.base, blocks.sign)) return;

@@ -1,19 +1,18 @@
 package com.sk89q.craftbook.bukkit;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.sk89q.bukkit.util.CommandsManagerRegistration;
-import com.sk89q.craftbook.LanguageManager;
-import com.sk89q.craftbook.LocalComponent;
-import com.sk89q.craftbook.LocalPlayer;
-import com.sk89q.craftbook.bukkit.commands.TopLevelCommands;
-import com.sk89q.minecraft.util.commands.*;
-import com.sk89q.util.yaml.YAMLProcessor;
-import com.sk89q.wepif.PermissionsResolverManager;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.GlobalRegionManager;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.util.FatalConfigurationLoadingException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.jar.JarFile;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+
 import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -28,13 +27,26 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.jar.JarFile;
-import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.sk89q.bukkit.util.CommandsManagerRegistration;
+import com.sk89q.craftbook.LanguageManager;
+import com.sk89q.craftbook.LocalComponent;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.bukkit.commands.TopLevelCommands;
+import com.sk89q.minecraft.util.commands.CommandException;
+import com.sk89q.minecraft.util.commands.CommandPermissionsException;
+import com.sk89q.minecraft.util.commands.CommandUsageException;
+import com.sk89q.minecraft.util.commands.CommandsManager;
+import com.sk89q.minecraft.util.commands.MissingNestedCommandException;
+import com.sk89q.minecraft.util.commands.SimpleInjector;
+import com.sk89q.minecraft.util.commands.WrappedCommandException;
+import com.sk89q.util.yaml.YAMLProcessor;
+import com.sk89q.wepif.PermissionsResolverManager;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.GlobalRegionManager;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.util.FatalConfigurationLoadingException;
 
 public class CraftBookPlugin extends JavaPlugin {
 
@@ -113,6 +125,7 @@ public class CraftBookPlugin extends JavaPlugin {
         } else {
             try {
                 //noinspection UnusedDeclaration
+                @SuppressWarnings("unused")
                 String s = WorldEditPlugin.CUI_PLUGIN_CHANNEL;
             } catch (Throwable t) {
                 logger().warning("WorldEdit detection has failed!");
@@ -188,7 +201,11 @@ public class CraftBookPlugin extends JavaPlugin {
         MechanicalCore mechanicalCore = new MechanicalCore();
         mechanicalCore.enable();
         components.add(mechanicalCore);
-        // TODO - Vehicles
+        // Vehicles
+        VehicleCore vehicleCore = new VehicleCore();
+        vehicleCore.enable();
+        components.add(vehicleCore);
+
     }
 
     /**
@@ -208,7 +225,7 @@ public class CraftBookPlugin extends JavaPlugin {
      */
     @Override
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label,
-                             String[] args) {
+            String[] args) {
 
         try {
             commands.execute(cmd.getName(), args, sender, sender);
