@@ -1,7 +1,7 @@
 package com.sk89q.craftbook.cart;
 
-import com.sk89q.craftbook.RailUtil;
-import com.sk89q.craftbook.RedstoneUtil.Power;
+import com.sk89q.craftbook.util.RailUtil;
+import com.sk89q.craftbook.util.RedstoneUtil.Power;
 import com.sk89q.craftbook.util.RegexUtil;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;

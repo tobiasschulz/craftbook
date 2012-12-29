@@ -1,6 +1,6 @@
 package com.sk89q.craftbook.cart;
 
-import com.sk89q.craftbook.RedstoneUtil.Power;
+import com.sk89q.craftbook.util.RedstoneUtil.Power;
 import com.sk89q.craftbook.util.SignUtil;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
 import org.bukkit.block.Block;

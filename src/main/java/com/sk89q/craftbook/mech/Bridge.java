@@ -113,7 +113,6 @@ public class Bridge extends AbstractMechanic {
     /**
      * @param trigger if you didn't already check if this is a signpost with appropriate text,
      *                you're going on Santa's naughty list.
-     * @param plugin
      *
      * @throws InvalidMechanismException
      */
@@ -133,7 +132,7 @@ public class Bridge extends AbstractMechanic {
         {
             proximalBaseCenter = trigger.getRelative(BlockFace.UP);
             mat = proximalBaseCenter.getTypeId();
-            if (settings.canUseBlock(mat) && isValidBridge(proximalBaseCenter, mat,
+            if (plugin.getConfiguration().bridgeBlocks.contains(mat) && isValidBridge(proximalBaseCenter, mat,
                     BukkitUtil.toChangedSign(trigger))) {
                 break findBase; // On Top
             }
@@ -141,7 +140,7 @@ public class Bridge extends AbstractMechanic {
             // If we've reached this point nothing was found on the top, check the bottom
             proximalBaseCenter = trigger.getRelative(BlockFace.DOWN);
             mat = proximalBaseCenter.getTypeId();
-            if (settings.canUseBlock(mat)) {
+            if (plugin.getConfiguration().bridgeBlocks.contains(mat)) {
                 if (isValidBridge(proximalBaseCenter, mat, BukkitUtil.toChangedSign(trigger))) {
                     break findBase; // it's below
                 } else throw new InvalidConstructionException("mech.bridge.material");
@@ -150,7 +149,7 @@ public class Bridge extends AbstractMechanic {
 
         // Find the other side
         farSide = trigger.getRelative(dir);
-        for (int i = 0; i <= settings.maxLength; i++) {
+        for (int i = 0; i <= plugin.getConfiguration().bridgeMaxLength; i++) {
             // about the loop index:
             // i = 0 is the first block after the proximal base
             // since we're allowed to have settings.maxLength toggle blocks,
@@ -198,11 +197,11 @@ public class Bridge extends AbstractMechanic {
         }
 
         // Check Width
-        if (left > settings.maxWidth) {
-            left = settings.maxWidth;
+        if (left > plugin.getConfiguration().bridgeMaxWidth) {
+            left = plugin.getConfiguration().bridgeMaxWidth;
         }
-        if (right > settings.maxWidth) {
-            right = settings.maxWidth;
+        if (right > plugin.getConfiguration().bridgeMaxWidth) {
+            right = plugin.getConfiguration().bridgeMaxWidth;
         }
 
         // Expand Left
@@ -221,7 +220,6 @@ public class Bridge extends AbstractMechanic {
     }
 
     private CraftBookPlugin plugin = CraftBookPlugin.inst();
-    private MechanismsConfiguration.BridgeSettings settings;
 
     /**
      * The signpost we came from.
