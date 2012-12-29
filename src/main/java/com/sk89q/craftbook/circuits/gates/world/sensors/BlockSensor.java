@@ -1,11 +1,18 @@
 package com.sk89q.craftbook.circuits.gates.world.sensors;
 
-import com.sk89q.craftbook.BaseConfiguration;
-import com.sk89q.craftbook.ChangedSign;
-import com.sk89q.craftbook.circuits.ic.*;
-import com.sk89q.craftbook.util.RegexUtil;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
+
+import com.sk89q.craftbook.BaseConfiguration;
+import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.circuits.ic.AbstractIC;
+import com.sk89q.craftbook.circuits.ic.AbstractICFactory;
+import com.sk89q.craftbook.circuits.ic.ChipState;
+import com.sk89q.craftbook.circuits.ic.IC;
+import com.sk89q.craftbook.circuits.ic.ICFactory;
+import com.sk89q.craftbook.circuits.ic.ICUtil;
+import com.sk89q.craftbook.circuits.ic.ICVerificationException;
+import com.sk89q.craftbook.util.RegexUtil;
 
 public class BlockSensor extends AbstractIC {
 
@@ -23,7 +30,12 @@ public class BlockSensor extends AbstractIC {
 
         String[] ids = RegexUtil.COLON_PATTERN.split(getSign().getLine(3), 2);
         center = ICUtil.parseBlockLocation(getSign());
-        id = Integer.parseInt(ids[0]);
+        try {
+            id = Integer.parseInt(ids[0]);
+        }
+        catch(Exception ignored) {
+            id = 1;
+        }
         try {
             data = Byte.parseByte(ids[1]);
         } catch (Exception ignored) {
