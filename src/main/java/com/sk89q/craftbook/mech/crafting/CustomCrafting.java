@@ -24,7 +24,7 @@ public class CustomCrafting {
     public CustomCrafting() {
 
         recipes = new RecipeManager(YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(),
-                "src/main/resources/crafting-recipes.yml")),
+                "crafting-recipes.yml")),
                 plugin.getDataFolder());
         Collection<RecipeManager.Recipe> recipeCollection = recipes.getRecipes();
         for (RecipeManager.Recipe r : recipeCollection) {

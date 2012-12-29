@@ -1,13 +1,13 @@
 package com.sk89q.craftbook;
+import com.sk89q.craftbook.mech.CustomDropManager;
+import com.sk89q.worldedit.blocks.BlockID;
+import com.sk89q.worldedit.blocks.ItemID;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.sk89q.craftbook.mech.CustomDropManager;
-import com.sk89q.worldedit.blocks.BlockID;
-import com.sk89q.worldedit.blocks.ItemID;
 
 /**
  * A implementation of Configuration based off of {@link com.sk89q.worldedit.LocalConfiguration} for CraftBook.
@@ -64,6 +64,8 @@ public abstract class LocalConfiguration {
     public boolean chairSneak = true;
     public boolean chairHealth = true;
     public List<Integer> chairBlocks = Arrays.asList(53, 67, 108, 109, 114, 128, 134, 135, 136);
+    // Mechanics - Chunk Anchor
+    public boolean chunkAnchorEnabled = true;
     // Mechanics - Command Signs
     public boolean commandSignEnabled = true;
     // Mechanics - Cooking Pot
@@ -71,6 +73,8 @@ public abstract class LocalConfiguration {
     public boolean cookingPotFuel = true;
     public boolean cookingPotOres = false;
     public boolean cookingPotSignOpen = true;
+    // Mechanics - Custom Crafting
+    public boolean customCraftingEnabled = true;
     // Mechanics - Custom Dispensing
     public boolean customDispensingEnabled = true;
     // Mechanics - Custom Drops
@@ -106,6 +110,8 @@ public abstract class LocalConfiguration {
     public boolean lightSwitchEnabled = true;
     public int lightSwitchMaxRange = 10;
     public int lightSwitchMaxLights = 20;
+    // Mechanics - Map Changer
+    public boolean mapChangerEnabled = true;
     // Mechanics - Paintings
     public boolean paintingsEnabled = true;
     // Mechanics - Payment
