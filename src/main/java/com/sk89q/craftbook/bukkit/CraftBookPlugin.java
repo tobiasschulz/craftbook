@@ -40,6 +40,7 @@ import com.sk89q.minecraft.util.commands.CommandsManager;
 import com.sk89q.minecraft.util.commands.MissingNestedCommandException;
 import com.sk89q.minecraft.util.commands.SimpleInjector;
 import com.sk89q.minecraft.util.commands.WrappedCommandException;
+import com.sk89q.util.yaml.YAMLFormat;
 import com.sk89q.util.yaml.YAMLProcessor;
 import com.sk89q.wepif.PermissionsResolverManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -136,7 +137,8 @@ public class CraftBookPlugin extends JavaPlugin {
 
         // Setup Config and the Commands Manager
         final CraftBookPlugin plugin = this;
-        config = new BukkitConfiguration(new YAMLProcessor(new File(getDataFolder(), "config.yml"), true), this);
+        createDefaultConfiguration(new File(getDataFolder(), "config.yml"), "config.yml", true);
+        config = new BukkitConfiguration(new YAMLProcessor(new File(getDataFolder(), "config.yml"), true, YAMLFormat.EXTENDED), this);
         commands = new CommandsManager<CommandSender>() {
 
             @Override
@@ -195,18 +197,23 @@ public class CraftBookPlugin extends JavaPlugin {
 
         // Let's start the show
         // Circuits
-        CircuitCore circuitCore = new CircuitCore();
-        circuitCore.enable();
-        components.add(circuitCore);
+        if(config.enableCircuits) {
+            CircuitCore circuitCore = new CircuitCore();
+            circuitCore.enable();
+            components.add(circuitCore);
+        }
         // Mechanics
-        MechanicalCore mechanicalCore = new MechanicalCore();
-        mechanicalCore.enable();
-        components.add(mechanicalCore);
+        if(config.enableMechanisms) {
+            MechanicalCore mechanicalCore = new MechanicalCore();
+            mechanicalCore.enable();
+            components.add(mechanicalCore);
+        }
         // Vehicles
-        VehicleCore vehicleCore = new VehicleCore();
-        vehicleCore.enable();
-        components.add(vehicleCore);
-
+        if(config.enableVehicles) {
+            VehicleCore vehicleCore = new VehicleCore();
+            vehicleCore.enable();
+            components.add(vehicleCore);
+        }
     }
 
     /**

@@ -11,6 +11,10 @@ import com.sk89q.util.yaml.YAMLProcessor;
  */
 public class BukkitConfiguration extends YAMLConfiguration {
 
+    public boolean enableCircuits = true;
+    public boolean enableMechanisms = true;
+    public boolean enableVehicles = true;
+
     public boolean noOpPermissions = false;
     public boolean indirectRedstone = false;
     public boolean experimentalRepeaters = false;
@@ -31,7 +35,10 @@ public class BukkitConfiguration extends YAMLConfiguration {
     @Override
     public void load() {
 
-        super.load();
+        enableCircuits = config.getBoolean("enable-circuits", true);
+        enableMechanisms = config.getBoolean("enable-mechanics", true);
+        enableVehicles = config.getBoolean("enable-vehicles", true);
+
         safeDestruction = config.getBoolean("safe-destruction", true);
         noOpPermissions = config.getBoolean("no-op-permissions", false);
         indirectRedstone = config.getBoolean("indirect-redstone", false);
@@ -40,7 +47,7 @@ public class BukkitConfiguration extends YAMLConfiguration {
         language = config.getString("language", "en_US");
         languages = config.getStringList("languages", Arrays.asList("en_US"));
 
-        config.save();
+        super.load();
     }
 
     @Override
