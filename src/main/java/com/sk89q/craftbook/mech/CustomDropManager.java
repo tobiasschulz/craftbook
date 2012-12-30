@@ -45,8 +45,8 @@ public final class CustomDropManager {
 
     public CustomDropManager(File source) {
 
-        File blockDefinitions = new File(source, "src/main/resources/custom-block-drops.txt");
-        File mobDefinitions = new File(source, "src/main/resources/custom-mob-drops.txt");
+        File blockDefinitions = new File(source, "custom-block-drops.txt");
+        File mobDefinitions = new File(source, "custom-mob-drops.txt");
 
         try {
             loadDropDefinitions(blockDefinitions, false);
