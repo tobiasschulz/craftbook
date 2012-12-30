@@ -9,14 +9,29 @@ package com.sk89q.craftbook.mech;
  * Software Foundation, either version 3 of the License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-  * warranty of MERCHANTABILITY or
+ * warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
 
-import com.sk89q.craftbook.*;
+import org.bukkit.GameMode;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+
+import com.sk89q.craftbook.AbstractMechanic;
+import com.sk89q.craftbook.AbstractMechanicFactory;
+import com.sk89q.craftbook.ChangedSign;
+import com.sk89q.craftbook.InvalidMechanismException;
+import com.sk89q.craftbook.LocalPlayer;
+import com.sk89q.craftbook.ProcessedMechanismException;
+import com.sk89q.craftbook.SourcedBlockRedstoneEvent;
 import com.sk89q.craftbook.bukkit.BukkitPlayer;
 import com.sk89q.craftbook.bukkit.CraftBookPlugin;
 import com.sk89q.craftbook.util.SignUtil;
@@ -26,14 +41,6 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BlockID;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.bukkit.GameMode;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Door.
@@ -55,7 +62,7 @@ public class Door extends AbstractMechanic {
          */
         @Override
         public Door detect(BlockWorldVector pt, LocalPlayer player,
-                           ChangedSign sign) throws InvalidMechanismException, ProcessedMechanismException {
+                ChangedSign sign) throws InvalidMechanismException, ProcessedMechanismException {
 
             if (sign.getLine(1).equalsIgnoreCase("[Door Down]")) {
                 player.checkPermission("craftbook.mech.door");
@@ -392,7 +399,7 @@ public class Door extends AbstractMechanic {
                             removeBlocks(s, 1);
                         } else {
                             if (player != null) {
-                                player.printError("Not enough blocks for mechanic to function!");
+                                player.printError("mech.not-enough-blocks");
                             }
                             return;
                         }

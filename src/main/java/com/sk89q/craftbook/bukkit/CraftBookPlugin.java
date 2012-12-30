@@ -146,7 +146,8 @@ public class CraftBookPlugin extends JavaPlugin {
             }
         };
 
-        //
+        // Initialize the language manager.
+        createDefaultConfiguration(getDataFolder(), "en_US.txt", true);
         languageManager = new LanguageManager();
 
         // Set the proper command injector
@@ -488,8 +489,9 @@ public class CraftBookPlugin extends JavaPlugin {
      *
      * @param actual      The destination file
      * @param defaultName The name of the file inside the jar's defaults folder
+     * @param force       If it should make the file even if it already exists
      */
-    public void createDefaultConfiguration(File actual, String defaultName) {
+    public void createDefaultConfiguration(File actual, String defaultName, boolean force) {
 
         // Make parent directories
         File parent = actual.getParentFile();
@@ -497,7 +499,7 @@ public class CraftBookPlugin extends JavaPlugin {
             parent.mkdirs();
         }
 
-        if (actual.exists()) {
+        if (actual.exists() && !force) {
             return;
         }
 
