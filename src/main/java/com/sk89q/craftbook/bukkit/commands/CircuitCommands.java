@@ -37,7 +37,7 @@ public class CircuitCommands {
 
     }
 
-    public class MIDICommands {
+    public static class MIDICommands {
 
         public MIDICommands(CraftBookPlugin plugin) {
 
@@ -100,7 +100,7 @@ public class CircuitCommands {
         }
     }
 
-    public class ICCommands {
+    public static class ICCommands {
 
         public ICCommands(CraftBookPlugin plugin) {
 
