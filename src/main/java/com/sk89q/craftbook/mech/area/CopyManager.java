@@ -9,22 +9,23 @@ package com.sk89q.craftbook.mech.area;
  * Software Foundation, either version 3 of the License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-  * warranty of MERCHANTABILITY or
+ * warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License along with this program. If not,
  * see <http://www.gnu.org/licenses/>.
  */
 
-import com.sk89q.craftbook.bukkit.CraftBookPlugin;
-import com.sk89q.craftbook.util.HistoryHashMap;
-import com.sk89q.worldedit.data.DataException;
-import org.bukkit.World;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.regex.Pattern;
+
+import org.bukkit.World;
+
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.util.HistoryHashMap;
+import com.sk89q.worldedit.data.DataException;
 
 /**
  * Used to load, save, and cache cuboid copies.
@@ -68,8 +69,7 @@ public class CopyManager {
      */
     public static boolean isValidName(String name) {
 
-        // name needs to be between 1 and 13 letters long so we can fit the - XXX - on the sides of the sign to
-        // indicate what area is toggled on
+        // name needs to be between 1 and 13 letters long so we can fit the
         return !name.isEmpty() && name.length() <= 13 && NAME_PATTERN.matcher(name).matches();
     }
 
@@ -114,7 +114,7 @@ public class CopyManager {
      * @throws CuboidCopyException
      */
     public CuboidCopy load(World world, String namespace, String id) throws IOException,
-            CuboidCopyException {
+    CuboidCopyException {
 
         id = id.toLowerCase();
         String cacheKey = namespace + "/" + id;

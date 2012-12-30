@@ -52,9 +52,6 @@ public class MechanicalCore implements LocalComponent {
     private final CopyManager copyManager = new CopyManager();
     private MechanicManager manager;
 
-    // TODO This probably shouldn't be here
-    private DispenserRecipes dRecipes = null;
-
     public MechanicalCore() {
 
         instance = this;
@@ -157,7 +154,7 @@ public class MechanicalCore implements LocalComponent {
         BukkitConfiguration config = plugin.getConfiguration();
 
         if (config.customDispensingEnabled) {
-            server.getPluginManager().registerEvents(dRecipes = new DispenserRecipes(), plugin);
+            server.getPluginManager().registerEvents(new DispenserRecipes(), plugin);
         }
         if (config.snowEnabled || config.snowPlace) {
             server.getPluginManager().registerEvents(new Snow(), plugin);
@@ -227,6 +224,6 @@ public class MechanicalCore implements LocalComponent {
      */
     public boolean registerDispenserRecipe(Recipe recipe) {
 
-        return plugin.getConfiguration().customDispensingEnabled && dRecipes.addRecipe(recipe);
+        return plugin.getConfiguration().customDispensingEnabled && DispenserRecipes.inst().addRecipe(recipe);
     }
 }

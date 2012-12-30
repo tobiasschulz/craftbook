@@ -143,7 +143,6 @@ public class ProgrammableFireworkShow extends AbstractIC {
             position = 0;
             if(task != null)
                 task.cancel();
-            Bukkit.getLogger().severe("STARTING SHOW");
             FireworkShow show = new FireworkShow();
             task = Bukkit.getScheduler().runTask(CraftBookPlugin.inst(), show);
         }

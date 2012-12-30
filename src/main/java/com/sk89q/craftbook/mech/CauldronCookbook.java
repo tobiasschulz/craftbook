@@ -16,14 +16,23 @@
 
 package com.sk89q.craftbook.mech;
 
-import com.sk89q.craftbook.util.RegexUtil;
-import com.sk89q.craftbook.util.Tuple2;
-
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.util.RegexUtil;
+import com.sk89q.craftbook.util.Tuple2;
 
 // import java.io.*;
 
@@ -45,7 +54,7 @@ public class CauldronCookbook {
     public CauldronCookbook() {
 
         try {
-            CauldronCookbook recipes = readCauldronRecipes("src/main/resources/cauldron-recipes.txt");
+            CauldronCookbook recipes = readCauldronRecipes("cauldron-recipes.txt");
             if (recipes.size() != 0) {
                 log.info(recipes.size() + " cauldron recipe(s) loaded");
             } else {
@@ -54,7 +63,7 @@ public class CauldronCookbook {
         } catch (FileNotFoundException e) {
             log.info("cauldron-recipes.txt not found: " + e.getMessage());
             try {
-                log.info("Looked in: " + new File(".").getCanonicalPath() + "/plugins/CraftBookMechanisms");
+                log.info("Looked in: " + CraftBookPlugin.inst().getDataFolder().getCanonicalPath());
             } catch (IOException ioe) {
                 // Eat error
             }
@@ -110,7 +119,9 @@ public class CauldronCookbook {
 
     private CauldronCookbook readCauldronRecipes(String path) throws IOException {
 
-        File file = new File("plugins/CraftBookMechanisms", path);
+        CraftBookPlugin.inst().createDefaultConfiguration(new File(CraftBookPlugin.inst().getDataFolder(), path), path, false);
+
+        File file = new File(CraftBookPlugin.inst().getDataFolder(), path);
         FileReader input = null;
         try {
             input = new FileReader(file);
@@ -234,7 +245,7 @@ public class CauldronCookbook {
          * @param groups
          */
         public Recipe(String name, List<Tuple2<Integer, Short>> ingredients, List<Tuple2<Integer, Short>> results,
-                      String[] groups) {
+                String[] groups) {
 
             this.name = name;
             this.ingredients = Collections.unmodifiableList(ingredients);

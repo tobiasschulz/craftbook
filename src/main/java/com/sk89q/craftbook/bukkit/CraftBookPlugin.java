@@ -147,7 +147,7 @@ public class CraftBookPlugin extends JavaPlugin {
         };
 
         // Initialize the language manager.
-        createDefaultConfiguration(getDataFolder(), "en_US.txt", true);
+        createDefaultConfiguration(new File(getDataFolder(), "en_US.txt"), "en_US.txt", true);
         languageManager = new LanguageManager();
 
         // Set the proper command injector
@@ -528,8 +528,9 @@ public class CraftBookPlugin extends JavaPlugin {
                     output.write(buf, 0, length);
                 }
 
-                getLogger().info("Default configuration file written: "
-                        + actual.getAbsolutePath());
+                if(!force)
+                    getLogger().info("Default configuration file written: "
+                            + actual.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {

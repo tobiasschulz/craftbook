@@ -1,7 +1,7 @@
 package com.sk89q.craftbook.mech.dispenser;
 
-import com.sk89q.craftbook.bukkit.CraftBookPlugin;
-import com.sk89q.craftbook.util.ItemUtil;
+import java.util.ArrayList;
+
 import org.bukkit.block.Dispenser;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,7 +10,8 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
+import com.sk89q.craftbook.bukkit.CraftBookPlugin;
+import com.sk89q.craftbook.util.ItemUtil;
 
 /**
  * @author Me4502
@@ -21,13 +22,21 @@ public class DispenserRecipes implements Listener {
 
     private final ArrayList<Recipe> recipes = new ArrayList<Recipe>();
 
+    private static DispenserRecipes instance;
+
     public DispenserRecipes() {
 
+        instance = this;
         addRecipe(new XPShooter());
         addRecipe(new SnowShooter());
         addRecipe(new FireArrows());
         addRecipe(new Fan());
         addRecipe(new Cannon());
+    }
+
+    public static DispenserRecipes inst() {
+
+        return instance;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

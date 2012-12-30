@@ -119,8 +119,8 @@ public class CombineHarvester extends AbstractIC {
 
                 List<ItemStack> items = new ArrayList<ItemStack>();
                 Collections.addAll(items, drops);
-                if (((CircuitCore) CircuitCore.inst()).getPipeFactory() != null)
-                    if (((CircuitCore) CircuitCore.inst()).getPipeFactory().detect(BukkitUtil.toWorldVector(pipe), items) != null) {
+                if (CircuitCore.inst().getPipeFactory() != null)
+                    if (CircuitCore.inst().getPipeFactory().detect(BukkitUtil.toWorldVector(pipe), items) != null) {
                         return;
                     }
             }
@@ -145,8 +145,7 @@ public class CombineHarvester extends AbstractIC {
 
         // TODO add a list of things that can be harvestable, and in what circumstance.
         return (block.getTypeId() == BlockID.CROPS || block.getTypeId() == BlockID.CARROTS || block.getTypeId() ==
-                BlockID.POTATOES)
-                && block.getData() >= 0x7;
+                BlockID.POTATOES) && block.getData() >= 0x7;
     }
 
     public static class Factory extends AbstractICFactory {
