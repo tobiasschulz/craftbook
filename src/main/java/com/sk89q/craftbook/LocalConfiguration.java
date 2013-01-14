@@ -166,6 +166,7 @@ public abstract class LocalConfiguration {
     public double minecartConstantSpeed;
     public double minecartPoweredRailModifier;
     public boolean minecartPickupItemsOnCollision;
+    public boolean minecartPressurePlateIntersection;
     // Vehicles - Boat Options
     public boolean boatNoCrash;
     public boolean boatRemoveEntities;
